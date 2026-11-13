@@ -1,0 +1,2652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>KTV Hanyu — Learn Chinese with Lyrics</title>
+
+  <!-- External CDN libraries for Pinyin and Traditional/Simplified Chinese conversion -->
+  <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.19.6/dist/index.js" defer onerror="window.__pinyinLoadError=true"></script>
+  <script src="https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js" defer onerror="window.__openccLoadError=true"></script>
+
+  <style>
+    :root {
+      --bg-body: #090d16;
+      --bg-app: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0f172a;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #e11d48;
+      --accent-soft: rgba(225, 29, 72, 0.18);
+      --gold: #fbbf24;
+      --teal: #14b8a6;
+      --border: #334155;
+      --radius: 12px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-zh: "PingFang TC", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK TC", sans-serif;
+      --lyric-scale: 1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: 1rem;
+      color: inherit;
+      background: none;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    /* Centered Mobile Container (max-width: 430px) */
+    .mobile-app {
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      background-color: var(--bg-app);
+      border-left: 1px solid rgba(255, 255, 255, 0.06);
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      flex-direction: column;
+      padding-top: var(--safe-top);
+      padding-bottom: calc(74px + var(--safe-bottom));
+      position: relative;
+    }
+
+    /* Top Header */
+    .top-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--bg-app);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background-color: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-zh);
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background-color: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    /* System Alert Box */
+    .alert-box {
+      margin: 10px 16px 0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background-color: rgba(251, 191, 36, 0.15);
+      border: 1px solid var(--gold);
+      color: #fde68a;
+      font-size: 0.85rem;
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-box.show {
+      display: flex;
+    }
+
+    /* Single Column View Container */
+    .view-container {
+      flex: 1;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .view-section {
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .view-section.active {
+      display: flex;
+    }
+
+    /* Cards & Buttons */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 48px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn:active {
+      opacity: 0.85;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-teal {
+      background-color: rgba(20, 184, 166, 0.18);
+      color: #5eead4;
+      border-color: var(--teal);
+    }
+
+    .btn-gold {
+      background-color: rgba(251, 191, 36, 0.16);
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .btn-sm {
+      min-height: 36px;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      width: auto;
+    }
+
+    .btn-subtle {
+      min-height: 36px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+    }
+
+    .input-field {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 0.96rem;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background-color: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+    }
+
+    /* Song List */
+    .song-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .song-item {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .song-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .song-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      font-family: var(--font-zh);
+    }
+
+    .song-artist {
+      font-size: 0.86rem;
+      color: var(--text-muted);
+    }
+
+    .fav-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border);
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .fav-btn.active {
+      color: var(--gold);
+      border-color: var(--gold);
+    }
+
+    /* Lyrics Reader Header & Controls */
+    .reader-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .segmented-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .seg-btn {
+      min-height: 40px;
+      border-radius: 8px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border);
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .seg-btn.active {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .chips-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chip-toggle {
+      flex: 1;
+      min-height: 38px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .chip-toggle.on {
+      border-color: var(--teal);
+      color: #5eead4;
+      background-color: rgba(20, 184, 166, 0.12);
+    }
+
+    /* Clean Lyrics Reader View */
+    .lyrics-reader-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .lyric-line {
+      padding: 14px;
+      border-radius: var(--radius);
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+    }
+
+    .lyric-tokens {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 6px 8px;
+      font-family: var(--font-zh);
+      line-height: 2;
+    }
+
+    .word-token {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 3px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .word-token:active, .word-token:hover {
+      background-color: var(--accent-soft);
+    }
+
+    .word-token.in-vocab {
+      border-bottom: 2px dotted var(--gold);
+    }
+
+    .word-token ruby {
+      ruby-position: over;
+      display: inline-flex;
+      flex-direction: column-reverse;
+      align-items: center;
+    }
+
+    .word-token rt {
+      font-family: var(--font-sans);
+      font-size: calc(0.78rem * var(--lyric-scale));
+      color: var(--gold);
+      font-weight: 500;
+      line-height: 1.1;
+      margin-bottom: 2px;
+    }
+
+    .hide-pinyin .word-token rt {
+      display: none;
+    }
+
+    .char-main {
+      font-size: calc(1.45rem * var(--lyric-scale));
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .char-sub-simplified {
+      font-size: calc(0.82rem * var(--lyric-scale));
+      color: #5eead4;
+      margin-top: 2px;
+      line-height: 1.1;
+      font-weight: 600;
+    }
+
+    .lyric-translation {
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--border);
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .hide-translation .lyric-translation {
+      display: none;
+    }
+
+    /* Flashcards Self-Practice Mode */
+    .flashcard-box {
+      background-color: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .flashcard-trad-char {
+      font-family: var(--font-zh);
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      color: var(--text-main);
+      margin: 8px 0;
+      text-align: center;
+    }
+
+    .flashcard-answer-area {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+
+    .flashcard-answer-area.revealed {
+      display: flex;
+    }
+
+    /* Bottom Navigation Bar (3 clean tabs) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background-color: var(--bg-app);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding-bottom: var(--safe-bottom);
+      z-index: 40;
+    }
+
+    .bottom-nav-btn {
+      min-height: 62px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .bottom-nav-btn .nav-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .bottom-nav-btn.active {
+      color: #fff;
+      background-color: rgba(225, 29, 72, 0.14);
+      border-top: 2px solid var(--accent);
+    }
+
+    /* Modals (Bottom Sheet) */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.72);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-sheet {
+      width: 100%;
+      max-width: 430px;
+      max-height: 88dvh;
+      overflow-y: auto;
+      background-color: var(--bg-card);
+      border-top: 1px solid var(--border);
+      border-top-left-radius: 18px;
+      border-top-right-radius: 18px;
+      padding: 20px 16px calc(20px + var(--safe-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .info-row {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+
+    .info-label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-app">
+    <!-- Top Header -->
+    <header class="top-header">
+      <div class="brand" onclick="app.switchView('home')" style="cursor:pointer;">
+        <div class="brand-icon">歌</div>
+        <span>KTV Hanyu</span>
+      </div>
+      <span class="status-badge" id="networkBadge">Online</span>
+    </header>
+
+    <!-- System Notification Banner -->
+    <div id="systemAlertBanner" class="alert-box" role="status">
+      <span id="systemAlertText"></span>
+      <button type="button" class="btn btn-sm" onclick="document.getElementById('systemAlertBanner').classList.remove('show')">OK</button>
+    </div>
+
+    <!-- Main Single-Column Container -->
+    <main class="view-container">
+
+      <!-- VIEW 1: LIBRARY -->
+      <section id="view-home" class="view-section active" aria-label="Library">
+        <div class="card">
+          <h1 style="font-size:1.15rem; font-weight:800; margin-bottom:6px;">Learn Chinese with KTV Lyrics</h1>
+          <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:12px;">
+            Open any song from your library to read the lyrics with Pinyin, characters, and meanings, or practice all words from any song directly in Flashcards.
+          </p>
+          <button type="button" class="btn btn-primary" onclick="app.switchView('add')">
+            ＋ Add Song
+          </button>
+        </div>
+
+        <input type="search" id="homeFilterInput" class="input-field" placeholder="Search in your library..." oninput="app.renderHomeLists()">
+
+        <div>
+          <div class="section-title">
+            <span>🎵 My Songs</span>
+            <span class="badge" id="libraryCountBadge">0</span>
+          </div>
+          <div id="homeLibraryList" class="song-list"></div>
+        </div>
+
+        <div id="favoritesSectionWrap" style="display:none;">
+          <div class="section-title"><span>⭐ Favorites</span></div>
+          <div id="homeFavoritesList" class="song-list"></div>
+        </div>
+
+        <!-- Subtle Backup Export / Import (JSON) -->
+        <div style="margin-top:8px; padding-top:12px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px;">
+          <button type="button" class="btn btn-subtle" onclick="app.toggleBackupPanel()">
+            ⇄ Export / Import Backup (JSON)
+          </button>
+          <div id="backupPanel" class="card" style="display:none; flex-direction:column; gap:10px;">
+            <p style="font-size:0.82rem; color:var(--text-muted);">
+              Download all your songs, cached translations, and saved words as a JSON backup file, or restore a backup on another device.
+            </p>
+            <div style="display:flex; gap:8px;">
+              <button type="button" class="btn btn-sm btn-teal" style="flex:1;" onclick="app.exportBackupJson()">
+                ⬇️ Export JSON
+              </button>
+              <label class="btn btn-sm" style="flex:1; cursor:pointer;">
+                ⬆️ Import JSON
+                <input type="file" accept=".json,application/json" style="display:none" onchange="app.importBackupJson(this.files[0]); this.value='';">
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: LYRICS READER -->
+      <section id="view-reader" class="view-section" aria-label="Lyrics Reader">
+        <div class="reader-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-sm" onclick="app.switchView('home')">
+              ← Back to Library
+            </button>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="btn btn-sm btn-subtle" id="readerFetchTransBtn" onclick="app.fetchMissingTranslationsForSong(app.state.currentSong?.id, this)">
+                🌐 Fetch Missing Translations
+              </button>
+              <button type="button" class="btn btn-sm" onclick="app.openSegmentEditorModal()">
+                ✂️ Edit Split
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-weight:800; font-size:1.2rem; font-family:var(--font-zh);" id="readerTitle">—</div>
+            <div style="font-size:0.88rem; color:var(--text-muted);" id="readerArtist">—</div>
+          </div>
+
+          <!-- Character Script Switcher: Traditional / Simplified / Both -->
+          <div class="segmented-row" role="group" aria-label="Character script mode">
+            <button type="button" class="seg-btn" data-script="trad" onclick="app.setScriptMode('trad')">Traditional (繁)</button>
+            <button type="button" class="seg-btn" data-script="simp" onclick="app.setScriptMode('simp')">Simplified (简)</button>
+            <button type="button" class="seg-btn active" data-script="both" onclick="app.setScriptMode('both')">Both (繁+简)</button>
+          </div>
+
+          <!-- Display Toggles -->
+          <div class="chips-row">
+            <button type="button" class="chip-toggle on" id="chip-showPinyin" onclick="app.toggleSetting('showPinyin')">Pinyin</button>
+            <button type="button" class="chip-toggle on" id="chip-pinyinTones" onclick="app.toggleSetting('pinyinTones')">Tones</button>
+            <button type="button" class="chip-toggle on" id="chip-showTranslation" onclick="app.toggleSetting('showTranslation')">Meaning</button>
+          </div>
+        </div>
+
+        <!-- Clean Interactive Lyrics List -->
+        <div id="lyricsViewport" class="lyrics-reader-list" aria-live="polite"></div>
+      </section>
+
+      <!-- VIEW 3: ADD SONG -->
+      <section id="view-add" class="view-section" aria-label="Add Song">
+        <div class="card">
+          <h2 class="section-title">＋ Add Song</h2>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:14px;">
+            Paste plain Chinese lyrics or <code>.lrc</code> lyrics below. When you click Save, words are automatically segmented and Pinyin, Traditional/Simplified characters, and word meanings are generated.
+          </p>
+
+          <form onsubmit="app.importCustomSong(event)">
+            <!-- Field 1: Song Title -->
+            <div class="form-group">
+              <label class="form-label" for="importSongTitle">1. Song Title *</label>
+              <input type="text" id="importSongTitle" class="input-field" required placeholder="e.g. 告白氣球">
+            </div>
+
+            <!-- Field 2: Artist -->
+            <div class="form-group">
+              <label class="form-label" for="importSongArtist">2. Artist *</label>
+              <input type="text" id="importSongArtist" class="input-field" required placeholder="e.g. 周杰倫 (Jay Chou)">
+            </div>
+
+            <!-- Field 3: Lyrics -->
+            <div class="form-group">
+              <label class="form-label" for="importLrcTextarea">3. Lyrics (Chinese text or .LRC) *</label>
+              <textarea id="importLrcTextarea" rows="9" class="input-field" required style="font-family:var(--font-zh), monospace; font-size:0.95rem; line-height:1.6;" placeholder="Paste your Chinese lyrics here..."></textarea>
+            </div>
+
+            <div style="margin-bottom:14px;">
+              <label class="btn btn-sm" style="cursor:pointer; width:100%;">
+                📄 Or load text from a .TXT / .LRC file
+                <input type="file" id="importLrcFile" accept=".lrc,.txt" style="display:none" onchange="app.previewImportedLrcFile(this.files[0])">
+              </label>
+            </div>
+
+            <!-- Translation progress indicator during Save -->
+            <div id="saveTranslationProgress" style="display:none; padding:10px 12px; margin-bottom:12px; border-radius:8px; background:rgba(20,184,166,0.15); border:1px solid var(--teal); color:#5eead4; font-size:0.88rem; font-weight:600; text-align:center;">
+              Translating words... 0/0
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="saveSongSubmitBtn">
+              💾 Save Song
+            </button>
+          </form>
+        </div>
+
+        <!-- Optional: Search lyrics on LRCLIB -->
+        <div class="card">
+          <div class="section-title">
+            <span>🔍 Find Lyrics on LRCLIB</span>
+            <span class="badge">Optional</span>
+          </div>
+          <form onsubmit="app.searchLrclib(event)" style="display:flex; gap:8px; margin-bottom:10px;">
+            <input type="text" id="lrcSearchTrack" class="input-field" placeholder="Search song title or artist...">
+            <button type="submit" class="btn btn-primary" style="width:auto; padding:0 16px;">Search</button>
+          </form>
+          <div id="lrcSearchStatus" style="font-size:0.82rem; color:var(--text-muted);"></div>
+          <div id="lrcSearchResults" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;"></div>
+        </div>
+      </section>
+
+      <!-- VIEW 4: WORDS & FLASHCARDS -->
+      <section id="view-vocab" class="view-section" aria-label="Words">
+        <div class="card" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="section-title" style="margin-bottom:0;">
+            <span>📚 Words & Flashcards</span>
+            <span class="badge" id="vocabTotalBadge">0 saved</span>
+          </div>
+          <button type="button" class="btn btn-gold" onclick="app.toggleFlashcardMode()">
+            🎴 Practice Flashcards
+          </button>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-sm" style="flex:1;" onclick="app.openVocabEditModal()">＋ Add Word</button>
+            <button type="button" class="btn btn-sm" style="flex:1;" onclick="app.exportVocabCsv()">⬇️ CSV</button>
+            <label class="btn btn-sm" style="flex:1; cursor:pointer;">
+              ⬆️ CSV
+              <input type="file" accept=".csv,text/csv" style="display:none" onchange="app.importVocabCsv(this.files[0]); this.value='';">
+            </label>
+          </div>
+        </div>
+
+        <!-- FLASHCARDS SELF-PRACTICE MODE WITH SONG SELECTOR DROPDOWN -->
+        <div id="flashcardContainer" style="display:none;">
+          <div class="flashcard-box">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span class="badge" id="flashcardCounter">Card 0 / 0</span>
+              <button type="button" class="btn btn-sm" onclick="app.toggleFlashcardMode()">Close</button>
+            </div>
+
+            <!-- Song Filter Dropdown: Always populated with all Library songs -->
+            <div style="text-align:left;">
+              <label class="form-label" for="flashcardSongFilter" style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">
+                Select deck / song:
+              </label>
+              <select id="flashcardSongFilter" class="input-field" style="min-height:42px; padding:8px 10px; font-size:0.9rem;" onchange="app.onFlashcardSongFilterChange(this.value)">
+                <option value="all_songs">All Library Songs (All unique words)</option>
+                <option value="saved_only">Saved / Starred Words Only</option>
+              </select>
+            </div>
+
+            <div id="flashcardEmptyMsg" style="display:none; padding:16px 8px; color:var(--text-muted); font-size:0.9rem;">
+              No words found for this selection. Add a song in 'Add Song' or tap words in a song to star them.
+            </div>
+
+            <div id="flashcardActiveWrap">
+              <!-- FRONT (Question): Exclusively Traditional character (large & centered) -->
+              <div>
+                <div style="font-size:0.76rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Traditional Character</div>
+                <div class="flashcard-trad-char" id="flashcardFrontTrad">—</div>
+              </div>
+
+              <!-- BUTTON: "Show answer" -->
+              <button type="button" class="btn btn-primary" id="flashcardShowAnswerBtn" onclick="app.revealFlashcard()">
+                Show answer
+              </button>
+
+              <!-- BACK (Revealed after clicking "Show answer"): Pinyin (with tones), Simplified character, Meaning & Edit Meaning -->
+              <div class="flashcard-answer-area" id="flashcardBackContent">
+                <div class="info-row">
+                  <div class="info-label">Pinyin (with tones)</div>
+                  <div style="font-size:1.3rem; font-weight:700; color:var(--gold);" id="flashcardBackPinyin">—</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Simplified Character (简体)</div>
+                  <div style="font-size:1.5rem; font-weight:700; font-family:var(--font-zh); color:#5eead4;" id="flashcardBackSimp">—</div>
+                </div>
+                <div class="info-row">
+                  <div class="info-label">Meaning</div>
+                  <div style="font-size:1.1rem; font-weight:600;" id="flashcardBackMeaning">—</div>
+                  <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;" id="flashcardBackNote"></div>
+
+                  <!-- Quick inline Edit Meaning field on Flashcard back -->
+                  <div style="display:flex; gap:6px; margin-top:8px;">
+                    <input type="text" id="flashcardEditMeaningInput" class="input-field" style="min-height:36px; padding:6px 10px; font-size:0.84rem;" placeholder="Edit meaning...">
+                    <button type="button" class="btn btn-sm btn-teal" onclick="app.saveFlashcardInlineMeaning()">Save</button>
+                  </div>
+                </div>
+
+                <div style="display:flex; gap:8px; margin-top:6px;">
+                  <button type="button" class="btn" onclick="app.stepFlashcard(-1)">◀ Previous</button>
+                  <button type="button" class="btn btn-primary" onclick="app.stepFlashcard(1)">Next card ▶</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search & Sort Saved Words -->
+        <div style="display:flex; gap:8px;">
+          <input type="search" id="vocabSearchInput" class="input-field" placeholder="Search saved words..." oninput="app.renderVocabList()">
+          <select id="vocabSortSelect" class="input-field" style="width:auto;" aria-label="Sort words" onchange="app.renderVocabList()">
+            <option value="date-desc">Newest</option>
+            <option value="zh-asc">A → Z</option>
+          </select>
+        </div>
+
+        <div id="vocabListContainer" class="song-list"></div>
+      </section>
+    </main>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav" aria-label="Bottom Navigation">
+      <button type="button" class="bottom-nav-btn active" data-view="home" onclick="app.switchView('home')">
+        <span class="nav-icon">🏠</span>
+        <span>Library</span>
+      </button>
+      <button type="button" class="bottom-nav-btn" data-view="add" onclick="app.switchView('add')">
+        <span class="nav-icon">＋</span>
+        <span>Add Song</span>
+      </button>
+      <button type="button" class="bottom-nav-btn" data-view="vocab" onclick="app.switchView('vocab')">
+        <span class="nav-icon">📚</span>
+        <span>Words (<span id="navVocabCount">0</span>)</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- MODAL 1: Word Details Popup -->
+  <div id="wordModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" onclick="if(event.target===this) app.closeWordModal()">
+    <div class="modal-sheet">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="font-family:var(--font-zh); font-size:2rem; font-weight:800;" id="wordModalTitle">學習 / 学习</div>
+          <div style="font-size:1.15rem; color:var(--gold); font-weight:700;" id="wordModalPinyin">xué xí</div>
+        </div>
+        <button type="button" class="btn btn-sm" onclick="app.closeWordModal()">✕</button>
+      </div>
+
+      <div class="info-row" style="display:flex; justify-content:space-between;">
+        <div><span class="info-label">Traditional (繁體)</span><div style="font-size:1.2rem; font-weight:700; font-family:var(--font-zh);" id="wordModalTrad">學習</div></div>
+        <div><span class="info-label">Simplified (简体)</span><div style="font-size:1.2rem; font-weight:700; font-family:var(--font-zh);" id="wordModalSimp">学习</div></div>
+      </div>
+
+      <div class="info-row">
+        <div class="info-label">Meaning (<span id="wordModalSourceBadge">Dictionary</span>)</div>
+        <div style="font-weight:700; font-size:1.05rem;" id="wordModalMeaning">—</div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:4px;">
+        <label class="form-label" for="wordModalCustomMeaning" style="font-size:0.8rem; color:var(--text-muted);">Edit meaning:</label>
+        <div style="display:flex; gap:6px;">
+          <input type="text" id="wordModalCustomMeaning" class="input-field" placeholder="Enter or edit meaning...">
+          <button type="button" class="btn btn-sm btn-teal" onclick="app.saveWordMeaningOnly()">Update</button>
+        </div>
+      </div>
+
+      <input type="text" id="wordModalCustomNote" class="input-field" placeholder="Optional note (for Saved Words)...">
+
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn btn-primary" style="flex:2;" onclick="app.saveCurrentWordToVocab()">⭐ Star / Save Word</button>
+        <button type="button" class="btn btn-teal" style="flex:1;" onclick="app.speakChineseWord()">🔊 Pronounce</button>
+      </div>
+
+      <div style="display:flex; gap:8px; justify-content:space-between;">
+        <a id="extLinkMdbg" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="flex:1;">MDBG ↗</a>
+        <a id="extLinkTranslate" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="flex:1;">Google Translate ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: Manual Word Segmentation Editor -->
+  <div id="segmentModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" onclick="if(event.target===this) app.closeSegmentEditorModal()">
+    <div class="modal-sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1.05rem; font-weight:700;">✂️ Edit Word Segmentation</h3>
+        <button type="button" class="btn btn-sm" onclick="app.closeSegmentEditorModal()">✕</button>
+      </div>
+      <select id="segmentLineSelect" class="input-field" onchange="app.onSegmentLineSelectChange()"></select>
+      <input type="text" id="segmentCustomInput" class="input-field" style="font-family:var(--font-zh); font-size:1.1rem;" placeholder="Words separated by spaces">
+      <div style="display:flex; gap:8px;">
+        <button type="button" class="btn" onclick="app.resetLineSegmentation()">Reset Auto</button>
+        <button type="button" class="btn btn-primary" onclick="app.saveLineSegmentation()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: Add / Edit Word -->
+  <div id="vocabEditModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" onclick="if(event.target===this) app.closeVocabEditModal()">
+    <div class="modal-sheet">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="font-size:1.05rem; font-weight:700;" id="vocabEditModalHeading">Add Word</h3>
+        <button type="button" class="btn btn-sm" onclick="app.closeVocabEditModal()">✕</button>
+      </div>
+      <form onsubmit="app.saveVocabEditForm(event)" style="display:flex; flex-direction:column; gap:10px;">
+        <input type="hidden" id="vocabEditId">
+        <input type="text" id="vocabEditSimp" class="input-field" required placeholder="Simplified Chinese (简体) *" oninput="app.autoFillVocabFormFromSimp(this.value)">
+        <input type="text" id="vocabEditTrad" class="input-field" placeholder="Traditional Chinese (繁體 - auto)">
+        <input type="text" id="vocabEditPinyin" class="input-field" placeholder="Pinyin (auto)">
+        <input type="text" id="vocabEditMeaning" class="input-field" required placeholder="Meaning *">
+        <input type="text" id="vocabEditNote" class="input-field" placeholder="Note (optional)">
+        <select id="vocabEditSongId" class="input-field">
+          <option value="">Linked song: None (General)</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Save Word</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * KTV Hanyu — Mobile-First Chinese KTV Lyrics Reader & Flashcards App
+     */
+
+    // =========================================================================
+    // 1. BUILT-IN HSK & KTV POP MUSIC DICTIONARY (320+ COMMON WORDS)
+    // =========================================================================
+    const KTV_BASE_DICT = {
+      // Pronouns & People
+      "我": "I / me", "你": "you", "妳": "you", "他": "he / him", "她": "she / her", "它": "it",
+      "我们": "we / us", "我們": "we / us", "你们": "you (plural)", "你們": "you (plural)", "他们": "they / them", "他們": "they / them",
+      "自己": "oneself / myself", "别人": "other people", "別人": "other people", "大家": "everyone", "有人": "someone",
+      "谁": "who", "誰": "who", "朋友": "friend", "恋人": "lover", "戀人": "lover", "情人": "sweetheart / lover",
+      "人": "person / people", "人生": "life", "人类": "mankind", "男人": "man", "女人": "woman", "孩子": "child",
+      "亲爱": "dear / beloved", "親愛": "dear / beloved", "亲爱的": "my dear / darling", "親愛的": "my dear / darling",
+      "宝贝": "baby / darling", "寶貝": "baby / darling",
+
+      // Particles, Conjunctions & Grammar Words
+      "的": "of / 's (possessive)", "地": "-ly (adverbial)", "得": "complement particle", "了": "completed action",
+      "着": "-ing (continuous)", "著": "-ing (continuous)", "过": "experienced / past", "過": "experienced / past",
+      "吗": "? (question)", "嗎": "? (question)", "呢": "what about / particle", "吧": "suggestion particle", "啊": "ah / oh",
+      "在": "in / at / on", "是": "is / am / are", "有": "have / there is", "没有": "don't have / without", "沒有": "don't have / without",
+      "不": "not / no", "没": "not / haven't", "沒": "not / haven't", "别": "don't", "別": "don't", "不要": "don't / don't want",
+      "很": "very", "太": "too / extremely", "真": "really / truly", "最": "most", "更": "even more", "还": "still / also", "還": "still / also",
+      "都": "all / both", "也": "also / too", "就": "just / then", "才": "only then / just", "又": "again", "再": "again / once more",
+      "只": "only", "只是": "only / merely", "却": "but / yet", "卻": "but / yet", "但": "but", "但是": "but / however",
+      "可是": "but / however", "因为": "because", "因為": "because", "所以": "so / therefore", "如果": "if", "假如": "if",
+      "虽然": "although", "雖然": "although", "不管": "no matter / regardless", "无论": "no matter", "無論": "no matter",
+      "和": "and / with", "跟": "with / follow", "与": "and / with", "與": "and / with", "把": "object marker", "被": "by (passive)",
+      "让": "let / make", "讓": "let / make", "给": "give / for", "給": "give / for", "对": "to / towards / right", "對": "to / towards / right",
+      "从": "from", "從": "from", "到": "to / arrive", "向": "towards", "往": "towards", "为": "for", "為": "for", "为了": "for the sake of", "為了": "for the sake of",
+      "这": "this", "這": "this", "那": "that", "这里": "here", "這裡": "here", "那里": "there", "那裡": "there",
+      "什么": "what", "什麼": "what", "怎么": "how / why", "怎麼": "how / why", "为什么": "why", "為什麼": "why", "多少": "how many / how much",
+
+      // Love, Heart & Emotions (Core KTV Vocabulary)
+      "爱": "love", "愛": "love", "爱情": "romance / love", "愛情": "romance / love", "爱上": "fall in love with", "愛上": "fall in love with",
+      "喜欢": "like / fond of", "喜歡": "like / fond of", "心": "heart / mind", "心里": "in the heart", "心裡": "in the heart",
+      "心跳": "heartbeat", "心痛": "heartache", "心碎": "heartbroken", "伤心": "sad / heartbroken", "傷心": "sad / heartbroken",
+      "难过": "sad / upset", "難過": "sad / upset", "痛苦": "pain / suffering", "痛": "pain / ache", "寂寞": "lonely", "孤独": "lonely / solitary", "孤獨": "lonely / solitary",
+      "孤单": "lonely / alone", "孤單": "lonely / alone", "快乐": "happy / joy", "快樂": "happy / joy", "开心": "happy", "開心": "happy",
+      "幸福": "happiness / blessed", "温柔": "gentle / tender", "溫柔": "gentle / tender", "甜蜜": "sweet", "浪漫": "romantic",
+      "感动": "moved / touched", "感動": "moved / touched", "感觉": "feeling / sense", "感覺": "feeling / sense",
+      "思念": "longing / miss", "想念": "miss / long for", "怀念": "cherish the memory of", "懷念": "cherish the memory of",
+      "回忆": "memory / recollect", "回憶": "memory / recollect", "记忆": "memory", "記憶": "memory",
+      "忘记": "forget", "忘記": "forget", "忘了": "forgot", "记得": "remember", "記得": "remember",
+      "希望": "hope / wish", "愿望": "wish / desire", "願望": "wish / desire", "梦想": "dream", "夢想": "dream", "梦": "dream", "夢": "dream",
+      "害怕": "afraid / scared", "怕": "afraid / fear", "勇敢": "brave", "勇气": "courage", "勇氣": "courage",
+      "后悔": "regret", "後悔": "regret", "遗憾": "regret / pity", "遺憾": "regret / pity", "眼泪": "tears", "眼淚": "tears", "泪": "tear", "淚": "tear",
+      "哭": "cry", "哭泣": "weep / sob", "笑": "smile / laugh", "微笑": "smile", "笑脸": "smiling face", "笑臉": "smiling face",
+      "拥抱": "embrace / hug", "擁抱": "embrace / hug", "吻": "kiss", "亲吻": "kiss", "親吻": "kiss",
+      "分手": "break up", "离开": "leave / depart", "離開": "leave / depart", "告别": "say goodbye", "告別": "say goodbye",
+      "再见": "goodbye", "再見": "goodbye", "相遇": "meet / encounter", "遇见": "meet", "遇見": "meet", "错过": "miss out", "錯過": "miss out",
+      "陪伴": "accompany", "陪": "accompany / stay with", "守护": "guard / protect", "守護": "guard / protect",
+      "等待": "wait", "等": "wait", "承诺": "promise", "承諾": "promise", "永远": "forever", "永遠": "forever", "一辈子": "a lifetime", "一輩子": "a lifetime",
+      "拥有": "possess / have", "擁有": "possess / have", "失去": "lose", "放弃": "give up", "放棄": "give up", "放手": "let go",
+      "珍惜": "cherish / treasure", "在乎": "care about", "相信": "believe / trust", "懂": "understand", "明白": "understand / clear",
+
+      // Common Verbs
+      "想": "think / miss / want", "要": "want / will", "会": "will / can", "會": "will / can", "能": "can / able to", "可以": "can / may",
+      "应该": "should", "應該": "should", "看": "look / see", "看见": "see", "看見": "see", "看着": "watching", "看著": "watching",
+      "听": "listen / hear", "聽": "listen / hear", "听见": "hear", "聽見": "hear", "说": "say / speak", "說": "say / speak", "说话": "speak / talk", "說話": "speak / talk",
+      "告诉": "tell", "告訴": "tell", "问": "ask", "問": "ask", "回答": "answer", "唱": "sing", "唱歌": "sing a song",
+      "走": "walk / go / leave", "来": "come", "來": "come", "去": "go", "回": "return", "回来": "come back", "回來": "come back", "回去": "go back",
+      "跑": "run", "飞": "fly", "飛": "fly", "飞翔": "fly / soar", "飛翔": "fly / soar", "停": "stop", "留在": "stay in", "留下": "leave behind / stay",
+      "坐": "sit", "站": "stand", "躺": "lie down", "睡": "sleep", "醒": "wake up", "喝": "drink", "吃": "eat",
+      "写": "write", "寫": "write", "写错": "write wrongly", "寫錯": "write wrongly", "读": "read", "讀": "read", "学": "learn", "學": "learn",
+      "找": "look for / find", "找到": "find", "给": "give", "給": "give", "送": "send / give as gift", "拿": "hold / take", "握": "hold / grasp",
+      "打开": "open / turn on", "打開": "open / turn on", "关": "close / turn off", "關": "close / turn off",
+      "开始": "start / begin", "開始": "start / begin", "结束": "end / finish", "結束": "end / finish",
+      "变": "change", "變": "change", "变成": "become", "變成": "become", "改变": "change", "改變": "change",
+      "吹": "blow", "照": "shine / illuminate", "闪烁": "twinkle / flash", "閃爍": "twinkle / flash", "发光": "shine / glow", "發光": "shine / glow",
+      "飘": "float / drift", "飄": "float / drift", "落": "fall / drop", "落下": "fall down",
+
+      // Nature, Time & Scenery (Frequent in Lyrics)
+      "天": "sky / day / heaven", "天空": "sky", "夜": "night", "夜晚": "night", "夜空": "night sky", "黑夜": "dark night",
+      "白天": "daytime", "今天": "today", "明天": "tomorrow", "昨天": "yesterday", "每天": "every day", "有一天": "one day",
+      "时间": "time", "時間": "time", "时候": "time / moment", "時候": "time / moment", "现在": "now", "現在": "now",
+      "过去": "the past / pass by", "過去": "the past / pass by", "未来": "future", "未來": "future", "以前": "before / previously", "以后": "after / later", "以後": "after / later",
+      "瞬间": "instant / moment", "瞬間": "instant / moment", "岁": "years (of age)", "歲": "years (of age)", "岁月": "years / time", "歲月": "years / time",
+      "青春": "youth", "年": "year", "月": "month / moon", "日": "day / sun", "春": "spring", "春天": "spring", "夏": "summer", "夏天": "summer",
+      "秋": "autumn", "秋天": "autumn", "冬": "winter", "冬天": "winter", "季节": "season", "季節": "season",
+      "风": "wind", "風": "wind", "微风": "gentle breeze", "微風": "gentle breeze", "雨": "rain", "下雨": "rain", "大雨": "heavy rain",
+      "雪": "snow", "云": "cloud", "雲": "cloud", "彩虹": "rainbow", "太阳": "sun", "太陽": "sun", "阳光": "sunlight", "陽光": "sunlight",
+      "光": "light", "月亮": "moon", "月光": "moonlight", "星": "star", "星星": "stars", "星空": "starry sky",
+      "海": "sea / ocean", "大海": "sea / ocean", "海边": "seaside", "海邊": "seaside", "河": "river", "山": "mountain",
+      "花": "flower", "玫瑰": "rose", "花店": "flower shop", "树": "tree", "樹": "tree", "叶": "leaf", "葉": "leaf", "落叶": "fallen leaves", "落葉": "fallen leaves",
+      "世界": "world", "地球": "earth", "城市": "city", "街": "street", "街角": "street corner", "路": "road / way", "路上": "on the road",
+      "家": "home / family", "房间": "room", "房間": "room", "窗": "window", "窗外": "outside the window", "门": "door", "門": "door",
+      "远方": "distant place", "遠方": "distant place", "地方": "place",
+
+      // Adjectives & Descriptions
+      "好": "good / fine", "美好": "beautiful / wonderful", "美": "beautiful / beauty", "美丽": "beautiful", "美麗": "beautiful",
+      "漂亮": "pretty", "大": "big / large", "小": "small / little", "多": "many / much / how", "少": "few / little",
+      "长": "long", "長": "long", "短": "short", "高": "high / tall", "低": "low", "远": "far", "遠": "far", "近": "near / close",
+      "快": "fast / soon", "慢": "slow", "慢慢": "slowly", "早": "early / morning", "晚": "late / evening",
+      "新": "new", "旧": "old / used", "舊": "old / used", "老": "old", "年轻": "young", "年輕": "young",
+      "热": "hot / warm", "熱": "hot / warm", "冷": "cold", "暖": "warm", "温暖": "warm", "溫暖": "warm",
+      "亮": "bright", "暗": "dark", "黑": "black / dark", "白": "white", "红": "red", "紅": "red", "蓝": "blue", "藍": "blue",
+      "安静": "quiet / peaceful", "安靜": "quiet / peaceful", "简单": "simple", "簡單": "simple", "容易": "easy", "难": "difficult / hard", "難": "difficult / hard",
+      "真": "true / real", "假": "fake / false", "一样": "same", "一樣": "same", "特别": "special", "特別": "special",
+
+      // Objects, Body & Specific Mandopop / 告白氣球 Terms
+      "歌": "song", "歌声": "singing voice", "歌聲": "singing voice", "音乐": "music", "音樂": "music", "旋律": "melody",
+      "声音": "voice / sound", "聲音": "voice / sound", "故事": "story", "名字": "name", "信": "letter / believe",
+      "电话": "telephone / call", "電話": "telephone / call", "照片": "photo", "画面": "scene / picture", "畫面": "scene / picture",
+      "手": "hand", "双手": "both hands", "雙手": "both hands", "牵手": "hold hands", "牽手": "hold hands",
+      "眼": "eye", "眼睛": "eyes", "眼神": "gaze / expression in eyes", "脸": "face", "臉": "face",
+      "嘴": "mouth / lips", "嘴角": "corner of the mouth", "唇": "lip", "唇印": "lip print / lipstick mark",
+      "肩膀": "shoulder", "背影": "view of someone's back", "脚步": "footstep", "腳步": "footstep",
+      "茶": "tea", "茶馆": "teahouse", "茶館": "teahouse", "咖啡": "coffee", "酒": "wine / alcohol", "水": "water",
+      "一杯": "a cup of", "手一杯": "a cup in hand", "品尝": "taste / savor", "品嚐": "taste / savor",
+      "塞纳河": "Seine River", "塞納河": "Seine River", "畔": "riverbank / side", "左岸": "Left Bank",
+      "告白": "confess love / confession", "气球": "balloon", "氣球": "balloon", "告白气球": "Love Confession (balloon)", "告白氣球": "Love Confession (balloon)",
+      "香": "fragrant / aroma", "香气": "fragrance", "香氣": "fragrance", "礼物": "gift / present", "禮物": "gift / present",
+      "秘密": "secret", "代表": "represent", "其实": "actually / in fact", "其實": "actually / in fact",
+      "一点": "a little", "一點": "a little", "一点点": "a tiny bit", "一點點": "a tiny bit", "一切": "everything"
+    };
+
+    const SIMP_TO_TRAD_MAP = {
+      "气": "氣", "阳": "陽", "们": "們", "馆": "館", "热": "熱", "风": "風", "过": "過",
+      "脸": "臉", "这": "這", "乐": "樂", "实": "實", "简": "簡", "单": "單", "闪": "閃",
+      "烁": "爍", "灯": "燈", "静": "靜", "里": "裡", "着": "著", "远": "遠", "来": "來",
+      "梦": "夢", "会": "會", "发": "發", "学": "學", "开": "開", "麦": "麥", "声": "聲",
+      "汉": "漢", "调": "調", "音": "音", "连": "連", "进": "進", "点": "點", "爱": "愛",
+      "听": "聽", "说": "說", "读": "讀", "写": "寫", "欢": "歡", "时": "時", "语": "語",
+      "国": "國", "亲": "親", "拥": "擁", "纳": "納", "尝": "嚐", "错": "錯", "谁": "誰",
+      "玫": "玫", "瑰": "瑰", "双": "雙", "牵": "牽", "礼": "禮", "岁": "歲", "叶": "葉"
+    };
+    const TRAD_TO_SIMP_MAP = {};
+    Object.keys(SIMP_TO_TRAD_MAP).forEach(s => { TRAD_TO_SIMP_MAP[SIMP_TO_TRAD_MAP[s]] = s; });
+
+    // Legacy IndexedDB migration helper
+    const legacyIdbReader = {
+      async getOldCustomSongs() {
+        if (!window.indexedDB) return [];
+        return new Promise((resolve) => {
+          try {
+            const req = indexedDB.open("KtvHanyuDB", 1);
+            req.onsuccess = (e) => {
+              const db = e.target.result;
+              if (!db.objectStoreNames.contains("songs")) {
+                resolve([]);
+                return;
+              }
+              const tx = db.transaction("songs", "readonly");
+              const getAllReq = tx.objectStore("songs").getAll();
+              getAllReq.onsuccess = () => {
+                const items = (getAllReq.result || [])
+                  .filter(s => !s.isDemo && !String(s.id).startsWith("demo-"))
+                  .map(s => ({
+                    id: s.id,
+                    title: s.title,
+                    artist: s.artist || "",
+                    lrc: s.lrc || "",
+                    dateAdded: s.dateAdded || new Date().toISOString()
+                  }));
+                resolve(items);
+              };
+              getAllReq.onerror = () => resolve([]);
+            };
+            req.onerror = () => resolve([]);
+          } catch (err) {
+            resolve([]);
+          }
+        });
+      }
+    };
+
+    // =========================================================================
+    // 2. TEXT, PINYIN, OPENCC, SEGMENTATION & TRANSLATION API HELPERS
+    // =========================================================================
+    const textHelper = {
+      s2tConverter: null,
+      t2sConverter: null,
+      segmenter: null,
+
+      init() {
+        if (window.OpenCC && typeof window.OpenCC.Converter === "function") {
+          try {
+            this.s2tConverter = window.OpenCC.Converter({ from: "cn", to: "tw" });
+            this.t2sConverter = window.OpenCC.Converter({ from: "tw", to: "cn" });
+          } catch (e) {}
+        }
+        if (typeof Intl !== "undefined" && typeof Intl.Segmenter === "function") {
+          try {
+            this.segmenter = new Intl.Segmenter("zh", { granularity: "word" });
+          } catch (e) {}
+        }
+      },
+
+      toTraditional(str) {
+        if (!str) return "";
+        if (this.s2tConverter) {
+          try { return this.s2tConverter(str); } catch (e) {}
+        }
+        return Array.from(str).map(ch => SIMP_TO_TRAD_MAP[ch] || ch).join("");
+      },
+
+      toSimplified(str) {
+        if (!str) return "";
+        if (this.t2sConverter) {
+          try { return this.t2sConverter(str); } catch (e) {}
+        }
+        return Array.from(str).map(ch => TRAD_TO_SIMP_MAP[ch] || ch).join("");
+      },
+
+      stripTones(pinyinStr) {
+        if (!pinyinStr) return "";
+        return pinyinStr.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      },
+
+      getPinyin(word, withTones = true) {
+        if (!word) return "";
+        if (window.pinyinPro && typeof window.pinyinPro.pinyin === "function") {
+          try {
+            const opts = withTones ? { toneType: "symbol" } : { toneType: "none" };
+            return window.pinyinPro.pinyin(word, opts);
+          } catch (e) {}
+        }
+        return "";
+      },
+
+      isChineseText(str) {
+        return /[\u4e00-\u9fff]/.test(str);
+      },
+
+      segmentLine(text, customOverrideStr) {
+        if (!text) return [];
+        if (customOverrideStr && customOverrideStr.trim()) {
+          return customOverrideStr.trim().split(/\s+/).filter(Boolean);
+        }
+        if (this.segmenter) {
+          const segments = [];
+          for (const item of this.segmenter.segment(text)) {
+            if (item.segment.trim()) segments.push(item.segment);
+          }
+          if (segments.length > 0) return segments;
+        }
+        const result = [];
+        let i = 0;
+        const chars = Array.from(text);
+        while (i < chars.length) {
+          if (/\s/.test(chars[i])) { i++; continue; }
+          let matched = null;
+          for (let len = 4; len >= 2; len--) {
+            const candidate = chars.slice(i, i + len).join("");
+            if (KTV_BASE_DICT[candidate]) {
+              matched = candidate;
+              i += len;
+              break;
+            }
+          }
+          if (!matched) {
+            matched = chars[i];
+            i++;
+          }
+          result.push(matched);
+        }
+        return result;
+      },
+
+      // Synchronous lookup across Saved Words -> wordMeaningsCache -> KTV_BASE_DICT -> character breakdown
+      getKnownMeaning(word) {
+        if (!word) return "";
+        const clean = word.trim();
+        const simp = this.toSimplified(clean);
+        const trad = this.toTraditional(clean);
+
+        // 1. User's Saved Words
+        const savedHit = app.state.vocab.find(v => v.simp === simp || v.trad === trad || v.simp === clean || v.trad === clean);
+        if (savedHit && savedHit.meaning) {
+          return { meaning: savedHit.meaning, source: "Saved Words" };
+        }
+
+        // 2. LocalStorage wordMeaningsCache
+        const cache = app.state.wordMeaningsCache || {};
+        if (cache[clean]) return { meaning: cache[clean], source: "Cached Translation" };
+        if (cache[simp]) return { meaning: cache[simp], source: "Cached Translation" };
+        if (cache[trad]) return { meaning: cache[trad], source: "Cached Translation" };
+
+        // 3. Built-in 300+ KTV Base Dictionary
+        if (KTV_BASE_DICT[clean]) return { meaning: KTV_BASE_DICT[clean], source: "Built-in Dictionary" };
+        if (KTV_BASE_DICT[simp]) return { meaning: KTV_BASE_DICT[simp], source: "Built-in Dictionary" };
+        if (KTV_BASE_DICT[trad]) return { meaning: KTV_BASE_DICT[trad], source: "Built-in Dictionary" };
+
+        // 4. Multi-character compound where each character is in KTV_BASE_DICT
+        if (Array.from(simp).length > 1) {
+          const parts = Array.from(simp).map(ch => KTV_BASE_DICT[ch] || cache[ch] || null);
+          if (parts.every(Boolean)) {
+            return { meaning: parts.map(p => p.split("/")[0].trim()).join(" + "), source: "Character Breakdown" };
+          }
+        }
+
+        return null;
+      },
+
+      lookupWordDetails(word) {
+        const clean = word.trim();
+        const simp = this.toSimplified(clean);
+        const trad = this.toTraditional(clean);
+        const pinyin = this.getPinyin(clean, true) || "—";
+        const known = this.getKnownMeaning(clean);
+
+        return {
+          original: clean,
+          trad,
+          simp,
+          pinyin,
+          meaning: known ? known.meaning : "",
+          source: known ? known.source : "Not translated yet"
+        };
+      },
+
+      // Fetch translation from public APIs with safe timeout & fallback
+      async fetchTranslationFromApi(word) {
+        const clean = (word || "").trim();
+        if (!clean || !this.isChineseText(clean)) return "";
+
+        // 1. Try Google Translate GTX public endpoint first (fast & accurate for single words)
+        try {
+          const ctrl1 = new AbortController();
+          const t1 = setTimeout(() => ctrl1.abort(), 4000);
+          const url1 = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-CN&tl=en&dt=t&q=${encodeURIComponent(clean)}`;
+          const res1 = await fetch(url1, { signal: ctrl1.signal });
+          clearTimeout(t1);
+          if (res1.ok) {
+            const data1 = await res1.json();
+            const translated = data1?.[0]?.[0]?.[0];
+            if (translated && typeof translated === "string" && translated.trim() && !this.isChineseText(translated)) {
+              return translated.trim().toLowerCase();
+            }
+          }
+        } catch (e) {}
+
+        // 2. Fallback to MyMemory public translation API
+        try {
+          const ctrl2 = new AbortController();
+          const t2 = setTimeout(() => ctrl2.abort(), 4500);
+          const url2 = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(clean)}&langpair=zh-TW|en`;
+          const res2 = await fetch(url2, { signal: ctrl2.signal });
+          clearTimeout(t2);
+          if (res2.ok) {
+            const data2 = await res2.json();
+            const translated2 = data2?.responseData?.translatedText;
+            if (translated2 && typeof translated2 === "string" && translated2.trim() && !this.isChineseText(translated2)) {
+              return translated2.trim().toLowerCase();
+            }
+          }
+        } catch (e) {}
+
+        return "";
+      }
+    };
+
+    // =========================================================================
+    // 3. MAIN APPLICATION CONTROLLER
+    // =========================================================================
+    const app = {
+      state: {
+        currentView: "home",
+        songs: [],
+        currentSong: null,
+        parsedLines: [],
+        selectedWord: null,
+        flashcardActive: false,
+        flashcardIndex: 0,
+        flashcardSongFilter: "all_songs",
+        currentFlashcardItem: null,
+        settings: {
+          scriptMode: "both",
+          showPinyin: true,
+          pinyinTones: true,
+          showTranslation: true
+        },
+        favorites: [],
+        segmentOverrides: {},
+        vocab: [],
+        wordMeaningsCache: {}
+      },
+
+      async init() {
+        await this.loadLocalStorageState();
+        textHelper.init();
+
+        setTimeout(() => {
+          textHelper.init();
+          if (this.state.currentSong) {
+            this.state.parsedLines = this.parseLyricsLines(this.state.currentSong.lrc);
+            this.renderLyrics();
+          }
+          this.populateSongSelects();
+          if (this.state.flashcardActive) this.renderCurrentFlashcard();
+        }, 800);
+
+        window.addEventListener("online", () => this.updateNetworkStatus());
+        window.addEventListener("offline", () => this.updateNetworkStatus());
+        this.updateNetworkStatus();
+
+        this.applySettingsToUI();
+        this.renderHomeLists();
+        this.renderVocabList();
+        this.populateSongSelects();
+      },
+
+      // -----------------------------------------------------------------------
+      // RELIABLE LOCALSTORAGE PERSISTENCE
+      // -----------------------------------------------------------------------
+      async loadLocalStorageState() {
+        try {
+          const savedSettings = localStorage.getItem("ktv_settings");
+          if (savedSettings) {
+            this.state.settings = { ...this.state.settings, ...JSON.parse(savedSettings) };
+          }
+
+          const savedFavs = localStorage.getItem("ktv_favorites");
+          if (savedFavs) {
+            this.state.favorites = JSON.parse(savedFavs).filter(id => !String(id).startsWith("demo-"));
+          }
+
+          const savedSeg = localStorage.getItem("ktv_seg_overrides");
+          if (savedSeg) this.state.segmentOverrides = JSON.parse(savedSeg);
+
+          const savedMeanings = localStorage.getItem("ktv_word_meanings_cache");
+          if (savedMeanings) {
+            this.state.wordMeaningsCache = JSON.parse(savedMeanings) || {};
+          }
+
+          let storedSongs = [];
+          const rawSongs = localStorage.getItem("ktv_songs");
+          if (rawSongs) storedSongs = JSON.parse(rawSongs);
+
+          const rawFallback = localStorage.getItem("ktv_custom_songs_fallback");
+          if (rawFallback) {
+            JSON.parse(rawFallback).forEach(s => {
+              if (!storedSongs.some(ex => ex.id === s.id)) storedSongs.push(s);
+            });
+          }
+
+          const oldIdbSongs = await legacyIdbReader.getOldCustomSongs();
+          oldIdbSongs.forEach(s => {
+            if (!storedSongs.some(ex => ex.id === s.id)) storedSongs.push(s);
+          });
+
+          this.state.songs = storedSongs.filter(s => !s.isDemo && !String(s.id).startsWith("demo-"));
+          this.saveLocalStorageKey("ktv_songs", this.state.songs);
+
+          const savedVocab = localStorage.getItem("ktv_vocab");
+          if (savedVocab) {
+            const parsedVocab = JSON.parse(savedVocab);
+            this.state.vocab = parsedVocab.filter(v =>
+              !["v-1", "v-2", "v-3", "v-4", "v-init-1", "v-init-2", "v-init-3", "v-init-4"].includes(v.id)
+            );
+            this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+          } else {
+            this.state.vocab = [];
+          }
+        } catch (err) {
+          this.showSystemAlert("Warning: localStorage could not be accessed.");
+        }
+      },
+
+      saveLocalStorageKey(key, data) {
+        try {
+          localStorage.setItem(key, JSON.stringify(data));
+        } catch (err) {
+          this.showSystemAlert("Storage limit reached. Please export a JSON backup.");
+        }
+      },
+
+      saveMeaningToCache(word, meaning) {
+        if (!word || !meaning) return;
+        const clean = word.trim();
+        const simp = textHelper.toSimplified(clean);
+        const trad = textHelper.toTraditional(clean);
+        const val = meaning.trim();
+
+        this.state.wordMeaningsCache[clean] = val;
+        this.state.wordMeaningsCache[simp] = val;
+        this.state.wordMeaningsCache[trad] = val;
+        this.saveLocalStorageKey("ktv_word_meanings_cache", this.state.wordMeaningsCache);
+      },
+
+      showSystemAlert(msg) {
+        const banner = document.getElementById("systemAlertBanner");
+        const textEl = document.getElementById("systemAlertText");
+        if (banner && textEl) {
+          textEl.textContent = msg;
+          banner.classList.add("show");
+        }
+      },
+
+      updateNetworkStatus() {
+        const badge = document.getElementById("networkBadge");
+        if (badge) {
+          badge.textContent = navigator.onLine !== false ? "Online" : "Offline";
+        }
+      },
+
+      switchView(viewName) {
+        this.state.currentView = viewName;
+        document.querySelectorAll(".view-section").forEach(sec => {
+          sec.classList.toggle("active", sec.id === `view-${viewName}`);
+        });
+        document.querySelectorAll(".bottom-nav-btn").forEach(btn => {
+          const target = btn.getAttribute("data-view");
+          btn.classList.toggle("active", target === viewName || (viewName === "reader" && target === "home"));
+        });
+        if (viewName === "vocab") {
+          this.populateSongSelects();
+          if (this.state.flashcardActive) {
+            this.renderCurrentFlashcard();
+          }
+        }
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      },
+
+      applySettingsToUI() {
+        const s = this.state.settings;
+        document.querySelectorAll("[data-script]").forEach(btn => {
+          btn.classList.toggle("active", btn.getAttribute("data-script") === s.scriptMode);
+        });
+
+        ["showPinyin", "pinyinTones", "showTranslation"].forEach(key => {
+          const chip = document.getElementById(`chip-${key}`);
+          if (chip) chip.classList.toggle("on", !!s[key]);
+        });
+
+        const viewport = document.getElementById("lyricsViewport");
+        if (viewport) {
+          viewport.classList.toggle("hide-pinyin", !s.showPinyin);
+          viewport.classList.toggle("hide-translation", !s.showTranslation);
+        }
+      },
+
+      setScriptMode(mode) {
+        this.state.settings.scriptMode = mode;
+        this.saveLocalStorageKey("ktv_settings", this.state.settings);
+        this.applySettingsToUI();
+        this.renderLyrics();
+      },
+
+      toggleSetting(key) {
+        this.state.settings[key] = !this.state.settings[key];
+        this.saveLocalStorageKey("ktv_settings", this.state.settings);
+        this.applySettingsToUI();
+        if (key === "pinyinTones") this.renderLyrics();
+      },
+
+      // -----------------------------------------------------------------------
+      // EXTRACT UNIQUE CHINESE WORDS FROM ANY SONG IN LIBRARY
+      // -----------------------------------------------------------------------
+      extractUniqueWordsFromSong(song) {
+        if (!song || !song.lrc) return [];
+        const lines = this.parseLyricsLines(song.lrc);
+        const seenSimp = new Set();
+        const uniqueWords = [];
+
+        lines.forEach((ln, lineIdx) => {
+          const overrideKey = `${song.id}:${lineIdx}`;
+          const tokens = textHelper.segmentLine(ln.zhText, this.state.segmentOverrides[overrideKey]);
+          tokens.forEach(token => {
+            const clean = token.trim();
+            // Filter out punctuation, numbers, and spaces
+            if (!clean || !textHelper.isChineseText(clean)) return;
+            const chineseOnly = Array.from(clean).filter(ch => textHelper.isChineseText(ch)).join("");
+            if (!chineseOnly) return;
+
+            const simp = textHelper.toSimplified(chineseOnly);
+            if (seenSimp.has(simp)) return;
+            seenSimp.add(simp);
+
+            const trad = textHelper.toTraditional(chineseOnly);
+            const pinyin = textHelper.getPinyin(chineseOnly, true) || "";
+            const known = textHelper.getKnownMeaning(chineseOnly);
+
+            uniqueWords.push({
+              id: `songword-${song.id}-${simp}`,
+              original: chineseOnly,
+              simp,
+              trad,
+              pinyin,
+              meaning: known ? known.meaning : "",
+              songId: song.id,
+              songTitle: `${song.title}${song.artist ? " - " + song.artist : ""}`,
+              note: ""
+            });
+          });
+        });
+
+        return uniqueWords;
+      },
+
+      // -----------------------------------------------------------------------
+      // TRANSLATE MISSING WORDS FOR A SONG (ON SAVE OR VIA BUTTON CLICK)
+      // -----------------------------------------------------------------------
+      async fetchMissingTranslationsForSong(songId, btnEl = null) {
+        const song = this.state.songs.find(s => s.id === songId);
+        if (!song) return;
+
+        const words = this.extractUniqueWordsFromSong(song);
+        const missingWords = words.filter(w => !textHelper.getKnownMeaning(w.original));
+
+        const origBtnText = btnEl ? btnEl.textContent : "";
+        if (btnEl) {
+          btnEl.disabled = true;
+          btnEl.textContent = "Loading...";
+        }
+
+        if (missingWords.length === 0) {
+          if (btnEl) {
+            btnEl.textContent = "✓ All translated";
+            setTimeout(() => {
+              btnEl.disabled = false;
+              btnEl.textContent = origBtnText;
+            }, 1500);
+          }
+          if (this.state.currentSong?.id === songId) {
+            this.state.parsedLines = this.parseLyricsLines(song.lrc);
+            this.renderLyrics();
+          }
+          if (this.state.flashcardActive) this.renderCurrentFlashcard();
+          return;
+        }
+
+        let completed = 0;
+        const total = missingWords.length;
+
+        // Translate in small parallel batches of 4 so it finishes quickly without rate-limiting
+        const batchSize = 4;
+        for (let i = 0; i < total; i += batchSize) {
+          const batch = missingWords.slice(i, i + batchSize);
+          await Promise.all(batch.map(async (w) => {
+            const translated = await textHelper.fetchTranslationFromApi(w.original);
+            if (translated) {
+              this.saveMeaningToCache(w.original, translated);
+            }
+            completed++;
+            if (btnEl) {
+              btnEl.textContent = `Loading... (${completed}/${total})`;
+            }
+          }));
+        }
+
+        if (btnEl) {
+          btnEl.textContent = "✓ Done!";
+          setTimeout(() => {
+            btnEl.disabled = false;
+            btnEl.textContent = origBtnText;
+          }, 1400);
+        }
+
+        // Refresh active views
+        if (this.state.currentSong && this.state.currentSong.id === songId) {
+          this.state.parsedLines = this.parseLyricsLines(this.state.currentSong.lrc);
+          this.renderLyrics();
+        }
+        if (this.state.flashcardActive) {
+          this.renderCurrentFlashcard();
+        }
+      },
+
+      // -----------------------------------------------------------------------
+      // LIBRARY & BACKUP (JSON EXPORT / IMPORT)
+      // -----------------------------------------------------------------------
+      renderHomeLists() {
+        const filterVal = (document.getElementById("homeFilterInput")?.value || "").trim().toLowerCase();
+        const filtered = this.state.songs.filter(song => {
+          if (!filterVal) return true;
+          return (
+            song.title.toLowerCase().includes(filterVal) ||
+            (song.artist || "").toLowerCase().includes(filterVal) ||
+            (song.lrc || "").toLowerCase().includes(filterVal)
+          );
+        });
+
+        const countBadge = document.getElementById("libraryCountBadge");
+        if (countBadge) countBadge.textContent = filtered.length;
+
+        const libList = document.getElementById("homeLibraryList");
+        if (libList) {
+          if (this.state.songs.length === 0) {
+            libList.innerHTML = `
+              <div class="card" style="text-align:center; color:var(--text-muted); padding:24px 16px;">
+                No songs yet. Click 'Add Song' to add your first KTV lyrics.
+              </div>
+            `;
+          } else if (filtered.length === 0) {
+            libList.innerHTML = `
+              <div class="card" style="text-align:center; color:var(--text-muted);">
+                No songs match your search.
+              </div>
+            `;
+          } else {
+            libList.innerHTML = filtered.map(s => this.createSongItemHtml(s)).join("");
+          }
+        }
+
+        const favWrap = document.getElementById("favoritesSectionWrap");
+        const favList = document.getElementById("homeFavoritesList");
+        const favs = this.state.songs.filter(s => this.state.favorites.includes(s.id));
+        if (favWrap && favList) {
+          if (favs.length > 0) {
+            favWrap.style.display = "block";
+            favList.innerHTML = favs.map(s => this.createSongItemHtml(s)).join("");
+          } else {
+            favWrap.style.display = "none";
+          }
+        }
+      },
+
+      createSongItemHtml(song) {
+        const isFav = this.state.favorites.includes(song.id);
+        return `
+          <div class="song-item">
+            <div class="song-item-header">
+              <div>
+                <div class="song-title">${this.escapeHtml(song.title)}</div>
+                <div class="song-artist">${this.escapeHtml(song.artist || "Unknown artist")}</div>
+              </div>
+              <button type="button" class="fav-btn ${isFav ? "active" : ""}" title="Toggle Favorite" onclick="app.toggleFavorite('${song.id}')">
+                ${isFav ? "★" : "☆"}
+              </button>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-primary btn-sm" style="flex:2;" onclick="app.openSong('${song.id}')">
+                📖 Read Lyrics
+              </button>
+              <button type="button" class="btn btn-sm btn-gold" style="flex:1;" title="Practice this song in Flashcards" onclick="app.practiceSongFlashcards('${song.id}')">
+                🎴 Cards
+              </button>
+              <button type="button" class="btn btn-sm btn-subtle" title="Fetch Missing Translations" onclick="app.fetchMissingTranslationsForSong('${song.id}', this)">
+                🌐 Fetch Missing Translations
+              </button>
+              <button type="button" class="btn btn-sm" title="Delete song" onclick="app.deleteCustomSong('${song.id}')">🗑️</button>
+            </div>
+          </div>
+        `;
+      },
+
+      practiceSongFlashcards(songId) {
+        this.state.flashcardSongFilter = `song:${songId}`;
+        this.state.flashcardActive = true;
+        this.state.flashcardIndex = 0;
+        this.switchView("vocab");
+        this.populateSongSelects();
+        document.getElementById("flashcardContainer").style.display = "block";
+        this.renderCurrentFlashcard();
+      },
+
+      toggleFavorite(songId) {
+        const idx = this.state.favorites.indexOf(songId);
+        if (idx >= 0) this.state.favorites.splice(idx, 1);
+        else this.state.favorites.push(songId);
+        this.saveLocalStorageKey("ktv_favorites", this.state.favorites);
+        this.renderHomeLists();
+      },
+
+      deleteCustomSong(songId) {
+        if (!confirm("Are you sure you want to delete this song?")) return;
+        this.state.songs = this.state.songs.filter(s => s.id !== songId);
+        this.saveLocalStorageKey("ktv_songs", this.state.songs);
+        this.renderHomeLists();
+        this.populateSongSelects();
+        if (this.state.currentSong && this.state.currentSong.id === songId) {
+          this.state.currentSong = null;
+          this.switchView("home");
+        }
+      },
+
+      toggleBackupPanel() {
+        const panel = document.getElementById("backupPanel");
+        if (panel) {
+          panel.style.display = panel.style.display === "none" ? "flex" : "none";
+        }
+      },
+
+      exportBackupJson() {
+        const backupData = {
+          version: 2,
+          exportedAt: new Date().toISOString(),
+          songs: this.state.songs,
+          vocab: this.state.vocab,
+          wordMeaningsCache: this.state.wordMeaningsCache,
+          favorites: this.state.favorites,
+          segmentOverrides: this.state.segmentOverrides,
+          settings: this.state.settings
+        };
+        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `ktv-hanyu-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+
+      importBackupJson(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const data = JSON.parse(e.target.result || "{}");
+            if (Array.isArray(data.songs)) {
+              data.songs.forEach(s => {
+                if (s && s.id && !this.state.songs.some(ex => ex.id === s.id)) {
+                  this.state.songs.push(s);
+                }
+              });
+              this.saveLocalStorageKey("ktv_songs", this.state.songs);
+            }
+            if (Array.isArray(data.vocab)) {
+              data.vocab.forEach(v => {
+                if (v && v.simp && !this.state.vocab.some(ex => ex.simp === v.simp)) {
+                  this.state.vocab.push(v);
+                }
+              });
+              this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+            }
+            if (data.wordMeaningsCache && typeof data.wordMeaningsCache === "object") {
+              this.state.wordMeaningsCache = { ...this.state.wordMeaningsCache, ...data.wordMeaningsCache };
+              this.saveLocalStorageKey("ktv_word_meanings_cache", this.state.wordMeaningsCache);
+            }
+            if (Array.isArray(data.favorites)) {
+              this.state.favorites = data.favorites;
+              this.saveLocalStorageKey("ktv_favorites", this.state.favorites);
+            }
+            if (data.segmentOverrides && typeof data.segmentOverrides === "object") {
+              this.state.segmentOverrides = { ...this.state.segmentOverrides, ...data.segmentOverrides };
+              this.saveLocalStorageKey("ktv_seg_overrides", this.state.segmentOverrides);
+            }
+            this.renderHomeLists();
+            this.renderVocabList();
+            this.populateSongSelects();
+            this.showSystemAlert("Backup imported successfully!");
+          } catch (err) {
+            this.showSystemAlert("Invalid JSON backup file.");
+          }
+        };
+        reader.readAsText(file, "utf-8");
+      },
+
+      // -----------------------------------------------------------------------
+      // LYRICS PARSER & CLEAN READER VIEW
+      // -----------------------------------------------------------------------
+      parseLyricsLines(rawString) {
+        const rawLines = (rawString || "").split(/\r?\n/);
+        const parsed = [];
+        const timeRegex = /\[(\d{1,3}):(\d{2})(?:\.(\d{1,3}))?\]/g;
+
+        rawLines.forEach((rawLine) => {
+          const trimmed = rawLine.trim();
+          if (!trimmed) return;
+          if (/^\[[a-zA-Z]+:.*\]$/.test(trimmed)) return;
+
+          const contentWithoutTime = trimmed.replace(timeRegex, "").trim();
+          if (!contentWithoutTime) return;
+
+          let zhText = contentWithoutTime;
+          let explicitMeaning = "";
+          if (contentWithoutTime.includes("|")) {
+            const parts = contentWithoutTime.split("|");
+            zhText = parts[0].trim();
+            explicitMeaning = parts.slice(1).join("|").trim();
+          }
+
+          parsed.push({ zhText, explicitMeaning });
+        });
+
+        return parsed;
+      },
+
+      buildLineMeaningGloss(zhText, explicitMeaning, overrideStr) {
+        if (explicitMeaning) return explicitMeaning;
+        const segs = textHelper.segmentLine(zhText, overrideStr);
+        const gloss = segs
+          .filter(w => textHelper.isChineseText(w))
+          .map(w => {
+            const known = textHelper.getKnownMeaning(w);
+            return known ? known.meaning : null;
+          })
+          .filter(Boolean);
+        return gloss.length > 0 ? gloss.join(" · ") : "";
+      },
+
+      openSong(songId) {
+        const song = this.state.songs.find(s => s.id === songId);
+        if (!song) return;
+
+        this.state.currentSong = song;
+        this.state.parsedLines = this.parseLyricsLines(song.lrc);
+
+        document.getElementById("readerTitle").textContent = song.title;
+        document.getElementById("readerArtist").textContent = song.artist || "Unknown artist";
+
+        this.renderLyrics();
+        this.switchView("reader");
+      },
+
+      renderLyrics() {
+        const viewport = document.getElementById("lyricsViewport");
+        if (!viewport) return;
+
+        if (!this.state.parsedLines.length) {
+          viewport.innerHTML = `<div class="card" style="text-align:center; color:var(--text-muted);">No lyrics lines available.</div>`;
+          return;
+        }
+
+        const scriptMode = this.state.settings.scriptMode;
+        const withTones = this.state.settings.pinyinTones;
+        const songId = this.state.currentSong?.id || "default";
+
+        viewport.innerHTML = this.state.parsedLines.map((line, lineIdx) => {
+          const overrideKey = `${songId}:${lineIdx}`;
+          const overrideStr = this.state.segmentOverrides[overrideKey];
+          const tokens = textHelper.segmentLine(line.zhText, overrideStr);
+
+          const tokensHtml = tokens.map(token => {
+            if (!textHelper.isChineseText(token)) {
+              return `<span class="word-token"><span class="char-main">${this.escapeHtml(token)}</span></span>`;
+            }
+
+            const tradWord = textHelper.toTraditional(token);
+            const simpWord = textHelper.toSimplified(token);
+            const pinyin = textHelper.getPinyin(token, withTones);
+            const inVocab = this.state.vocab.some(v => v.simp === simpWord || v.trad === tradWord);
+
+            let primaryChars = tradWord;
+            let secondarySimpBadge = "";
+
+            if (scriptMode === "simp") {
+              primaryChars = simpWord;
+            } else if (scriptMode === "trad") {
+              primaryChars = tradWord;
+            } else {
+              primaryChars = tradWord;
+              if (tradWord !== simpWord) {
+                secondarySimpBadge = `<span class="char-sub-simplified">${this.escapeHtml(simpWord)}</span>`;
+              }
+            }
+
+            const safeToken = this.escapeHtml(token).replace(/'/g, "\\'");
+            return `
+              <span class="word-token ${inVocab ? "in-vocab" : ""}" role="button" tabindex="0"
+                    onclick="app.openWordModal('${safeToken}', ${lineIdx})">
+                <ruby>
+                  <span class="char-main">${this.escapeHtml(primaryChars)}</span>
+                  <rt>${this.escapeHtml(pinyin)}</rt>
+                </ruby>
+                ${secondarySimpBadge}
+              </span>
+            `;
+          }).join("");
+
+          const lineMeaning = this.buildLineMeaningGloss(line.zhText, line.explicitMeaning, overrideStr);
+
+          return `
+            <div class="lyric-line" id="lyric-line-${lineIdx}">
+              <div class="lyric-tokens">${tokensHtml}</div>
+              ${lineMeaning ? `<div class="lyric-translation">${this.escapeHtml(lineMeaning)}</div>` : ""}
+            </div>
+          `;
+        }).join("");
+      },
+
+      // -----------------------------------------------------------------------
+      // WORD DETAILS MODAL (AUTO-FETCHES MEANING IF MISSING + ALLOWS EDITING)
+      // -----------------------------------------------------------------------
+      async openWordModal(word) {
+        const info = textHelper.lookupWordDetails(word);
+        this.state.selectedWord = info;
+
+        document.getElementById("wordModalTitle").textContent =
+          info.trad === info.simp ? info.trad : `${info.trad} / ${info.simp}`;
+        document.getElementById("wordModalPinyin").textContent = info.pinyin;
+        document.getElementById("wordModalTrad").textContent = info.trad;
+        document.getElementById("wordModalSimp").textContent = info.simp;
+        document.getElementById("wordModalMeaning").textContent = info.meaning || "Fetching translation...";
+        document.getElementById("wordModalSourceBadge").textContent = info.source;
+
+        document.getElementById("wordModalCustomMeaning").value = info.meaning || "";
+        document.getElementById("wordModalCustomNote").value =
+          this.state.currentSong ? `From: ${this.state.currentSong.title}` : "";
+
+        const encoded = encodeURIComponent(info.simp);
+        document.getElementById("extLinkMdbg").href =
+          `https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encoded}`;
+        document.getElementById("extLinkTranslate").href =
+          `https://translate.google.com/?sl=zh-CN&tl=en&text=${encoded}&op=translate`;
+
+        document.getElementById("wordModalBackdrop").classList.add("open");
+
+        // Automatically fetch translation if not yet known
+        if (!info.meaning) {
+          const fetched = await textHelper.fetchTranslationFromApi(info.original);
+          if (fetched) {
+            this.saveMeaningToCache(info.original, fetched);
+            info.meaning = fetched;
+            info.source = "Auto-translated (Cached)";
+            if (this.state.selectedWord && this.state.selectedWord.simp === info.simp) {
+              document.getElementById("wordModalMeaning").textContent = fetched;
+              document.getElementById("wordModalSourceBadge").textContent = info.source;
+              if (!document.getElementById("wordModalCustomMeaning").value) {
+                document.getElementById("wordModalCustomMeaning").value = fetched;
+              }
+            }
+            this.renderLyrics();
+          } else {
+            if (this.state.selectedWord && this.state.selectedWord.simp === info.simp) {
+              document.getElementById("wordModalMeaning").textContent = "No offline meaning yet — enter below";
+            }
+          }
+        }
+      },
+
+      closeWordModal() {
+        document.getElementById("wordModalBackdrop").classList.remove("open");
+      },
+
+      saveWordMeaningOnly() {
+        if (!this.state.selectedWord) return;
+        const newMeaning = document.getElementById("wordModalCustomMeaning").value.trim();
+        if (!newMeaning) return;
+
+        const w = this.state.selectedWord;
+        this.saveMeaningToCache(w.original || w.simp, newMeaning);
+        w.meaning = newMeaning;
+        document.getElementById("wordModalMeaning").textContent = newMeaning;
+        document.getElementById("wordModalSourceBadge").textContent = "Edited & Cached";
+
+        // Also update if already in Saved Words
+        const existing = this.state.vocab.find(v => v.simp === w.simp || v.trad === w.trad);
+        if (existing) {
+          existing.meaning = newMeaning;
+          this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+          this.renderVocabList();
+        }
+
+        this.renderLyrics();
+      },
+
+      speakChineseWord() {
+        if (!this.state.selectedWord || !("speechSynthesis" in window)) return;
+        const utter = new SpeechSynthesisUtterance(this.state.selectedWord.simp);
+        utter.lang = "zh-CN";
+        utter.rate = 0.85;
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utter);
+      },
+
+      saveCurrentWordToVocab() {
+        if (!this.state.selectedWord) return;
+        const w = this.state.selectedWord;
+        const customMeaning = document.getElementById("wordModalCustomMeaning").value.trim() || w.meaning || "—";
+        const customNote = document.getElementById("wordModalCustomNote").value.trim();
+
+        if (customMeaning && customMeaning !== "—") {
+          this.saveMeaningToCache(w.original || w.simp, customMeaning);
+        }
+
+        this.upsertVocabItem({
+          simp: w.simp,
+          trad: w.trad,
+          pinyin: w.pinyin,
+          meaning: customMeaning,
+          note: customNote,
+          songId: this.state.currentSong ? this.state.currentSong.id : "",
+          songTitle: this.state.currentSong ? this.state.currentSong.title : ""
+        });
+
+        this.closeWordModal();
+        this.renderLyrics();
+      },
+
+      // -----------------------------------------------------------------------
+      // WORD SEGMENTATION EDITOR
+      // -----------------------------------------------------------------------
+      openSegmentEditorModal() {
+        if (!this.state.parsedLines.length) return;
+        const selectEl = document.getElementById("segmentLineSelect");
+        selectEl.innerHTML = this.state.parsedLines.map((ln, idx) =>
+          `<option value="${idx}">Line ${idx + 1}: ${this.escapeHtml(ln.zhText)}</option>`
+        ).join("");
+        this.onSegmentLineSelectChange();
+        document.getElementById("segmentModalBackdrop").classList.add("open");
+      },
+
+      closeSegmentEditorModal() {
+        document.getElementById("segmentModalBackdrop").classList.remove("open");
+      },
+
+      onSegmentLineSelectChange() {
+        const lineIdx = parseInt(document.getElementById("segmentLineSelect").value, 10) || 0;
+        const line = this.state.parsedLines[lineIdx];
+        if (!line) return;
+        const songId = this.state.currentSong?.id || "default";
+        const key = `${songId}:${lineIdx}`;
+        const tokens = textHelper.segmentLine(line.zhText, this.state.segmentOverrides[key]);
+        document.getElementById("segmentCustomInput").value = tokens.join(" ");
+      },
+
+      saveLineSegmentation() {
+        const lineIdx = parseInt(document.getElementById("segmentLineSelect").value, 10) || 0;
+        const val = document.getElementById("segmentCustomInput").value.trim();
+        const songId = this.state.currentSong?.id || "default";
+        const key = `${songId}:${lineIdx}`;
+        if (val) this.state.segmentOverrides[key] = val;
+        else delete this.state.segmentOverrides[key];
+        this.saveLocalStorageKey("ktv_seg_overrides", this.state.segmentOverrides);
+        this.renderLyrics();
+        this.closeSegmentEditorModal();
+      },
+
+      resetLineSegmentation() {
+        const lineIdx = parseInt(document.getElementById("segmentLineSelect").value, 10) || 0;
+        const songId = this.state.currentSong?.id || "default";
+        delete this.state.segmentOverrides[`${songId}:${lineIdx}`];
+        this.saveLocalStorageKey("ktv_seg_overrides", this.state.segmentOverrides);
+        this.onSegmentLineSelectChange();
+        this.renderLyrics();
+      },
+
+      // -----------------------------------------------------------------------
+      // ADD SONG (WITH "Translating words... X/Y" PROGRESS INDICATOR)
+      // -----------------------------------------------------------------------
+      previewImportedLrcFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById("importLrcTextarea").value = e.target.result || "";
+          const titleInput = document.getElementById("importSongTitle");
+          if (!titleInput.value) {
+            titleInput.value = file.name.replace(/\.(lrc|txt)$/i, "");
+          }
+        };
+        reader.readAsText(file, "utf-8");
+      },
+
+      async importCustomSong(event) {
+        if (event) event.preventDefault();
+        const title = document.getElementById("importSongTitle").value.trim();
+        const artist = document.getElementById("importSongArtist").value.trim() || "Unknown Artist";
+        const rawLyrics = document.getElementById("importLrcTextarea").value.trim();
+
+        if (!title || !rawLyrics) {
+          this.showSystemAlert("Please enter a song title, artist, and lyrics.");
+          return;
+        }
+
+        const newSong = {
+          id: "song-" + Date.now(),
+          title,
+          artist,
+          lrc: rawLyrics,
+          dateAdded: new Date().toISOString()
+        };
+
+        // Extract all unique words and translate missing ones with progress indicator
+        const uniqueWords = this.extractUniqueWordsFromSong(newSong);
+        const missingWords = uniqueWords.filter(w => !textHelper.getKnownMeaning(w.original));
+
+        const progressBox = document.getElementById("saveTranslationProgress");
+        const submitBtn = document.getElementById("saveSongSubmitBtn");
+
+        if (missingWords.length > 0) {
+          if (progressBox) {
+            progressBox.style.display = "block";
+            progressBox.textContent = `Translating words... 0/${missingWords.length}`;
+          }
+          if (submitBtn) submitBtn.disabled = true;
+
+          let doneCount = 0;
+          const batchSize = 4;
+          for (let i = 0; i < missingWords.length; i += batchSize) {
+            const batch = missingWords.slice(i, i + batchSize);
+            await Promise.all(batch.map(async (w) => {
+              const translated = await textHelper.fetchTranslationFromApi(w.original);
+              if (translated) {
+                this.saveMeaningToCache(w.original, translated);
+              }
+              doneCount++;
+              if (progressBox) {
+                progressBox.textContent = `Translating words... ${doneCount}/${missingWords.length}`;
+              }
+            }));
+          }
+        }
+
+        if (progressBox) progressBox.style.display = "none";
+        if (submitBtn) submitBtn.disabled = false;
+
+        this.state.songs.unshift(newSong);
+        this.saveLocalStorageKey("ktv_songs", this.state.songs);
+
+        this.renderHomeLists();
+        this.populateSongSelects();
+
+        document.getElementById("importSongTitle").value = "";
+        document.getElementById("importSongArtist").value = "";
+        document.getElementById("importLrcTextarea").value = "";
+        document.getElementById("importLrcFile").value = "";
+
+        this.openSong(newSong.id);
+      },
+
+      async searchLrclib(event) {
+        if (event) event.preventDefault();
+        const query = document.getElementById("lrcSearchTrack").value.trim();
+        const statusEl = document.getElementById("lrcSearchStatus");
+        const resultsEl = document.getElementById("lrcSearchResults");
+        if (!query) return;
+
+        statusEl.textContent = "Searching LRCLIB...";
+        resultsEl.innerHTML = "";
+
+        try {
+          const response = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(query)}`);
+          if (!response.ok) throw new Error("Network error");
+          const items = await response.json();
+          if (!Array.isArray(items) || !items.length) {
+            statusEl.textContent = "No results found.";
+            return;
+          }
+          statusEl.textContent = `${items.length} results found. Tap 'Use Lyrics' to fill the form above:`;
+          this.lastLrclibResults = items;
+
+          resultsEl.innerHTML = items.slice(0, 8).map((item, idx) => `
+            <div class="info-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <div>
+                <div style="font-weight:700; font-family:var(--font-zh);">${this.escapeHtml(item.trackName || item.name || "Unknown")}</div>
+                <div style="font-size:0.8rem; color:var(--text-muted);">${this.escapeHtml(item.artistName || "—")}</div>
+              </div>
+              <button type="button" class="btn btn-sm btn-primary" onclick="app.fillFormFromLrclib(${idx})">Use Lyrics</button>
+            </div>
+          `).join("");
+        } catch (err) {
+          statusEl.textContent = "LRCLIB unavailable. You can paste your own lyrics directly above.";
+        }
+      },
+
+      fillFormFromLrclib(idx) {
+        const item = this.lastLrclibResults?.[idx];
+        if (!item) return;
+        document.getElementById("importSongTitle").value = item.trackName || item.name || "";
+        document.getElementById("importSongArtist").value = item.artistName || "";
+        document.getElementById("importLrcTextarea").value = item.syncedLyrics || item.plainLyrics || "";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      },
+
+      // -----------------------------------------------------------------------
+      // FLASHCARDS & SONG SELECTOR DROPDOWN (ALWAYS POPULATED FROM LIBRARY)
+      // -----------------------------------------------------------------------
+      populateSongSelects() {
+        const filterSelect = document.getElementById("flashcardSongFilter");
+        if (filterSelect) {
+          const prevVal = this.state.flashcardSongFilter || "all_songs";
+          const allSongsWordsCount = this.getFlashcardDeck("all_songs").length;
+          const savedWordsCount = this.state.vocab.length;
+
+          const optionsHtml = [
+            `<option value="all_songs">All Library Songs (${allSongsWordsCount} unique words)</option>`,
+            `<option value="saved_only">Saved / Starred Words Only (${savedWordsCount})</option>`,
+            ...this.state.songs.map(song => {
+              const count = this.extractUniqueWordsFromSong(song).length;
+              const label = `${song.title}${song.artist ? " - " + song.artist : ""} (${count} words)`;
+              return `<option value="song:${song.id}">${this.escapeHtml(label)}</option>`;
+            })
+          ];
+
+          filterSelect.innerHTML = optionsHtml.join("");
+
+          if ([...filterSelect.options].some(o => o.value === prevVal)) {
+            filterSelect.value = prevVal;
+          } else {
+            this.state.flashcardSongFilter = "all_songs";
+            filterSelect.value = "all_songs";
+          }
+        }
+
+        const editSongSelect = document.getElementById("vocabEditSongId");
+        if (editSongSelect) {
+          editSongSelect.innerHTML = [
+            `<option value="">Linked song: None (General)</option>`,
+            ...this.state.songs.map(song =>
+              `<option value="${song.id}">${this.escapeHtml(song.title)} - ${this.escapeHtml(song.artist || "")}</option>`
+            )
+          ].join("");
+        }
+      },
+
+      getFlashcardDeck(filterValue) {
+        const mode = filterValue || this.state.flashcardSongFilter || "all_songs";
+
+        // 1. Saved / Starred Words Only
+        if (mode === "saved_only") {
+          return this.state.vocab.map(v => ({
+            ...v,
+            meaning: v.meaning || textHelper.getKnownMeaning(v.simp)?.meaning || ""
+          }));
+        }
+
+        // 2. Specific song from Library ("song:<id>")
+        if (mode.startsWith("song:")) {
+          const songId = mode.slice(5);
+          const song = this.state.songs.find(s => s.id === songId);
+          if (!song) return [];
+          return this.extractUniqueWordsFromSong(song);
+        }
+
+        // 3. Default: "All Library Songs (All unique words)" + any extra Saved Words
+        const seenSimp = new Set();
+        const combined = [];
+
+        this.state.songs.forEach(song => {
+          const words = this.extractUniqueWordsFromSong(song);
+          words.forEach(w => {
+            if (!seenSimp.has(w.simp)) {
+              seenSimp.add(w.simp);
+              combined.push(w);
+            }
+          });
+        });
+
+        this.state.vocab.forEach(v => {
+          if (!seenSimp.has(v.simp)) {
+            seenSimp.add(v.simp);
+            combined.push(v);
+          }
+        });
+
+        return combined;
+      },
+
+      toggleFlashcardMode() {
+        this.state.flashcardActive = !this.state.flashcardActive;
+        this.state.flashcardIndex = 0;
+        this.populateSongSelects();
+
+        // If user has songs in Library, default to first song or all_songs so deck is never empty
+        if (this.state.flashcardActive && this.state.songs.length > 0 && this.state.flashcardSongFilter === "saved_only" && this.state.vocab.length === 0) {
+          this.state.flashcardSongFilter = `song:${this.state.songs[0].id}`;
+          document.getElementById("flashcardSongFilter").value = this.state.flashcardSongFilter;
+        }
+
+        document.getElementById("flashcardContainer").style.display =
+          this.state.flashcardActive ? "block" : "none";
+        if (this.state.flashcardActive) {
+          this.renderCurrentFlashcard();
+        }
+      },
+
+      onFlashcardSongFilterChange(val) {
+        this.state.flashcardSongFilter = val || "all_songs";
+        this.state.flashcardIndex = 0;
+        this.renderCurrentFlashcard();
+      },
+
+      async renderCurrentFlashcard() {
+        const activeDeck = this.getFlashcardDeck(this.state.flashcardSongFilter);
+        const emptyMsg = document.getElementById("flashcardEmptyMsg");
+        const activeWrap = document.getElementById("flashcardActiveWrap");
+        const counterEl = document.getElementById("flashcardCounter");
+
+        if (!activeDeck.length) {
+          if (counterEl) counterEl.textContent = "Card 0 / 0";
+          if (emptyMsg) emptyMsg.style.display = "block";
+          if (activeWrap) activeWrap.style.display = "none";
+          return;
+        }
+
+        if (emptyMsg) emptyMsg.style.display = "none";
+        if (activeWrap) activeWrap.style.display = "block";
+
+        const total = activeDeck.length;
+        const idx = ((this.state.flashcardIndex % total) + total) % total;
+        const item = activeDeck[idx];
+        this.state.currentFlashcardItem = item;
+
+        // Front: Exclusively Traditional character (or Simplified if no Traditional exists)
+        const frontChar = (item.trad && item.trad.trim()) ? item.trad.trim() : item.simp;
+
+        counterEl.textContent = `Card ${idx + 1} / ${total}`;
+        document.getElementById("flashcardFrontTrad").textContent = frontChar;
+
+        // Check latest meaning from cache/dictionary
+        const latestKnown = textHelper.getKnownMeaning(item.original || item.simp);
+        const resolvedMeaning = latestKnown ? latestKnown.meaning : (item.meaning || "");
+
+        document.getElementById("flashcardBackPinyin").textContent =
+          item.pinyin || textHelper.getPinyin(item.simp || frontChar, true) || "—";
+        document.getElementById("flashcardBackSimp").textContent =
+          item.simp || textHelper.toSimplified(frontChar);
+        document.getElementById("flashcardBackMeaning").textContent =
+          resolvedMeaning || "Translating...";
+        document.getElementById("flashcardEditMeaningInput").value = resolvedMeaning || "";
+        document.getElementById("flashcardBackNote").textContent =
+          item.songTitle ? `🎵 ${item.songTitle}${item.note ? " · " + item.note : ""}` : (item.note || "");
+
+        document.getElementById("flashcardBackContent").classList.remove("revealed");
+        document.getElementById("flashcardShowAnswerBtn").style.display = "inline-flex";
+
+        // If meaning is still missing, fetch it in the background and cache it
+        if (!resolvedMeaning) {
+          const fetched = await textHelper.fetchTranslationFromApi(item.original || item.simp);
+          if (fetched) {
+            this.saveMeaningToCache(item.original || item.simp, fetched);
+            if (this.state.currentFlashcardItem && this.state.currentFlashcardItem.simp === item.simp) {
+              document.getElementById("flashcardBackMeaning").textContent = fetched;
+              document.getElementById("flashcardEditMeaningInput").value = fetched;
+            }
+          } else {
+            if (this.state.currentFlashcardItem && this.state.currentFlashcardItem.simp === item.simp) {
+              document.getElementById("flashcardBackMeaning").textContent = "No meaning yet — edit below";
+            }
+          }
+        }
+      },
+
+      revealFlashcard() {
+        document.getElementById("flashcardBackContent").classList.add("revealed");
+        document.getElementById("flashcardShowAnswerBtn").style.display = "none";
+      },
+
+      saveFlashcardInlineMeaning() {
+        const item = this.state.currentFlashcardItem;
+        if (!item) return;
+        const val = document.getElementById("flashcardEditMeaningInput").value.trim();
+        if (!val) return;
+
+        this.saveMeaningToCache(item.original || item.simp, val);
+        item.meaning = val;
+        document.getElementById("flashcardBackMeaning").textContent = val;
+
+        // Also update if in Saved Words
+        const existing = this.state.vocab.find(v => v.simp === item.simp || v.trad === item.trad);
+        if (existing) {
+          existing.meaning = val;
+          this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+          this.renderVocabList();
+        }
+        if (this.state.currentSong) {
+          this.renderLyrics();
+        }
+      },
+
+      stepFlashcard(delta) {
+        this.state.flashcardIndex += delta;
+        this.renderCurrentFlashcard();
+      },
+
+      // -----------------------------------------------------------------------
+      // SAVED WORDS CRUD & CSV EXPORT / IMPORT
+      // -----------------------------------------------------------------------
+      upsertVocabItem({ id, simp, trad, pinyin, meaning, note, songId, songTitle }) {
+        const cleanSimp = textHelper.toSimplified(simp.trim());
+        const cleanTrad = (trad && trad.trim()) ? trad.trim() : textHelper.toTraditional(cleanSimp);
+        const cleanPinyin = (pinyin && pinyin.trim()) ? pinyin.trim() : (textHelper.getPinyin(cleanSimp, true) || "—");
+
+        if (meaning && meaning.trim() && meaning.trim() !== "—") {
+          this.saveMeaningToCache(cleanSimp, meaning.trim());
+        }
+
+        const existingIdx = this.state.vocab.findIndex(v =>
+          (id && v.id === id) || (!id && v.simp === cleanSimp)
+        );
+
+        const resolvedSong = songId ? this.state.songs.find(s => s.id === songId) : null;
+        const resolvedSongTitle = songTitle || (resolvedSong ? resolvedSong.title : "");
+
+        if (existingIdx >= 0) {
+          const prev = this.state.vocab[existingIdx];
+          const songIds = Array.from(new Set([...(prev.songIds || []), ...(prev.songId ? [prev.songId] : []), ...(songId ? [songId] : [])]));
+          this.state.vocab[existingIdx] = {
+            ...prev,
+            simp: cleanSimp,
+            trad: cleanTrad,
+            pinyin: cleanPinyin,
+            meaning: meaning.trim(),
+            note: (note || "").trim(),
+            songId: songId || prev.songId || "",
+            songTitle: resolvedSongTitle || prev.songTitle || "",
+            songIds
+          };
+        } else {
+          this.state.vocab.unshift({
+            id: "v-" + Date.now() + "-" + Math.random().toString(36).slice(2, 6),
+            simp: cleanSimp,
+            trad: cleanTrad,
+            pinyin: cleanPinyin,
+            meaning: meaning.trim(),
+            note: (note || "").trim(),
+            songId: songId || "",
+            songTitle: resolvedSongTitle || "",
+            songIds: songId ? [songId] : [],
+            dateAdded: new Date().toISOString()
+          });
+        }
+
+        this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+        this.renderVocabList();
+        this.populateSongSelects();
+      },
+
+      renderVocabList() {
+        const countEl = document.getElementById("navVocabCount");
+        if (countEl) countEl.textContent = this.state.vocab.length;
+
+        const badgeEl = document.getElementById("vocabTotalBadge");
+        if (badgeEl) badgeEl.textContent = `${this.state.vocab.length} saved`;
+
+        const container = document.getElementById("vocabListContainer");
+        if (!container) return;
+
+        const q = (document.getElementById("vocabSearchInput")?.value || "").trim().toLowerCase();
+        const sortMode = document.getElementById("vocabSortSelect")?.value || "date-desc";
+
+        let list = this.state.vocab.filter(item => {
+          if (!q) return true;
+          return (
+            item.simp.toLowerCase().includes(q) ||
+            item.trad.toLowerCase().includes(q) ||
+            item.pinyin.toLowerCase().includes(q) ||
+            item.meaning.toLowerCase().includes(q) ||
+            (item.note || "").toLowerCase().includes(q) ||
+            (item.songTitle || "").toLowerCase().includes(q)
+          );
+        });
+
+        list.sort((a, b) => {
+          if (sortMode === "zh-asc") return a.simp.localeCompare(b.simp, "zh");
+          return new Date(b.dateAdded) - new Date(a.dateAdded);
+        });
+
+        if (list.length === 0) {
+          container.innerHTML = `<div class="card" style="color:var(--text-muted); font-size:0.88rem;">No starred words yet. Tip: Click '🎴 Practice Flashcards' above to immediately practice all words from any song in your Library!</div>`;
+          return;
+        }
+
+        container.innerHTML = list.map(item => {
+          const titleChars = item.trad === item.simp ? item.trad : `${item.trad} (${item.simp})`;
+          return `
+            <div class="song-item">
+              <div class="song-item-header">
+                <div>
+                  <div class="song-title" style="font-size:1.3rem;">${this.escapeHtml(titleChars)}</div>
+                  <div style="color:var(--gold); font-weight:700; font-size:0.92rem;">${this.escapeHtml(item.pinyin)}</div>
+                </div>
+                <div style="display:flex; gap:6px;">
+                  <button type="button" class="btn btn-sm" title="Edit word" onclick="app.openVocabEditModal('${item.id}')">✏️</button>
+                  <button type="button" class="btn btn-sm" title="Delete word" onclick="app.deleteVocabItem('${item.id}')">🗑️</button>
+                </div>
+              </div>
+              <div style="font-weight:600; font-size:0.95rem;">${this.escapeHtml(item.meaning)}</div>
+              ${item.songTitle ? `<div style="font-size:0.78rem; color:#5eead4;">🎵 ${this.escapeHtml(item.songTitle)}</div>` : ""}
+              ${item.note ? `<div style="font-size:0.8rem; color:var(--text-muted);">${this.escapeHtml(item.note)}</div>` : ""}
+            </div>
+          `;
+        }).join("");
+      },
+
+      openVocabEditModal(vocabId = null) {
+        this.populateSongSelects();
+        const item = vocabId ? this.state.vocab.find(v => v.id === vocabId) : null;
+        document.getElementById("vocabEditModalHeading").textContent =
+          item ? "Edit Word" : "Add Word";
+        document.getElementById("vocabEditId").value = item ? item.id : "";
+        document.getElementById("vocabEditSimp").value = item ? item.simp : "";
+        document.getElementById("vocabEditTrad").value = item ? item.trad : "";
+        document.getElementById("vocabEditPinyin").value = item ? item.pinyin : "";
+        document.getElementById("vocabEditMeaning").value = item ? item.meaning : "";
+        document.getElementById("vocabEditNote").value = item ? (item.note || "") : "";
+        document.getElementById("vocabEditSongId").value = item ? (item.songId || "") : (this.state.currentSong?.id || "");
+        document.getElementById("vocabEditModalBackdrop").classList.add("open");
+      },
+
+      closeVocabEditModal() {
+        document.getElementById("vocabEditModalBackdrop").classList.remove("open");
+      },
+
+      autoFillVocabFormFromSimp(val) {
+        const clean = val.trim();
+        if (!clean) return;
+        document.getElementById("vocabEditTrad").value = textHelper.toTraditional(clean);
+        document.getElementById("vocabEditPinyin").value = textHelper.getPinyin(clean, true);
+        const known = textHelper.getKnownMeaning(clean);
+        if (known && !document.getElementById("vocabEditMeaning").value) {
+          document.getElementById("vocabEditMeaning").value = known.meaning;
+        }
+      },
+
+      saveVocabEditForm(event) {
+        if (event) event.preventDefault();
+        const chosenSongId = document.getElementById("vocabEditSongId").value;
+        const chosenSong = this.state.songs.find(s => s.id === chosenSongId);
+        this.upsertVocabItem({
+          id: document.getElementById("vocabEditId").value || null,
+          simp: document.getElementById("vocabEditSimp").value,
+          trad: document.getElementById("vocabEditTrad").value,
+          pinyin: document.getElementById("vocabEditPinyin").value,
+          meaning: document.getElementById("vocabEditMeaning").value,
+          note: document.getElementById("vocabEditNote").value,
+          songId: chosenSongId,
+          songTitle: chosenSong ? chosenSong.title : ""
+        });
+        this.closeVocabEditModal();
+        this.renderLyrics();
+      },
+
+      deleteVocabItem(id) {
+        this.state.vocab = this.state.vocab.filter(v => v.id !== id);
+        this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+        this.renderVocabList();
+        this.populateSongSelects();
+        this.renderLyrics();
+      },
+
+      exportVocabCsv() {
+        if (!this.state.vocab.length) {
+          this.showSystemAlert("Your Saved Words list is empty.");
+          return;
+        }
+        const headers = ["Traditional", "Simplified", "Pinyin", "Meaning", "Song_Title", "Date_Added", "Note"];
+        const rows = this.state.vocab.map(v => [
+          v.trad, v.simp, v.pinyin, v.meaning, v.songTitle || "", v.dateAdded, v.note || ""
+        ].map(c => `"${String(c || "").replace(/"/g, '""')}"`).join(","));
+
+        const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `ktv-words.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+
+      importVocabCsv(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const lines = (e.target.result || "").split(/\r?\n/).filter(l => l.trim());
+          for (let i = 1; i < lines.length; i++) {
+            const cols = this.parseCsvLine(lines[i]);
+            if (cols.length >= 4) {
+              this.upsertVocabItem({
+                trad: cols[0],
+                simp: cols[1] || cols[0],
+                pinyin: cols[2],
+                meaning: cols[3],
+                songTitle: cols[4] || "",
+                note: cols[6] || cols[5] || ""
+              });
+            }
+          }
+          this.renderVocabList();
+          this.renderLyrics();
+        };
+        reader.readAsText(file, "utf-8");
+      },
+
+      parseCsvLine(line) {
+        const result = [];
+        let cur = "";
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+          const ch = line[i];
+          if (ch === '"') {
+            if (inQuotes && line[i + 1] === '"') { cur += '"'; i++; }
+            else { inQuotes = !inQuotes; }
+          } else if (ch === "," && !inQuotes) {
+            result.push(cur);
+            cur = "";
+          } else {
+            cur += ch;
+          }
+        }
+        result.push(cur);
+        return result;
+      },
+
+      escapeHtml(str) {
+        return String(str ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+    };
+
+    window.addEventListener("DOMContentLoaded", () => app.init());
+  </script>
+</body>
+</html>
