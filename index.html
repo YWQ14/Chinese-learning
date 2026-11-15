@@ -9,7 +9,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KTV App">
   <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%2358cc02'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='108' font-family='sans-serif' font-weight='bold' fill='%23ffffff'%3E%E6%AD%8C%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%2358cc02'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='78' font-family='sans-serif' font-weight='bold' fill='%23ffffff'%3E%E5%AD%B8%E7%BF%92%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%2358cc02'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='78' font-family='sans-serif' font-weight='bold' fill='%23ffffff'%3E%E5%AD%B8%E7%BF%92%3C/text%3E%3C/svg%3E">
   <title>KTV App — Learn Chinese with Lyrics</title>
 
   <!-- External CDN libraries for Pinyin and Traditional/Simplified Chinese conversion -->
@@ -121,8 +122,9 @@
     }
 
     .brand-icon {
-      width: 36px;
+      min-width: 40px;
       height: 36px;
+      padding: 0 7px;
       border-radius: 12px;
       background: linear-gradient(135deg, #58cc02, #22c55e);
       color: #fff;
@@ -131,7 +133,8 @@
       justify-content: center;
       font-family: var(--font-zh);
       font-weight: 800;
-      font-size: 1.1rem;
+      font-size: 0.92rem;
+      letter-spacing: -0.02em;
       box-shadow: 0 4px 10px rgba(88, 204, 2, 0.3);
     }
 
@@ -942,17 +945,136 @@
     .alert-box.show {
       display: flex;
     }
+
+    /* ===================================================================== */
+    /* MULTI-USER PROFILE SELECTION SCREEN (Netflix / Duolingo Style)        */
+    /* ===================================================================== */
+    .profile-gate-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background: radial-gradient(circle at 50% 18%, #1e293b 0%, #0b1120 75%);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: calc(20px + var(--safe-top)) 18px calc(24px + var(--safe-bottom));
+      overflow-y: auto;
+    }
+
+    .profile-gate-backdrop.open {
+      display: flex;
+    }
+
+    .profile-gate-card {
+      width: 100%;
+      max-width: 400px;
+      background-color: var(--bg-card);
+      border-radius: var(--radius-3xl);
+      padding: 28px 22px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      text-align: center;
+    }
+
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .profile-tile {
+      background-color: var(--bg-input);
+      border: 2px solid var(--border-subtle);
+      border-radius: 22px;
+      padding: 18px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.14s ease, border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .profile-tile:hover {
+      border-color: rgba(88, 204, 2, 0.55);
+      background-color: var(--bg-elevated);
+    }
+
+    .profile-tile:active {
+      transform: scale(0.96);
+    }
+
+    .profile-tile.new-profile-tile {
+      border-style: dashed;
+      border-color: rgba(148, 163, 184, 0.35);
+      background-color: rgba(19, 28, 49, 0.55);
+    }
+
+    .profile-avatar {
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .profile-avatar.sm {
+      width: 30px;
+      height: 30px;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    }
+
+    .profile-avatar.md {
+      width: 44px;
+      height: 44px;
+      font-size: 1.18rem;
+    }
+
+    .header-profile-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px 4px 4px;
+      border-radius: 999px;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      cursor: pointer;
+      max-width: 120px;
+      transition: transform 0.14s ease;
+    }
+
+    .header-profile-pill:active {
+      transform: scale(0.95);
+    }
   </style>
 </head>
 <body>
   <div class="mobile-app">
-    <!-- Top Header: Brand + Daily Streak 🔥 + Total XP ⚡ -->
+    <!-- Top Header: Brand + Active Profile + Daily Streak 🔥 + Total XP ⚡ -->
     <header class="top-header">
       <div class="brand" onclick="app.switchView('home')">
-        <div class="brand-icon">歌</div>
+        <div class="brand-icon">學習</div>
         <span>KTV App</span>
       </div>
       <div class="header-stats">
+        <button type="button" class="header-profile-pill" title="Switch Profile" onclick="app.openProfileSelector()">
+          <span class="profile-avatar sm" id="headerProfileAvatar" style="background:#58cc02;">?</span>
+          <span id="headerProfileName" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">Profile</span>
+        </button>
         <div class="stat-pill streak" title="Daily Practice Streak" onclick="app.switchView('progress')">
           <span>🔥</span>
           <span id="headerStreakCount">0</span>
@@ -1007,6 +1129,33 @@
         <div id="favoritesSectionWrap" style="display:none;">
           <div class="section-title"><span>⭐ Favorite Songs</span></div>
           <div id="homeFavoritesList" class="song-list"></div>
+        </div>
+
+        <!-- Library HSK Overview: Uploaded Songs / Words / Characters per HSK Level -->
+        <div class="card" id="libraryHskOverviewCard">
+          <div class="section-title" style="margin-bottom:6px;">
+            <span>📊 Library Words &amp; Characters by HSK</span>
+            <span class="badge badge-blue" id="libHskSummaryBadge">0 words · 0 chars</span>
+          </div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
+            Overview of all unique words and Chinese characters extracted from your uploaded KTV lyrics, grouped by HSK level. Tap any item to inspect its meaning &amp; pronunciation.
+          </p>
+
+          <!-- Toggle between Unique Words and Unique Single Characters -->
+          <div class="segmented-row" style="grid-template-columns: repeat(2, 1fr); margin-bottom:10px;">
+            <button type="button" class="seg-btn active" id="libHskUnitWordsBtn" onclick="app.setLibraryHskUnit('words')">
+              🔤 Words (<span id="libHskTotalWordsCount">0</span>)
+            </button>
+            <button type="button" class="seg-btn" id="libHskUnitCharsBtn" onclick="app.setLibraryHskUnit('chars')">
+              🀄 Characters (<span id="libHskTotalCharsCount">0</span>)
+            </button>
+          </div>
+
+          <!-- Level Filter Pills (HSK 1 to 6 + Non-HSK) -->
+          <div id="libHskLevelTabs" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;"></div>
+
+          <!-- Interactive Grid of Words / Characters for Selected HSK Level -->
+          <div id="libHskItemsGrid" style="display:flex; flex-wrap:wrap; gap:8px; max-height:290px; overflow-y:auto; padding:4px 2px;"></div>
         </div>
 
         <!-- Subtle Backup Export / Import (JSON) -->
@@ -1102,8 +1251,8 @@
 
             <div style="margin-bottom:14px;">
               <label class="btn btn-subtle" style="cursor:pointer; width:100%;">
-                📄 Or load text from a .TXT / .LRC file
-                <input type="file" id="importLrcFile" accept=".lrc,.txt" style="display:none" onchange="app.previewImportedLrcFile(this.files[0])">
+                📄 Or load from .TXT / .LRC / .JSON Backup
+                <input type="file" id="importLrcFile" accept=".lrc,.txt,.json,application/json" style="display:none" onchange="app.previewImportedLrcFile(this.files[0]); this.value='';">
               </label>
             </div>
 
@@ -1375,21 +1524,61 @@
       </section>
 
       <!-- ================================================================= -->
-      <!-- TAB 3: PROGRESS (Streak 🔥, XP Goal ⚡, Dashboard & HSK Breakdown) -->
+      <!-- TAB 3: PROGRESS (Profile Header, Streak 🔥, XP Goal ⚡ & HSK)     -->
       <!-- ================================================================= -->
       <section id="view-progress" class="view-section" aria-label="Progress">
-        <!-- Streak Banner Card -->
-        <div class="card-elevated" style="background: linear-gradient(145deg, rgba(255, 150, 0, 0.2), rgba(30, 41, 59, 0.95)); border-color: rgba(255, 150, 0, 0.3);">
-          <div style="display:flex; align-items:center; gap:16px;">
-            <div style="font-size:3rem; line-height:1;">🔥</div>
-            <div>
-              <div style="font-size:2rem; font-weight:900; color:#ffb03a; line-height:1.1;">
-                <span id="progressStreakDays">0</span> Day Streak
-              </div>
-              <div style="font-size:0.9rem; color:var(--text-muted); margin-top:4px;" id="progressStreakSubtext">
-                Practice today to keep your flame lit!
+        <!-- Active User Profile Card (Switch Profile & Delete Profile Menu) -->
+        <div class="card-elevated" style="display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div class="profile-avatar md" id="progressProfileAvatar" style="background:#58cc02;">A</div>
+              <div>
+                <div style="font-size:1.15rem; font-weight:900; letter-spacing:-0.01em;" id="progressProfileHeading">
+                  👤 Learner's Progress
+                </div>
+                <div style="font-size:0.8rem; color:var(--text-muted);" id="progressProfileSub">
+                  Personal library, SRS schedule &amp; XP
+                </div>
               </div>
             </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <button type="button" class="btn btn-sm btn-blue" onclick="app.openProfileSelector()">
+                ⇄ Switch Profile
+              </button>
+              <button type="button" class="btn btn-sm btn-subtle" style="width:auto; padding:6px 10px;" title="Profile Options" onclick="app.toggleProfileDangerMenu()">
+                ⋯
+              </button>
+            </div>
+          </div>
+
+          <!-- Small Collapsible Menu for Deleting the Active Profile -->
+          <div id="profileDangerMenu" style="display:none; padding-top:10px; border-top:1px solid var(--border-subtle); align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <span style="font-size:0.8rem; color:var(--text-muted);">
+              Remove this profile and all its personal data from this device:
+            </span>
+            <button type="button" class="btn btn-sm" style="width:auto; background:var(--hard-red-soft); color:#fca5a5; border:1px solid rgba(255,75,75,0.35);" onclick="app.openResetConfirmModal('delete_profile')">
+              🗑️ Delete Profile
+            </button>
+          </div>
+        </div>
+
+        <!-- Streak Banner Card -->
+        <div class="card-elevated" style="background: linear-gradient(145deg, rgba(255, 150, 0, 0.2), rgba(30, 41, 59, 0.95)); border-color: rgba(255, 150, 0, 0.3);">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div style="display:flex; align-items:center; gap:16px;">
+              <div style="font-size:3rem; line-height:1;">🔥</div>
+              <div>
+                <div style="font-size:2rem; font-weight:900; color:#ffb03a; line-height:1.1;">
+                  <span id="progressStreakDays">0</span> Day Streak
+                </div>
+                <div style="font-size:0.9rem; color:var(--text-muted); margin-top:4px;" id="progressStreakSubtext">
+                  Practice today to keep your flame lit!
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-subtle" style="width:auto; padding:6px 10px; min-height:32px; font-size:0.76rem;" title="Reset Streak & XP" onclick="app.openResetConfirmModal('streak')">
+              ↺ Reset
+            </button>
           </div>
         </div>
 
@@ -1414,7 +1603,12 @@
         <!-- Dashboard Statistics Grid -->
         <div class="stats-grid">
           <div class="stat-card">
-            <span style="font-size:1.4rem;">🎓</span>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:1.4rem;">🎓</span>
+              <button type="button" class="btn btn-sm btn-subtle" style="width:auto; padding:4px 8px; min-height:28px; font-size:0.74rem;" title="Reset Total Words Learned" onclick="app.openResetConfirmModal('words')">
+                ↺ Reset
+              </button>
+            </div>
             <div class="stat-value" style="color:var(--duo-green);" id="statWordsLearned">0</div>
             <div class="stat-label">Total Words Learned</div>
           </div>
@@ -1447,6 +1641,24 @@
             Unique words mastered (rated <strong>Good</strong> or <strong>Easy</strong>) per HSK level compared to total unique words in your KTV library:
           </p>
           <div id="hskBreakdownContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
+        </div>
+
+        <!-- Reset Options Card -->
+        <div class="card" style="display:flex; flex-direction:column; gap:10px;">
+          <div class="section-title" style="margin-bottom:0;">
+            <span>⚙️ Reset Statistics</span>
+          </div>
+          <p style="font-size:0.82rem; color:var(--text-muted);">
+            Reset your Daily Streak &amp; XP or your learned word progress. Your songs in the Library are never deleted.
+          </p>
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn btn-sm" style="flex:1; background:var(--streak-orange-soft); color:#fdba74; border:1px solid rgba(255,150,0,0.3);" onclick="app.openResetConfirmModal('streak')">
+              🔥 Reset Streak &amp; XP
+            </button>
+            <button type="button" class="btn btn-sm" style="flex:1; background:var(--hard-red-soft); color:#fca5a5; border:1px solid rgba(255,75,75,0.3);" onclick="app.openResetConfirmModal('words')">
+              🎓 Reset Words Learned
+            </button>
+          </div>
         </div>
       </section>
     </main>
@@ -1557,6 +1769,72 @@
         </select>
         <button type="submit" class="btn btn-primary">Save Word</button>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: Warning Confirmation Popup for Resetting Streak, Words Learned, or Deleting Profile -->
+  <div id="resetConfirmModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" onclick="if(event.target===this) app.closeResetConfirmModal()">
+    <div class="modal-sheet" style="text-align:center;">
+      <div style="font-size:2.6rem; line-height:1;">⚠️</div>
+      <h3 style="font-size:1.2rem; font-weight:900;" id="resetConfirmTitle">Are you sure you want to reset?</h3>
+      <p style="font-size:0.92rem; color:var(--text-muted);" id="resetConfirmMessage">
+        This action will reset your progress and cannot be undone. Your songs in the Library will remain safe.
+      </p>
+      <div style="display:flex; gap:10px; margin-top:6px;">
+        <button type="button" class="btn" style="flex:1;" onclick="app.closeResetConfirmModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn" style="flex:1; background:var(--hard-red); color:#fff;" id="resetConfirmActionBtn" onclick="app.confirmResetAction()">
+          Yes, Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STARTUP OVERLAY: Multi-User Profile Selection ("Who is learning today?") -->
+  <div id="profileSelectorBackdrop" class="profile-gate-backdrop" role="dialog" aria-modal="true" aria-label="Who is learning today?">
+    <div class="profile-gate-card">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+        <div class="brand-icon" style="min-width:52px; height:46px; font-size:1.15rem; border-radius:15px;">學習</div>
+        <h2 style="font-size:1.45rem; font-weight:900; letter-spacing:-0.02em; margin-top:4px;">
+          Who is learning today?
+        </h2>
+        <p style="font-size:0.88rem; color:var(--text-muted);">
+          Select your profile or create a new one. Each learner has their own KTV library, flashcards, streak &amp; XP.
+        </p>
+      </div>
+
+      <!-- Existing Profiles + "+ New Profile" Tile Grid -->
+      <div id="profileSelectorGrid" class="profile-grid"></div>
+
+      <!-- Inline New Profile Creation Form (No password needed) -->
+      <form id="newProfileForm" onsubmit="app.createNewProfile(event)" style="display:none; flex-direction:column; gap:10px; background:var(--bg-input); padding:16px; border-radius:20px; border:1px solid var(--border-subtle); text-align:left;">
+        <label class="form-label" for="newProfileNameInput" style="font-size:0.82rem; color:var(--text-muted);">
+          Enter learner name:
+        </label>
+        <input
+          type="text"
+          id="newProfileNameInput"
+          class="input-field"
+          placeholder="e.g. Alice"
+          maxlength="24"
+          autocomplete="off"
+          required
+        >
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-sm" style="flex:1; background:var(--bg-elevated);" id="cancelNewProfileBtn" onclick="app.toggleNewProfileForm(false)">
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-sm btn-primary" style="flex:2;">
+            ✓ Create &amp; Start
+          </button>
+        </div>
+      </form>
+
+      <!-- Close button when switching profile while a profile is already active -->
+      <button type="button" class="btn btn-sm btn-subtle" id="profileSelectorStayBtn" style="display:none;" onclick="app.closeProfileSelector()">
+        ← Continue as current profile
+      </button>
     </div>
   </div>
 
@@ -1826,6 +2104,7 @@
             if (badgeEl) {
               badgeEl.textContent = `HSK 1–6 (${Object.keys(app.state.hskLevelCache).length} words)`;
             }
+            app.renderHomeLists();
             app.renderCurrentFlashcard();
             app.renderVocabList();
             app.updateGamificationUI();
@@ -2189,10 +2468,29 @@
     };
 
     // =========================================================================
-    // 5. MAIN APPLICATION CONTROLLER
+    // 5. MAIN APPLICATION CONTROLLER (WITH MULTI-USER PROFILE SYSTEM)
     // =========================================================================
+    const PROFILE_AVATAR_COLORS = [
+      "#58cc02", // Duolingo Green
+      "#0a84ff", // iOS Blue
+      "#ff9600", // Streak Orange
+      "#f43f5e", // Rose Red
+      "#14b8a6", // Teal
+      "#a855f7", // Purple
+      "#eab308", // Gold
+      "#ec4899"  // Pink
+    ];
+
+    const GLOBAL_STORAGE_KEYS = new Set([
+      "hskLevelCache",
+      "ktv_profiles",
+      "ktv_active_profile_id"
+    ]);
+
     const app = {
       state: {
+        profiles: [],
+        activeProfileId: null,
         currentView: "home",
         songs: [],
         currentSong: null,
@@ -2230,11 +2528,12 @@
       },
 
       async init() {
+        await this.initProfileSystem();
         await this.loadLocalStorageState();
         this.verifyStreakContinuity();
         textHelper.init();
 
-        // Load HSK 1-6 dataset asynchronously with localStorage cache & firewall safety
+        // Load global HSK 1-6 dataset asynchronously with localStorage cache & firewall safety
         hskEngine.loadHskDatasetFromCdn();
 
         setTimeout(() => {
@@ -2243,6 +2542,7 @@
             this.state.parsedLines = this.parseLyricsLines(this.state.currentSong.lrc);
             this.renderLyrics();
           }
+          this.renderHomeLists();
           this.populateSongSelects();
           this.renderCurrentFlashcard();
           this.updateGamificationUI();
@@ -2253,36 +2553,25 @@
         this.updateNetworkStatus();
 
         this.applySettingsToUI();
+        this.updateProfileUI();
         this.renderHomeLists();
         this.renderVocabList();
         this.populateSongSelects();
         this.renderCurrentFlashcard();
         this.updateGamificationUI();
+
+        // Show "Who is learning today?" startup screen if no active profile is selected
+        if (!this.getActiveProfile()) {
+          this.openProfileSelector();
+        }
       },
 
       // -----------------------------------------------------------------------
-      // RELIABLE LOCALSTORAGE PERSISTENCE
+      // MULTI-USER PROFILE ENGINE & SCOPED LOCALSTORAGE PERSISTENCE
       // -----------------------------------------------------------------------
-      async loadLocalStorageState() {
+      async initProfileSystem() {
         try {
-          const savedSettings = localStorage.getItem("ktv_settings");
-          if (savedSettings) {
-            this.state.settings = { ...this.state.settings, ...JSON.parse(savedSettings) };
-          }
-
-          const savedFavs = localStorage.getItem("ktv_favorites");
-          if (savedFavs) {
-            this.state.favorites = JSON.parse(savedFavs).filter(id => !String(id).startsWith("demo-"));
-          }
-
-          const savedSeg = localStorage.getItem("ktv_seg_overrides");
-          if (savedSeg) this.state.segmentOverrides = JSON.parse(savedSeg);
-
-          const savedMeanings = localStorage.getItem("ktv_word_meanings_cache");
-          if (savedMeanings) {
-            this.state.wordMeaningsCache = JSON.parse(savedMeanings) || {};
-          }
-
+          // Load global HSK cache immediately so all profiles share it
           const savedHskCache = localStorage.getItem("hskLevelCache");
           if (savedHskCache) {
             this.state.hskLevelCache = { ...HSK_BASE_SEED, ...(JSON.parse(savedHskCache) || {}) };
@@ -2290,12 +2579,397 @@
             this.state.hskLevelCache = { ...HSK_BASE_SEED };
           }
 
-          const savedSrsMap = localStorage.getItem("ktv_srs_map");
+          let profiles = [];
+          const rawProfiles = localStorage.getItem("ktv_profiles");
+          if (rawProfiles) {
+            const parsed = JSON.parse(rawProfiles);
+            if (Array.isArray(parsed)) profiles = parsed;
+          }
+
+          // Check if existing pre-multi-user data exists on this device; migrate seamlessly so nothing is lost
+          if (profiles.length === 0) {
+            const hasLegacySongs = !!localStorage.getItem("ktv_songs") || !!localStorage.getItem("ktv_custom_songs_fallback");
+            const hasLegacyVocab = !!localStorage.getItem("ktv_vocab");
+            const hasLegacyGamification = !!localStorage.getItem("ktv_gamification");
+            const oldIdbSongs = await legacyIdbReader.getOldCustomSongs();
+
+            if (hasLegacySongs || hasLegacyVocab || hasLegacyGamification || oldIdbSongs.length > 0) {
+              const migratedId = "p-default";
+              const migratedProfile = {
+                id: migratedId,
+                name: "Learner 1",
+                color: PROFILE_AVATAR_COLORS[0],
+                createdAt: new Date().toISOString()
+              };
+              profiles.push(migratedProfile);
+              localStorage.setItem("ktv_profiles", JSON.stringify(profiles));
+
+              // Copy legacy unscoped keys into profile_p-default_* keys
+              const legacyKeys = [
+                "ktv_settings",
+                "ktv_favorites",
+                "ktv_seg_overrides",
+                "ktv_word_meanings_cache",
+                "ktv_srs_map",
+                "ktv_gamification",
+                "ktv_songs",
+                "ktv_vocab"
+              ];
+              legacyKeys.forEach(k => {
+                const val = localStorage.getItem(k);
+                if (val !== null && localStorage.getItem(`profile_${migratedId}_${k}`) === null) {
+                  localStorage.setItem(`profile_${migratedId}_${k}`, val);
+                }
+              });
+
+              if (oldIdbSongs.length > 0 && !localStorage.getItem(`profile_${migratedId}_ktv_songs`)) {
+                localStorage.setItem(`profile_${migratedId}_ktv_songs`, JSON.stringify(oldIdbSongs));
+              }
+            }
+          }
+
+          this.state.profiles = profiles;
+          const savedActiveId = localStorage.getItem("ktv_active_profile_id") || "";
+          if (savedActiveId && profiles.some(p => p.id === savedActiveId)) {
+            this.state.activeProfileId = savedActiveId;
+          } else {
+            this.state.activeProfileId = null;
+          }
+        } catch (err) {
+          this.state.profiles = [];
+          this.state.activeProfileId = null;
+        }
+      },
+
+      getActiveProfile() {
+        if (!this.state.activeProfileId) return null;
+        return this.state.profiles.find(p => p.id === this.state.activeProfileId) || null;
+      },
+
+      getProfileInitial(name) {
+        const clean = String(name || "").trim();
+        if (!clean) return "?";
+        return Array.from(clean)[0].toUpperCase();
+      },
+
+      getScopedStorageKey(key) {
+        if (GLOBAL_STORAGE_KEYS.has(key)) return key;
+        const pid = this.state.activeProfileId || "guest";
+        return `profile_${pid}_${key}`;
+      },
+
+      getDefaultProfileState() {
+        return {
+          settings: {
+            scriptMode: "both",
+            showPinyin: true,
+            pinyinTones: true,
+            showTranslation: true
+          },
+          favorites: [],
+          segmentOverrides: {},
+          wordMeaningsCache: {},
+          srsMap: {},
+          gamification: {
+            streakCount: 0,
+            lastPracticeDate: "",
+            totalXp: 0,
+            dailyGoalXp: 50,
+            dailyXpByDate: {}
+          },
+          songs: [],
+          vocab: []
+        };
+      },
+
+      getProfileQuickStats(profileId) {
+        try {
+          const rawGam = localStorage.getItem(`profile_${profileId}_ktv_gamification`);
+          const gam = rawGam ? JSON.parse(rawGam) : {};
+          const rawSongs = localStorage.getItem(`profile_${profileId}_ktv_songs`);
+          const songs = rawSongs ? JSON.parse(rawSongs) : [];
+          return {
+            streak: Number(gam.streakCount) || 0,
+            xp: Number(gam.totalXp) || 0,
+            songsCount: Array.isArray(songs) ? songs.length : 0
+          };
+        } catch (e) {
+          return { streak: 0, xp: 0, songsCount: 0 };
+        }
+      },
+
+      openProfileSelector() {
+        this.renderProfileSelector();
+        const hasProfiles = this.state.profiles.length > 0;
+        this.toggleNewProfileForm(!hasProfiles);
+
+        const stayBtn = document.getElementById("profileSelectorStayBtn");
+        if (stayBtn) {
+          const current = this.getActiveProfile();
+          if (current) {
+            stayBtn.style.display = "inline-flex";
+            stayBtn.textContent = `← Continue as ${current.name}`;
+          } else {
+            stayBtn.style.display = "none";
+          }
+        }
+
+        const dangerMenu = document.getElementById("profileDangerMenu");
+        if (dangerMenu) dangerMenu.style.display = "none";
+
+        document.getElementById("profileSelectorBackdrop")?.classList.add("open");
+      },
+
+      closeProfileSelector() {
+        if (!this.getActiveProfile()) return;
+        document.getElementById("profileSelectorBackdrop")?.classList.remove("open");
+      },
+
+      toggleNewProfileForm(show) {
+        const formEl = document.getElementById("newProfileForm");
+        const cancelBtn = document.getElementById("cancelNewProfileBtn");
+        const inputEl = document.getElementById("newProfileNameInput");
+        if (!formEl) return;
+
+        const shouldShow = show !== undefined ? !!show : formEl.style.display === "none";
+        formEl.style.display = shouldShow ? "flex" : "none";
+
+        if (cancelBtn) {
+          cancelBtn.style.display = this.state.profiles.length > 0 ? "inline-flex" : "none";
+        }
+
+        if (shouldShow && inputEl) {
+          inputEl.value = "";
+          setTimeout(() => {
+            try { inputEl.focus(); } catch (e) {}
+          }, 50);
+        }
+      },
+
+      renderProfileSelector() {
+        const gridEl = document.getElementById("profileSelectorGrid");
+        if (!gridEl) return;
+
+        const profileTilesHtml = this.state.profiles.map(p => {
+          const initial = this.getProfileInitial(p.name);
+          const stats = this.getProfileQuickStats(p.id);
+          const isCurrent = p.id === this.state.activeProfileId;
+          return `
+            <button type="button" class="profile-tile" style="${isCurrent ? "border-color:var(--duo-green);" : ""}" onclick="app.selectProfile('${p.id}')">
+              <div class="profile-avatar" style="background:${this.escapeHtml(p.color || "#58cc02")};">
+                ${this.escapeHtml(initial)}
+              </div>
+              <div style="font-weight:900; font-size:1rem; color:var(--text-main); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                ${this.escapeHtml(p.name)}
+              </div>
+              <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">
+                🔥 ${stats.streak} · ⚡ ${stats.xp} XP
+              </div>
+            </button>
+          `;
+        }).join("");
+
+        const addTileHtml = `
+          <button type="button" class="profile-tile new-profile-tile" onclick="app.toggleNewProfileForm(true)">
+            <div class="profile-avatar" style="background:var(--bg-elevated); color:#7dd3fc; border:2px dashed rgba(125,211,252,0.4);">
+              ＋
+            </div>
+            <div style="font-weight:800; font-size:0.95rem; color:#7dd3fc;">
+              + New Profile
+            </div>
+            <div style="font-size:0.74rem; color:var(--text-muted);">
+              Add learner
+            </div>
+          </button>
+        `;
+
+        gridEl.innerHTML = profileTilesHtml + addTileHtml;
+      },
+
+      async createNewProfile(event) {
+        if (event) event.preventDefault();
+        const inputEl = document.getElementById("newProfileNameInput");
+        const cleanName = (inputEl?.value || "").trim();
+        if (!cleanName) return;
+
+        const randomColor = PROFILE_AVATAR_COLORS[
+          (this.state.profiles.length + Math.floor(Math.random() * PROFILE_AVATAR_COLORS.length)) % PROFILE_AVATAR_COLORS.length
+        ];
+
+        const newProfile = {
+          id: "u-" + Date.now() + "-" + Math.random().toString(36).slice(2, 5),
+          name: cleanName,
+          color: randomColor,
+          createdAt: new Date().toISOString()
+        };
+
+        this.state.profiles.push(newProfile);
+        this.saveLocalStorageKey("ktv_profiles", this.state.profiles);
+        if (inputEl) inputEl.value = "";
+
+        await this.selectProfile(newProfile.id);
+        this.showSystemAlert(`Welcome, ${cleanName}! Your personal profile is ready.`);
+      },
+
+      async selectProfile(profileId) {
+        const target = this.state.profiles.find(p => p.id === profileId);
+        if (!target) return;
+
+        this.state.activeProfileId = target.id;
+        try {
+          localStorage.setItem("ktv_active_profile_id", target.id);
+        } catch (e) {}
+
+        this.state.currentSong = null;
+        this.state.parsedLines = [];
+        this.state.flashcardIndex = 0;
+        this.state.flashcardSongFilter = "all_songs";
+        this.state.flashcardHskFilter = "all";
+
+        await this.loadLocalStorageState();
+        this.verifyStreakContinuity();
+        this.applySettingsToUI();
+        this.updateProfileUI();
+        this.renderHomeLists();
+        this.renderVocabList();
+        this.populateSongSelects();
+        this.renderCurrentFlashcard();
+        this.updateGamificationUI();
+
+        document.getElementById("profileSelectorBackdrop")?.classList.remove("open");
+        if (this.state.currentView === "reader") {
+          this.switchView("home");
+        }
+      },
+
+      toggleProfileDangerMenu() {
+        const menuEl = document.getElementById("profileDangerMenu");
+        if (!menuEl) return;
+        menuEl.style.display = menuEl.style.display === "none" ? "flex" : "none";
+      },
+
+      deleteActiveProfile() {
+        const current = this.getActiveProfile();
+        if (!current) return;
+
+        const pid = current.id;
+        const deletedName = current.name;
+
+        // Remove all localStorage keys scoped to this profile
+        const scopedSuffixes = [
+          "ktv_settings",
+          "ktv_favorites",
+          "ktv_seg_overrides",
+          "ktv_word_meanings_cache",
+          "ktv_srs_map",
+          "ktv_gamification",
+          "ktv_songs",
+          "ktv_vocab"
+        ];
+        scopedSuffixes.forEach(suffix => {
+          try {
+            localStorage.removeItem(`profile_${pid}_${suffix}`);
+          } catch (e) {}
+        });
+
+        this.state.profiles = this.state.profiles.filter(p => p.id !== pid);
+        this.saveLocalStorageKey("ktv_profiles", this.state.profiles);
+
+        this.state.activeProfileId = null;
+        try {
+          localStorage.removeItem("ktv_active_profile_id");
+        } catch (e) {}
+
+        const defaults = this.getDefaultProfileState();
+        Object.assign(this.state, defaults);
+        this.updateProfileUI();
+        this.renderHomeLists();
+        this.renderVocabList();
+        this.populateSongSelects();
+        this.renderCurrentFlashcard();
+        this.updateGamificationUI();
+
+        this.openProfileSelector();
+        this.showSystemAlert(`Profile "${deletedName}" and its data were removed.`);
+      },
+
+      updateProfileUI() {
+        const profile = this.getActiveProfile();
+        const name = profile ? profile.name : "Guest";
+        const initial = this.getProfileInitial(name);
+        const color = profile?.color || "#58cc02";
+
+        const headerAvatar = document.getElementById("headerProfileAvatar");
+        const headerName = document.getElementById("headerProfileName");
+        if (headerAvatar) {
+          headerAvatar.textContent = initial;
+          headerAvatar.style.background = color;
+        }
+        if (headerName) {
+          headerName.textContent = name;
+        }
+
+        const progAvatar = document.getElementById("progressProfileAvatar");
+        const progHeading = document.getElementById("progressProfileHeading");
+        const progSub = document.getElementById("progressProfileSub");
+        if (progAvatar) {
+          progAvatar.textContent = initial;
+          progAvatar.style.background = color;
+        }
+        if (progHeading) {
+          progHeading.textContent = `👤 ${name}'s Progress`;
+        }
+        if (progSub) {
+          progSub.textContent = `${this.state.songs.length} songs · ${this.state.vocab.length} saved words`;
+        }
+      },
+
+      async loadLocalStorageState() {
+        try {
+          // Global HSK cache is shared across all profiles
+          const savedHskCache = localStorage.getItem("hskLevelCache");
+          if (savedHskCache) {
+            this.state.hskLevelCache = { ...HSK_BASE_SEED, ...(JSON.parse(savedHskCache) || {}) };
+          } else {
+            this.state.hskLevelCache = { ...HSK_BASE_SEED };
+          }
+
+          const defaults = this.getDefaultProfileState();
+          this.state.settings = { ...defaults.settings };
+          this.state.favorites = [];
+          this.state.segmentOverrides = {};
+          this.state.wordMeaningsCache = {};
+          this.state.srsMap = {};
+          this.state.gamification = { ...defaults.gamification };
+          this.state.songs = [];
+          this.state.vocab = [];
+
+          if (!this.state.activeProfileId) return;
+
+          const savedSettings = localStorage.getItem(this.getScopedStorageKey("ktv_settings"));
+          if (savedSettings) {
+            this.state.settings = { ...this.state.settings, ...JSON.parse(savedSettings) };
+          }
+
+          const savedFavs = localStorage.getItem(this.getScopedStorageKey("ktv_favorites"));
+          if (savedFavs) {
+            this.state.favorites = JSON.parse(savedFavs).filter(id => !String(id).startsWith("demo-"));
+          }
+
+          const savedSeg = localStorage.getItem(this.getScopedStorageKey("ktv_seg_overrides"));
+          if (savedSeg) this.state.segmentOverrides = JSON.parse(savedSeg) || {};
+
+          const savedMeanings = localStorage.getItem(this.getScopedStorageKey("ktv_word_meanings_cache"));
+          if (savedMeanings) {
+            this.state.wordMeaningsCache = JSON.parse(savedMeanings) || {};
+          }
+
+          const savedSrsMap = localStorage.getItem(this.getScopedStorageKey("ktv_srs_map"));
           if (savedSrsMap) {
             this.state.srsMap = JSON.parse(savedSrsMap) || {};
           }
 
-          const savedGamification = localStorage.getItem("ktv_gamification");
+          const savedGamification = localStorage.getItem(this.getScopedStorageKey("ktv_gamification"));
           if (savedGamification) {
             this.state.gamification = {
               ...this.state.gamification,
@@ -2304,29 +2978,18 @@
           }
 
           let storedSongs = [];
-          const rawSongs = localStorage.getItem("ktv_songs");
+          const rawSongs = localStorage.getItem(this.getScopedStorageKey("ktv_songs"));
           if (rawSongs) storedSongs = JSON.parse(rawSongs);
 
-          const rawFallback = localStorage.getItem("ktv_custom_songs_fallback");
-          if (rawFallback) {
-            JSON.parse(rawFallback).forEach(s => {
-              if (!storedSongs.some(ex => ex.id === s.id)) storedSongs.push(s);
-            });
-          }
+          this.state.songs = (Array.isArray(storedSongs) ? storedSongs : []).filter(
+            s => s && !s.isDemo && !String(s.id).startsWith("demo-")
+          );
 
-          const oldIdbSongs = await legacyIdbReader.getOldCustomSongs();
-          oldIdbSongs.forEach(s => {
-            if (!storedSongs.some(ex => ex.id === s.id)) storedSongs.push(s);
-          });
-
-          this.state.songs = storedSongs.filter(s => !s.isDemo && !String(s.id).startsWith("demo-"));
-          this.saveLocalStorageKey("ktv_songs", this.state.songs);
-
-          const savedVocab = localStorage.getItem("ktv_vocab");
+          const savedVocab = localStorage.getItem(this.getScopedStorageKey("ktv_vocab"));
           if (savedVocab) {
             const today = srsEngine.getTodayDateStr();
             const parsedVocab = JSON.parse(savedVocab);
-            this.state.vocab = parsedVocab
+            this.state.vocab = (Array.isArray(parsedVocab) ? parsedVocab : [])
               .filter(v => !["v-1", "v-2", "v-3", "v-4", "v-init-1", "v-init-2", "v-init-3", "v-init-4"].includes(v.id))
               .map(v => ({
                 ...v,
@@ -2334,7 +2997,6 @@
                 nextReviewDate: v.nextReviewDate || this.state.srsMap[v.simp]?.nextReviewDate || today,
                 lastRating: v.lastRating || this.state.srsMap[v.simp]?.lastRating || ""
               }));
-            this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
           } else {
             this.state.vocab = [];
           }
@@ -2345,7 +3007,8 @@
 
       saveLocalStorageKey(key, data) {
         try {
-          localStorage.setItem(key, JSON.stringify(data));
+          const targetKey = this.getScopedStorageKey(key);
+          localStorage.setItem(targetKey, JSON.stringify(data));
         } catch (err) {
           this.showSystemAlert("Storage limit reached. Please export a JSON backup.");
         }
@@ -2424,6 +3087,82 @@
       getTotalDueTodayCount() {
         const allCards = this.getRawFlashcardDeck("all_songs", "all");
         return allCards.filter(c => srsEngine.isCardDueToday(c)).length;
+      },
+
+      openResetConfirmModal(resetType) {
+        this.state.pendingResetType = resetType;
+        const titleEl = document.getElementById("resetConfirmTitle");
+        const msgEl = document.getElementById("resetConfirmMessage");
+        const actionBtn = document.getElementById("resetConfirmActionBtn");
+        const activeProfile = this.getActiveProfile();
+        const profileName = activeProfile ? activeProfile.name : "this profile";
+
+        if (resetType === "streak") {
+          if (titleEl) titleEl.textContent = "Reset Daily Streak & XP?";
+          if (msgEl) {
+            msgEl.textContent =
+              `Are you sure you want to reset ${profileName}'s Daily Streak (🔥) and Total XP (⚡) back to 0? Your songs and learned words will not be deleted.`;
+          }
+          if (actionBtn) actionBtn.textContent = "Yes, Reset";
+        } else if (resetType === "delete_profile") {
+          if (titleEl) titleEl.textContent = `Delete Profile "${profileName}"?`;
+          if (msgEl) {
+            msgEl.textContent =
+              `Are you sure you want to permanently delete "${profileName}" and all of their songs, saved words, SRS schedules, and XP from this device? Other profiles will not be affected.`;
+          }
+          if (actionBtn) actionBtn.textContent = "Yes, Delete Profile";
+        } else {
+          if (titleEl) titleEl.textContent = "Reset Total Words Learned?";
+          if (msgEl) {
+            msgEl.textContent =
+              `Are you sure you want to reset ${profileName}'s Total Words Learned, Saved Words list, and SRS review intervals back to 0? Your songs in the Library will remain safe.`;
+          }
+          if (actionBtn) actionBtn.textContent = "Yes, Reset";
+        }
+
+        document.getElementById("resetConfirmModalBackdrop").classList.add("open");
+      },
+
+      closeResetConfirmModal() {
+        this.state.pendingResetType = null;
+        document.getElementById("resetConfirmModalBackdrop").classList.remove("open");
+      },
+
+      confirmResetAction() {
+        const type = this.state.pendingResetType;
+        this.closeResetConfirmModal();
+        if (!type) return;
+
+        if (type === "delete_profile") {
+          this.deleteActiveProfile();
+          return;
+        }
+
+        if (type === "streak") {
+          this.state.gamification = {
+            streakCount: 0,
+            lastPracticeDate: "",
+            totalXp: 0,
+            dailyGoalXp: 50,
+            dailyXpByDate: {}
+          };
+          this.saveLocalStorageKey("ktv_gamification", this.state.gamification);
+          this.updateGamificationUI();
+          this.showSystemAlert("Daily Streak and XP have been reset to 0.");
+        } else if (type === "words") {
+          this.state.vocab = [];
+          this.state.srsMap = {};
+          this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+          this.saveLocalStorageKey("ktv_srs_map", this.state.srsMap);
+          this.renderVocabList();
+          this.populateSongSelects();
+          this.renderCurrentFlashcard();
+          this.updateGamificationUI();
+          if (this.state.currentSong) {
+            this.renderLyrics();
+          }
+          this.showSystemAlert("Total Words Learned and SRS progress have been reset to 0.");
+        }
       },
 
       /**
@@ -2559,6 +3298,7 @@
         const statDue = document.getElementById("statWordsDueToday");
         if (statDue) statDue.textContent = dueTodayCount;
 
+        this.updateProfileUI();
         this.renderHskBreakdown();
       },
 
@@ -2865,11 +3605,154 @@
             favWrap.style.display = "none";
           }
         }
+
+        this.renderLibraryHskOverview();
+      },
+
+      setLibraryHskUnit(unit) {
+        this.state.libraryHskUnit = unit === "chars" ? "chars" : "words";
+        document.getElementById("libHskUnitWordsBtn")?.classList.toggle("active", this.state.libraryHskUnit === "words");
+        document.getElementById("libHskUnitCharsBtn")?.classList.toggle("active", this.state.libraryHskUnit === "chars");
+        this.renderLibraryHskOverview();
+      },
+
+      setLibraryHskSelectedLevel(levelKey) {
+        this.state.libraryHskSelectedLevel = levelKey;
+        this.renderLibraryHskOverview();
+      },
+
+      renderLibraryHskOverview() {
+        const tabsEl = document.getElementById("libHskLevelTabs");
+        const gridEl = document.getElementById("libHskItemsGrid");
+        const summaryBadge = document.getElementById("libHskSummaryBadge");
+        const wordsCountEl = document.getElementById("libHskTotalWordsCount");
+        const charsCountEl = document.getElementById("libHskTotalCharsCount");
+        if (!tabsEl || !gridEl) return;
+
+        const unitMode = this.state.libraryHskUnit || "words";
+        const selectedLvl = this.state.libraryHskSelectedLevel !== undefined ? this.state.libraryHskSelectedLevel : "all";
+
+        // 1. Collect all unique words and all unique single Chinese characters from uploaded songs
+        const uniqueWordsMap = new Map();
+        const uniqueCharsMap = new Map();
+
+        this.state.songs.forEach(song => {
+          const songWords = this.extractUniqueWordsFromSong(song);
+          songWords.forEach(w => {
+            if (!uniqueWordsMap.has(w.simp)) {
+              uniqueWordsMap.set(w.simp, w);
+            }
+            Array.from(w.original || w.simp).forEach(ch => {
+              if (!textHelper.isChineseText(ch)) return;
+              const simpCh = textHelper.toSimplified(ch);
+              if (!uniqueCharsMap.has(simpCh)) {
+                const tradCh = textHelper.toTraditional(simpCh);
+                uniqueCharsMap.set(simpCh, {
+                  original: simpCh,
+                  simp: simpCh,
+                  trad: tradCh,
+                  pinyin: textHelper.getPinyin(simpCh, true) || "",
+                  hskLevel: hskEngine.getWordHskLevel(simpCh),
+                  songTitle: song.title
+                });
+              }
+            });
+          });
+        });
+
+        const totalWords = uniqueWordsMap.size;
+        const totalChars = uniqueCharsMap.size;
+        if (summaryBadge) summaryBadge.textContent = `${totalWords} words · ${totalChars} chars`;
+        if (wordsCountEl) wordsCountEl.textContent = totalWords;
+        if (charsCountEl) charsCountEl.textContent = totalChars;
+
+        if (this.state.songs.length === 0) {
+          tabsEl.innerHTML = "";
+          gridEl.innerHTML = `<div style="color:var(--text-muted); font-size:0.86rem; padding:8px 0;">Upload or import a song to see all words and characters grouped by HSK level.</div>`;
+          return;
+        }
+
+        const activeMap = unitMode === "chars" ? uniqueCharsMap : uniqueWordsMap;
+        const buckets = {
+          all: [],
+          1: [],
+          2: [],
+          3: [],
+          4: [],
+          5: [],
+          6: [],
+          0: []
+        };
+
+        activeMap.forEach(item => {
+          const lvl = item.hskLevel || hskEngine.getWordHskLevel(item.simp) || 0;
+          const enriched = { ...item, hskLevel: lvl || null };
+          buckets.all.push(enriched);
+          if (buckets[lvl]) buckets[lvl].push(enriched);
+          else buckets[0].push(enriched);
+        });
+
+        const tabDefs = [
+          { key: "all", label: "All", badgeClass: "hsk-badge-none" },
+          { key: "1", label: "HSK 1", badgeClass: "hsk-badge-1-2" },
+          { key: "2", label: "HSK 2", badgeClass: "hsk-badge-1-2" },
+          { key: "3", label: "HSK 3", badgeClass: "hsk-badge-3-4" },
+          { key: "4", label: "HSK 4", badgeClass: "hsk-badge-3-4" },
+          { key: "5", label: "HSK 5", badgeClass: "hsk-badge-5-6" },
+          { key: "6", label: "HSK 6", badgeClass: "hsk-badge-5-6" },
+          { key: "0", label: "Non-HSK", badgeClass: "hsk-badge-none" }
+        ];
+
+        tabsEl.innerHTML = tabDefs.map(t => {
+          const count = (buckets[t.key] || []).length;
+          const isActive = String(selectedLvl) === t.key;
+          return `
+            <button type="button"
+              class="hsk-badge ${t.badgeClass}"
+              style="padding:6px 11px; font-size:0.76rem; cursor:pointer; opacity:${isActive ? "1" : "0.65"}; transform:${isActive ? "scale(1.05)" : "none"}; box-shadow:${isActive ? "0 0 0 2px #fff" : "none"};"
+              onclick="app.setLibraryHskSelectedLevel('${t.key}')">
+              ${t.label} (${count})
+            </button>
+          `;
+        }).join("");
+
+        const itemsToShow = buckets[selectedLvl] || buckets.all;
+        if (itemsToShow.length === 0) {
+          gridEl.innerHTML = `<div style="color:var(--text-muted); font-size:0.85rem; padding:8px 0;">No ${unitMode === "chars" ? "characters" : "words"} in this HSK level.</div>`;
+          return;
+        }
+
+        gridEl.innerHTML = itemsToShow.map(item => {
+          const displayChar = item.trad || item.simp;
+          const badgeHtml = hskEngine.getHskBadgeHtml(item.hskLevel, false);
+          const safeToken = this.escapeHtml(item.original || item.simp).replace(/'/g, "\\'");
+          return `
+            <button type="button"
+              onclick="app.openWordModal('${safeToken}')"
+              style="background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:14px; padding:7px 11px; display:inline-flex; flex-direction:column; align-items:center; gap:2px; min-width:68px;">
+              <span style="font-size:0.68rem; color:var(--gold); font-weight:700;">${this.escapeHtml(item.pinyin || "—")}</span>
+              <span style="font-family:var(--font-zh); font-size:1.18rem; font-weight:800; color:var(--text-main);">${this.escapeHtml(displayChar)}</span>
+              ${String(selectedLvl) === "all" ? badgeHtml : ""}
+            </button>
+          `;
+        }).join("");
       },
 
       createSongItemHtml(song) {
         const isFav = this.state.favorites.includes(song.id);
-        const wordsCount = this.extractUniqueWordsFromSong(song).length;
+        const songWords = this.extractUniqueWordsFromSong(song);
+        const wordsCount = songWords.length;
+
+        // Calculate per-song HSK distribution
+        let hsk12 = 0, hsk34 = 0, hsk56 = 0, nonHsk = 0;
+        songWords.forEach(w => {
+          const lvl = w.hskLevel || hskEngine.getWordHskLevel(w.simp);
+          if (lvl === 1 || lvl === 2) hsk12++;
+          else if (lvl === 3 || lvl === 4) hsk34++;
+          else if (lvl === 5 || lvl === 6) hsk56++;
+          else nonHsk++;
+        });
+
         return `
           <div class="song-item">
             <div class="song-item-header">
@@ -2880,6 +3763,12 @@
               <button type="button" class="fav-btn ${isFav ? "active" : ""}" title="Toggle Favorite" onclick="app.toggleFavorite('${song.id}')">
                 ${isFav ? "★" : "☆"}
               </button>
+            </div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <span class="hsk-badge hsk-badge-1-2">HSK 1–2: ${hsk12}</span>
+              <span class="hsk-badge hsk-badge-3-4">HSK 3–4: ${hsk34}</span>
+              <span class="hsk-badge hsk-badge-5-6">HSK 5–6: ${hsk56}</span>
+              <span class="hsk-badge hsk-badge-none">Other: ${nonHsk}</span>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
               <button type="button" class="btn btn-primary btn-sm" style="flex:2;" onclick="app.openSong('${song.id}')">
@@ -2929,9 +3818,11 @@
       },
 
       exportBackupJson() {
+        const activeProfile = this.getActiveProfile();
         const backupData = {
-          version: 4,
+          version: 5,
           exportedAt: new Date().toISOString(),
+          profileName: activeProfile ? activeProfile.name : "Learner",
           songs: this.state.songs,
           vocab: this.state.vocab,
           srsMap: this.state.srsMap,
@@ -2942,67 +3833,90 @@
           segmentOverrides: this.state.segmentOverrides,
           settings: this.state.settings
         };
+        const safeProfileSlug = (activeProfile ? activeProfile.name : "profile")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "") || "profile";
         const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: "application/json;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `ktv-app-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `ktv-app-${safeProfileSlug}-backup-${new Date().toISOString().slice(0, 10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
+      },
+
+      importBackupJsonFromText(rawText) {
+        try {
+          const data = JSON.parse(rawText || "{}");
+          if (!data || typeof data !== "object" || (!Array.isArray(data.songs) && !Array.isArray(data.vocab))) {
+            return false;
+          }
+
+          let addedSongsCount = 0;
+          if (Array.isArray(data.songs)) {
+            data.songs.forEach(s => {
+              if (s && s.id && !this.state.songs.some(ex => ex.id === s.id)) {
+                this.state.songs.push(s);
+                addedSongsCount++;
+              }
+            });
+            this.saveLocalStorageKey("ktv_songs", this.state.songs);
+          }
+          if (Array.isArray(data.vocab)) {
+            data.vocab.forEach(v => {
+              if (v && v.simp && !this.state.vocab.some(ex => ex.simp === v.simp)) {
+                this.state.vocab.push(v);
+              }
+            });
+            this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+          }
+          if (data.srsMap && typeof data.srsMap === "object") {
+            this.state.srsMap = { ...this.state.srsMap, ...data.srsMap };
+            this.saveLocalStorageKey("ktv_srs_map", this.state.srsMap);
+          }
+          if (data.gamification && typeof data.gamification === "object") {
+            this.state.gamification = { ...this.state.gamification, ...data.gamification };
+            this.saveLocalStorageKey("ktv_gamification", this.state.gamification);
+          }
+          if (data.wordMeaningsCache && typeof data.wordMeaningsCache === "object") {
+            this.state.wordMeaningsCache = { ...this.state.wordMeaningsCache, ...data.wordMeaningsCache };
+            this.saveLocalStorageKey("ktv_word_meanings_cache", this.state.wordMeaningsCache);
+          }
+          if (data.hskLevelCache && typeof data.hskLevelCache === "object") {
+            this.state.hskLevelCache = { ...this.state.hskLevelCache, ...data.hskLevelCache };
+            this.saveLocalStorageKey("hskLevelCache", this.state.hskLevelCache);
+          }
+          if (Array.isArray(data.favorites)) {
+            this.state.favorites = Array.from(new Set([...this.state.favorites, ...data.favorites]));
+            this.saveLocalStorageKey("ktv_favorites", this.state.favorites);
+          }
+          if (data.segmentOverrides && typeof data.segmentOverrides === "object") {
+            this.state.segmentOverrides = { ...this.state.segmentOverrides, ...data.segmentOverrides };
+            this.saveLocalStorageKey("ktv_seg_overrides", this.state.segmentOverrides);
+          }
+
+          this.renderHomeLists();
+          this.renderVocabList();
+          this.populateSongSelects();
+          this.updateGamificationUI();
+          this.showSystemAlert(
+            addedSongsCount > 0
+              ? `Batch imported ${addedSongsCount} song(s) and backup data!`
+              : "Backup imported successfully!"
+          );
+          return true;
+        } catch (err) {
+          return false;
+        }
       },
 
       importBackupJson(file) {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-          try {
-            const data = JSON.parse(e.target.result || "{}");
-            if (Array.isArray(data.songs)) {
-              data.songs.forEach(s => {
-                if (s && s.id && !this.state.songs.some(ex => ex.id === s.id)) {
-                  this.state.songs.push(s);
-                }
-              });
-              this.saveLocalStorageKey("ktv_songs", this.state.songs);
-            }
-            if (Array.isArray(data.vocab)) {
-              data.vocab.forEach(v => {
-                if (v && v.simp && !this.state.vocab.some(ex => ex.simp === v.simp)) {
-                  this.state.vocab.push(v);
-                }
-              });
-              this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
-            }
-            if (data.srsMap && typeof data.srsMap === "object") {
-              this.state.srsMap = { ...this.state.srsMap, ...data.srsMap };
-              this.saveLocalStorageKey("ktv_srs_map", this.state.srsMap);
-            }
-            if (data.gamification && typeof data.gamification === "object") {
-              this.state.gamification = { ...this.state.gamification, ...data.gamification };
-              this.saveLocalStorageKey("ktv_gamification", this.state.gamification);
-            }
-            if (data.wordMeaningsCache && typeof data.wordMeaningsCache === "object") {
-              this.state.wordMeaningsCache = { ...this.state.wordMeaningsCache, ...data.wordMeaningsCache };
-              this.saveLocalStorageKey("ktv_word_meanings_cache", this.state.wordMeaningsCache);
-            }
-            if (data.hskLevelCache && typeof data.hskLevelCache === "object") {
-              this.state.hskLevelCache = { ...this.state.hskLevelCache, ...data.hskLevelCache };
-              this.saveLocalStorageKey("hskLevelCache", this.state.hskLevelCache);
-            }
-            if (Array.isArray(data.favorites)) {
-              this.state.favorites = data.favorites;
-              this.saveLocalStorageKey("ktv_favorites", this.state.favorites);
-            }
-            if (data.segmentOverrides && typeof data.segmentOverrides === "object") {
-              this.state.segmentOverrides = { ...this.state.segmentOverrides, ...data.segmentOverrides };
-              this.saveLocalStorageKey("ktv_seg_overrides", this.state.segmentOverrides);
-            }
-            this.renderHomeLists();
-            this.renderVocabList();
-            this.populateSongSelects();
-            this.updateGamificationUI();
-            this.showSystemAlert("Backup imported successfully!");
-          } catch (err) {
+          const ok = this.importBackupJsonFromText(e.target.result || "");
+          if (!ok) {
             this.showSystemAlert("Invalid JSON backup file.");
           }
         };
@@ -3352,7 +4266,17 @@
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-          document.getElementById("importLrcTextarea").value = e.target.result || "";
+          const text = e.target.result || "";
+          const looksLikeJson = file.name.toLowerCase().endsWith(".json") || text.trim().startsWith("{");
+          if (looksLikeJson && this.importBackupJsonFromText(text)) {
+            document.getElementById("importSongTitle").value = "";
+            document.getElementById("importSongArtist").value = "";
+            document.getElementById("importLrcTextarea").value = "";
+            this.switchView("home");
+            return;
+          }
+
+          document.getElementById("importLrcTextarea").value = text;
           const titleInput = document.getElementById("importSongTitle");
           if (!titleInput.value) {
             titleInput.value = file.name.replace(/\.(lrc|txt)$/i, "");
@@ -3366,6 +4290,15 @@
         const title = document.getElementById("importSongTitle").value.trim();
         const artist = document.getElementById("importSongArtist").value.trim() || "Unknown Artist";
         const rawLyrics = document.getElementById("importLrcTextarea").value.trim();
+
+        // Also support batch JSON backup if pasted directly into the lyrics box
+        if (rawLyrics.startsWith("{") && this.importBackupJsonFromText(rawLyrics)) {
+          document.getElementById("importSongTitle").value = "";
+          document.getElementById("importSongArtist").value = "";
+          document.getElementById("importLrcTextarea").value = "";
+          this.switchView("home");
+          return;
+        }
 
         if (!title || !rawLyrics) {
           this.showSystemAlert("Please enter a song title, artist, and lyrics.");
