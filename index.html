@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KTV App">
   <link rel="manifest" href="./manifest.json">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23e11d48'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='108' font-family='sans-serif' font-weight='bold' fill='%23ffffff'%3E%E6%AD%8C%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='44' fill='%2358cc02'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='108' font-family='sans-serif' font-weight='bold' fill='%23ffffff'%3E%E6%AD%8C%3C/text%3E%3C/svg%3E">
   <title>KTV App — Learn Chinese with Lyrics</title>
 
   <!-- External CDN libraries for Pinyin and Traditional/Simplified Chinese conversion -->
@@ -18,23 +18,38 @@
 
   <style>
     :root {
-      --bg-body: #090d16;
+      --bg-body: #0b1120;
       --bg-app: #0f172a;
       --bg-card: #1e293b;
-      --bg-input: #0f172a;
+      --bg-elevated: #263449;
+      --bg-input: #131c31;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --accent: #e11d48;
-      --accent-soft: rgba(225, 29, 72, 0.18);
-      --gold: #fbbf24;
+
+      /* Apple / Duolingo / Anki Accent Palette */
+      --duo-green: #58cc02;
+      --duo-green-dark: #46a302;
+      --duo-green-soft: rgba(88, 204, 2, 0.16);
+      --ios-blue: #0a84ff;
+      --ios-blue-soft: rgba(10, 132, 255, 0.16);
+      --streak-orange: #ff9600;
+      --streak-orange-soft: rgba(255, 150, 0, 0.16);
+      --gold: #ffc800;
+      --gold-soft: rgba(255, 200, 0, 0.16);
+      --hard-red: #ff4b4b;
+      --hard-red-soft: rgba(255, 75, 75, 0.16);
       --teal: #14b8a6;
-      --border: #334155;
-      --radius: 12px;
+
+      --border-subtle: rgba(255, 255, 255, 0.07);
+      --radius-2xl: 20px;
+      --radius-3xl: 26px;
+      --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.18);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.28);
+
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Rounded", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       --font-zh: "PingFang TC", "PingFang SC", "Microsoft YaHei", "Noto Sans CJK TC", sans-serif;
-      --lyric-scale: 1;
     }
 
     * {
@@ -51,6 +66,7 @@
       line-height: 1.5;
       min-height: 100dvh;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
     button, input, select, textarea {
@@ -64,51 +80,51 @@
 
     button {
       cursor: pointer;
-      touch-action: manipulation;
     }
 
-    /* Centered Mobile Container (max-width: 430px) */
+    /* Mobile-First Centered App Shell */
     .mobile-app {
       width: 100%;
       max-width: 430px;
-      margin: 0 auto;
       min-height: 100dvh;
+      margin: 0 auto;
       background-color: var(--bg-app);
-      border-left: 1px solid rgba(255, 255, 255, 0.06);
-      border-right: 1px solid rgba(255, 255, 255, 0.06);
       display: flex;
       flex-direction: column;
-      padding-top: var(--safe-top);
-      padding-bottom: calc(74px + var(--safe-bottom));
-      position: relative;
+      padding-bottom: calc(88px + var(--safe-bottom));
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
     }
 
-    /* Top Header */
+    /* Top Header with Brand, Streak 🔥 & XP ⚡ */
     .top-header {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background-color: var(--bg-app);
       position: sticky;
       top: 0;
       z-index: 30;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: calc(12px + var(--safe-top)) 18px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
     }
 
     .brand {
       display: flex;
       align-items: center;
       gap: 10px;
-      font-weight: 700;
-      font-size: 1.1rem;
+      font-weight: 800;
+      font-size: 1.12rem;
+      letter-spacing: -0.02em;
+      cursor: pointer;
     }
 
     .brand-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      background-color: var(--accent);
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #58cc02, #22c55e);
       color: #fff;
       display: flex;
       align-items: center;
@@ -116,148 +132,224 @@
       font-family: var(--font-zh);
       font-weight: 800;
       font-size: 1.1rem;
+      box-shadow: 0 4px 10px rgba(88, 204, 2, 0.3);
     }
 
-    .status-badge {
-      font-size: 0.75rem;
-      padding: 4px 8px;
-      border-radius: 6px;
-      background-color: var(--bg-card);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
-    /* System Alert Box */
-    .alert-box {
-      margin: 10px 16px 0;
-      padding: 10px 12px;
-      border-radius: 8px;
-      background-color: rgba(251, 191, 36, 0.15);
-      border: 1px solid var(--gold);
-      color: #fde68a;
-      font-size: 0.85rem;
-      display: none;
-      justify-content: space-between;
+    .header-stats {
+      display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .alert-box.show {
-      display: flex;
+    .stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease;
     }
 
-    /* Single Column View Container */
+    .stat-pill:active {
+      transform: scale(0.95);
+    }
+
+    .stat-pill.streak {
+      background-color: var(--streak-orange-soft);
+      color: #ffb03a;
+    }
+
+    .stat-pill.xp {
+      background-color: var(--ios-blue-soft);
+      color: #5ac8fa;
+    }
+
+    /* Main Content Container with Generous Whitespace */
     .view-container {
       flex: 1;
-      padding: 16px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
     .view-section {
       display: none;
       flex-direction: column;
-      gap: 16px;
+      gap: 18px;
     }
 
     .view-section.active {
       display: flex;
     }
 
-    /* Cards & Buttons */
+    /* Premium Rounded Cards (rounded-2xl / rounded-3xl) & Soft Shadows */
     .card {
       background-color: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px;
+      border-radius: var(--radius-3xl);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .card-elevated {
+      background-color: var(--bg-card);
+      border-radius: var(--radius-3xl);
+      padding: 22px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-subtle);
     }
 
     .section-title {
       font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 10px;
+      font-weight: 800;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      letter-spacing: -0.01em;
     }
 
+    .badge {
+      font-size: 0.76rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background-color: var(--bg-elevated);
+      color: var(--text-muted);
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-green {
+      background-color: var(--duo-green-soft);
+      color: #86efac;
+    }
+
+    .badge-blue {
+      background-color: var(--ios-blue-soft);
+      color: #7dd3fc;
+    }
+
+    .badge-orange {
+      background-color: var(--streak-orange-soft);
+      color: #fdba74;
+    }
+
+    /* Dynamic Tailwind-inspired HSK Level Badges */
+    .hsk-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    .hsk-badge-1-2 {
+      background-color: rgba(34, 197, 94, 0.18);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+
+    .hsk-badge-3-4 {
+      background-color: rgba(245, 158, 11, 0.18);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .hsk-badge-5-6 {
+      background-color: rgba(244, 63, 94, 0.18);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.35);
+    }
+
+    .hsk-badge-none {
+      background-color: rgba(148, 163, 184, 0.14);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    /* Touch-Friendly Premium Buttons */
     .btn {
+      min-height: 50px;
+      padding: 12px 18px;
+      border-radius: 16px;
+      font-weight: 800;
+      font-size: 0.96rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      min-height: 48px;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 0.95rem;
-      background-color: var(--bg-card);
+      background-color: var(--bg-elevated);
       color: var(--text-main);
-      border: 1px solid var(--border);
       width: 100%;
-      text-align: center;
+      transition: transform 0.12s ease, opacity 0.15s ease, background-color 0.15s ease;
+      box-shadow: var(--shadow-sm);
     }
 
     .btn:active {
-      opacity: 0.85;
+      transform: translateY(2px) scale(0.99);
     }
 
     .btn:disabled {
-      opacity: 0.6;
-      cursor: wait;
+      opacity: 0.55;
+      cursor: not-allowed;
     }
 
     .btn-primary {
-      background-color: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
+      background-color: var(--duo-green);
+      color: #ffffff;
+      box-shadow: 0 4px 0 var(--duo-green-dark), var(--shadow-sm);
     }
 
-    .btn-teal {
-      background-color: rgba(20, 184, 166, 0.18);
-      color: #5eead4;
-      border-color: var(--teal);
+    .btn-primary:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--duo-green-dark);
+    }
+
+    .btn-blue {
+      background-color: var(--ios-blue);
+      color: #ffffff;
+      box-shadow: 0 4px 0 #0060df, var(--shadow-sm);
     }
 
     .btn-gold {
-      background-color: rgba(251, 191, 36, 0.16);
-      color: var(--gold);
-      border-color: var(--gold);
+      background-color: var(--streak-orange);
+      color: #ffffff;
+      box-shadow: 0 4px 0 #cc7800, var(--shadow-sm);
     }
 
-    .btn-sm {
-      min-height: 36px;
-      padding: 6px 10px;
-      font-size: 0.82rem;
-      width: auto;
+    .btn-teal {
+      background-color: var(--teal);
+      color: #ffffff;
     }
 
     .btn-subtle {
-      min-height: 36px;
-      padding: 6px 12px;
-      font-size: 0.8rem;
+      background-color: rgba(255, 255, 255, 0.04);
       color: var(--text-muted);
-      background-color: rgba(255, 255, 255, 0.03);
-      border: 1px dashed var(--border);
-      border-radius: 8px;
+      font-size: 0.86rem;
+      min-height: 44px;
+      box-shadow: none;
     }
 
-    .input-field {
-      width: 100%;
-      min-height: 46px;
-      padding: 10px 12px;
-      border-radius: 10px;
-      background-color: var(--bg-input);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      font-size: 0.96rem;
+    .btn-sm {
+      min-height: 40px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      border-radius: 14px;
+      width: auto;
+      box-shadow: none;
     }
 
-    .input-field:focus {
-      border-color: var(--accent);
-    }
-
+    /* Inputs & Textareas */
     .form-group {
       display: flex;
       flex-direction: column;
@@ -266,208 +358,221 @@
     }
 
     .form-label {
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-size: 0.88rem;
+      font-weight: 700;
       color: var(--text-main);
     }
 
-    .badge {
-      display: inline-block;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background-color: rgba(255, 255, 255, 0.08);
+    .input-field {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 16px;
+      border-radius: 16px;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-size: 0.96rem;
+      transition: border-color 0.15s ease;
+    }
+
+    .input-field:focus {
+      border-color: var(--ios-blue);
+    }
+
+    /* Segmented Controls (Apple Style) */
+    .segmented-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      background-color: var(--bg-input);
+      padding: 5px;
+      border-radius: 16px;
+    }
+
+    .seg-btn {
+      min-height: 40px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      transition: all 0.15s ease;
+      padding: 4px 6px;
+    }
+
+    .seg-btn.active {
+      background-color: var(--bg-elevated);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .chips-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .chip-toggle {
+      min-height: 40px;
+      border-radius: 12px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      background-color: var(--bg-input);
       color: var(--text-muted);
     }
 
-    /* Song List */
+    .chip-toggle.on {
+      background-color: var(--ios-blue-soft);
+      color: #7dd3fc;
+    }
+
+    /* Song List Cards */
     .song-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 14px;
     }
 
     .song-item {
       background-color: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
+      border-radius: var(--radius-2xl);
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
     }
 
     .song-item-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      gap: 8px;
+      gap: 10px;
     }
 
     .song-title {
-      font-weight: 700;
-      font-size: 1.05rem;
-      font-family: var(--font-zh);
+      font-weight: 800;
+      font-size: 1.08rem;
+      font-family: var(--font-zh), var(--font-sans);
     }
 
     .song-artist {
       font-size: 0.86rem;
       color: var(--text-muted);
+      margin-top: 2px;
     }
 
     .fav-btn {
-      width: 38px;
-      height: 38px;
-      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
       background-color: var(--bg-input);
-      border: 1px solid var(--border);
-      font-size: 1.1rem;
       color: var(--text-muted);
+      font-size: 1.15rem;
       flex-shrink: 0;
     }
 
     .fav-btn.active {
       color: var(--gold);
-      border-color: var(--gold);
+      background-color: var(--gold-soft);
     }
 
-    /* Lyrics Reader Header & Controls */
+    /* Lyrics Reader View */
     .reader-card {
       background-color: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 14px;
+      border-radius: var(--radius-3xl);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .lyrics-reader-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    .segmented-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
-
-    .seg-btn {
-      min-height: 40px;
-      border-radius: 8px;
-      background-color: var(--bg-input);
-      border: 1px solid var(--border);
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .seg-btn.active {
-      background-color: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-
-    .chips-row {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .chip-toggle {
-      flex: 1;
-      min-height: 38px;
-      padding: 6px 8px;
-      border-radius: 8px;
-      background-color: var(--bg-input);
-      border: 1px solid var(--border);
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    .chip-toggle.on {
-      border-color: var(--teal);
-      color: #5eead4;
-      background-color: rgba(20, 184, 166, 0.12);
-    }
-
-    /* Clean Lyrics Reader View */
-    .lyrics-reader-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
     .lyric-line {
-      padding: 14px;
-      border-radius: var(--radius);
       background-color: var(--bg-card);
-      border: 1px solid var(--border);
+      border-radius: var(--radius-2xl);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
     }
 
     .lyric-tokens {
       display: flex;
       flex-wrap: wrap;
       align-items: flex-end;
-      gap: 6px 8px;
-      font-family: var(--font-zh);
-      line-height: 2;
+      gap: 8px 10px;
     }
 
     .word-token {
       display: inline-flex;
       flex-direction: column;
       align-items: center;
-      padding: 3px 6px;
-      border-radius: 6px;
+      padding: 6px 8px;
+      border-radius: 12px;
       cursor: pointer;
+      user-select: none;
+      transition: background-color 0.15s ease, transform 0.1s ease;
     }
 
-    .word-token:active, .word-token:hover {
-      background-color: var(--accent-soft);
+    .word-token:active {
+      background-color: var(--ios-blue-soft);
+      transform: scale(0.96);
     }
 
     .word-token.in-vocab {
-      border-bottom: 2px dotted var(--gold);
+      background-color: var(--duo-green-soft);
     }
 
     .word-token ruby {
       ruby-position: over;
-      display: inline-flex;
+      display: flex;
       flex-direction: column-reverse;
       align-items: center;
     }
 
     .word-token rt {
       font-family: var(--font-sans);
-      font-size: calc(0.78rem * var(--lyric-scale));
+      font-size: 0.78rem;
       color: var(--gold);
-      font-weight: 500;
-      line-height: 1.1;
-      margin-bottom: 2px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 3px;
     }
 
     .hide-pinyin .word-token rt {
       display: none;
     }
 
-    .char-main {
-      font-size: calc(1.45rem * var(--lyric-scale));
-      font-weight: 700;
-      line-height: 1.2;
+    .word-token .char-main {
+      font-family: var(--font-zh);
+      font-size: 1.48rem;
+      font-weight: 800;
+      line-height: 1.25;
+      color: var(--text-main);
     }
 
-    .char-sub-simplified {
-      font-size: calc(0.82rem * var(--lyric-scale));
+    .word-token .char-sub-simplified {
+      font-family: var(--font-zh);
+      font-size: 0.84rem;
       color: #5eead4;
-      margin-top: 2px;
-      line-height: 1.1;
-      font-weight: 600;
+      background: rgba(20, 184, 166, 0.14);
+      padding: 2px 6px;
+      border-radius: 6px;
+      margin-top: 3px;
     }
 
     .lyric-translation {
-      margin-top: 8px;
-      padding-top: 6px;
-      border-top: 1px dashed var(--border);
-      font-size: 0.88rem;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 0.92rem;
       color: var(--text-muted);
     }
 
@@ -475,65 +580,263 @@
       display: none;
     }
 
-    /* Flashcards Self-Practice Mode */
+    /* Practice Box (Flashcards, Matching Mode & Typing Mode) */
     .flashcard-box {
       background-color: var(--bg-card);
-      border: 2px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px 16px;
+      border-radius: var(--radius-3xl);
+      padding: 22px 18px;
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 15px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-subtle);
     }
 
     .flashcard-trad-char {
       font-family: var(--font-zh);
-      font-size: 3.5rem;
+      font-size: 3.7rem;
       font-weight: 800;
       line-height: 1.2;
       color: var(--text-main);
-      margin: 8px 0;
+      margin: 10px 0;
       text-align: center;
       word-break: break-word;
     }
 
     .flashcard-trad-char.sentence-mode {
-      font-size: 1.85rem;
+      font-size: 1.8rem;
       line-height: 1.45;
-      margin: 10px 0;
+      margin: 8px 0;
     }
 
     .btn-star-card {
       width: auto;
-      padding: 6px 14px;
-      min-height: 36px;
-      font-size: 0.85rem;
+      padding: 6px 12px;
+      min-height: 34px;
+      font-size: 0.82rem;
+      font-weight: 700;
       border-radius: 999px;
-      border: 1px solid var(--border);
       background-color: var(--bg-input);
       color: var(--text-muted);
     }
 
     .btn-star-card.starred {
-      background-color: rgba(245, 158, 11, 0.2);
-      border-color: var(--gold);
-      color: #fde68a;
+      background-color: var(--gold-soft);
+      color: var(--gold);
     }
 
     .flashcard-answer-area {
       display: none;
       flex-direction: column;
-      gap: 10px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+      text-align: left;
     }
 
     .flashcard-answer-area.revealed {
       display: flex;
     }
 
-    /* Bottom Navigation Bar (3 clean tabs) */
+    /* Anki SRS 3 Rating Buttons (Hard / Good / Easy) */
+    .srs-rating-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .srs-btn {
+      min-height: 64px;
+      padding: 10px 8px;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-weight: 800;
+      font-size: 0.95rem;
+      transition: transform 0.12s ease;
+    }
+
+    .srs-btn:active {
+      transform: translateY(2px) scale(0.97);
+    }
+
+    .srs-btn .srs-sub {
+      font-size: 0.74rem;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .srs-btn-hard {
+      background-color: var(--hard-red-soft);
+      color: #fca5a5;
+      border: 1px solid rgba(255, 75, 75, 0.35);
+    }
+
+    .srs-btn-good {
+      background-color: var(--ios-blue-soft);
+      color: #93c5fd;
+      border: 1px solid rgba(10, 132, 255, 0.35);
+    }
+
+    .srs-btn-easy {
+      background-color: var(--duo-green-soft);
+      color: #86efac;
+      border: 1px solid rgba(88, 204, 2, 0.35);
+    }
+
+    /* Matching Mode (Multiple Choice) Option Buttons */
+    .matching-options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .match-option-btn {
+      width: 100%;
+      min-height: 58px;
+      padding: 12px 16px;
+      border-radius: 18px;
+      background-color: var(--bg-input);
+      border: 2px solid var(--border-subtle);
+      color: var(--text-main);
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: all 0.15s ease;
+    }
+
+    .match-option-btn:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .match-option-btn.correct {
+      background-color: rgba(88, 204, 2, 0.22);
+      border-color: var(--duo-green);
+      color: #bbf7d0;
+    }
+
+    .match-option-btn.wrong {
+      background-color: rgba(255, 75, 75, 0.22);
+      border-color: var(--hard-red);
+      color: #fecaca;
+    }
+
+    /* Typing Mode Feedback Box */
+    .typing-feedback-box {
+      padding: 12px 16px;
+      border-radius: 16px;
+      font-weight: 800;
+      font-size: 0.92rem;
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      text-align: left;
+    }
+
+    .typing-feedback-box.correct {
+      display: flex;
+      background-color: rgba(88, 204, 2, 0.2);
+      border: 1px solid var(--duo-green);
+      color: #bbf7d0;
+    }
+
+    .typing-feedback-box.wrong {
+      display: flex;
+      background-color: rgba(255, 75, 75, 0.2);
+      border: 1px solid var(--hard-red);
+      color: #fecaca;
+    }
+
+    /* Memrise-Style Context Box */
+    .context-sentence-box {
+      background: linear-gradient(145deg, rgba(10, 132, 255, 0.1), rgba(88, 204, 2, 0.08));
+      border-radius: 18px;
+      padding: 14px 16px;
+      border: 1px solid rgba(125, 211, 252, 0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .context-highlight {
+      color: var(--duo-green);
+      font-weight: 900;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    /* Gamification & Progress Dashboard (Duolingo Style) */
+    .progress-bar-track {
+      width: 100%;
+      height: 16px;
+      background-color: var(--bg-input);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 6px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #58cc02, #86efac);
+      border-radius: 999px;
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat-card {
+      background-color: var(--bg-card);
+      border-radius: var(--radius-2xl);
+      padding: 18px 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-card.wide {
+      grid-column: span 2;
+    }
+
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .hsk-progress-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .hsk-progress-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Fixed Bottom Navigation Bar (3 Icons: Library, Practice, Progress) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -541,42 +844,46 @@
       transform: translateX(-50%);
       width: 100%;
       max-width: 430px;
-      background-color: var(--bg-app);
-      border-top: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border-subtle);
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      padding-bottom: var(--safe-bottom);
+      padding: 6px 10px calc(8px + var(--safe-bottom));
       z-index: 40;
     }
 
     .bottom-nav-btn {
-      min-height: 62px;
+      min-height: 58px;
+      border-radius: 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 3px;
+      gap: 4px;
       color: var(--text-muted);
       font-size: 0.78rem;
-      font-weight: 600;
+      font-weight: 800;
+      transition: all 0.15s ease;
     }
 
     .bottom-nav-btn .nav-icon {
-      font-size: 1.25rem;
+      font-size: 1.35rem;
       line-height: 1;
     }
 
     .bottom-nav-btn.active {
-      color: #fff;
-      background-color: rgba(225, 29, 72, 0.14);
-      border-top: 2px solid var(--accent);
+      color: var(--duo-green);
+      background-color: var(--duo-green-soft);
     }
 
-    /* Modals (Bottom Sheet) */
+    /* Bottom Sheet Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
       background-color: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(4px);
       z-index: 100;
       display: none;
       align-items: flex-end;
@@ -593,40 +900,68 @@
       max-height: 88dvh;
       overflow-y: auto;
       background-color: var(--bg-card);
-      border-top: 1px solid var(--border);
-      border-top-left-radius: 18px;
-      border-top-right-radius: 18px;
-      padding: 20px 16px calc(20px + var(--safe-bottom));
+      border-top-left-radius: 26px;
+      border-top-right-radius: 26px;
+      padding: 24px 20px calc(24px + var(--safe-bottom));
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      box-shadow: var(--shadow-md);
     }
 
     .info-row {
       background-color: var(--bg-input);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
+      border-radius: 16px;
+      padding: 12px 16px;
     }
 
     .info-label {
       font-size: 0.74rem;
       color: var(--text-muted);
       text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 3px;
+    }
+
+    /* Notification Banner */
+    .alert-box {
+      padding: 12px 16px;
+      border-radius: 16px;
+      background-color: var(--ios-blue-soft);
+      color: #bae6fd;
+      font-size: 0.88rem;
       font-weight: 700;
-      margin-bottom: 2px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 10px 18px 0;
+    }
+
+    .alert-box.show {
+      display: flex;
     }
   </style>
 </head>
 <body>
   <div class="mobile-app">
-    <!-- Top Header -->
+    <!-- Top Header: Brand + Daily Streak 🔥 + Total XP ⚡ -->
     <header class="top-header">
-      <div class="brand" onclick="app.switchView('home')" style="cursor:pointer;">
+      <div class="brand" onclick="app.switchView('home')">
         <div class="brand-icon">歌</div>
-        <span>KTV Hanyu</span>
+        <span>KTV App</span>
       </div>
-      <span class="status-badge" id="networkBadge">Online</span>
+      <div class="header-stats">
+        <div class="stat-pill streak" title="Daily Practice Streak" onclick="app.switchView('progress')">
+          <span>🔥</span>
+          <span id="headerStreakCount">0</span>
+        </div>
+        <div class="stat-pill xp" title="Total XP" onclick="app.switchView('progress')">
+          <span>⚡</span>
+          <span id="headerXpCount">0 XP</span>
+        </div>
+      </div>
     </header>
 
     <!-- System Notification Banner -->
@@ -638,47 +973,56 @@
     <!-- Main Single-Column Container -->
     <main class="view-container">
 
-      <!-- VIEW 1: LIBRARY -->
+      <!-- ================================================================= -->
+      <!-- TAB 1: LIBRARY (Songs + Add Song + Lyrics Reader)                 -->
+      <!-- ================================================================= -->
       <section id="view-home" class="view-section active" aria-label="Library">
-        <div class="card">
-          <h1 style="font-size:1.15rem; font-weight:800; margin-bottom:6px;">Learn Chinese with KTV Lyrics</h1>
-          <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:12px;">
-            Open any song from your library to read the lyrics with Pinyin, characters, and meanings, or practice all words from any song directly in Flashcards.
+        <!-- Hero Card -->
+        <div class="card-elevated">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <span class="badge badge-green" id="networkBadge">Online</span>
+            <span class="badge badge-orange" id="libraryDueHintBadge" style="cursor:pointer;" onclick="app.switchView('practice')">0 due today</span>
+          </div>
+          <h1 style="font-size:1.3rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:6px;">
+            Learn Chinese with KTV
+          </h1>
+          <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:16px;">
+            Read lyrics with Pinyin, HSK badges &amp; meanings, save words with full KTV sentence context, and master them with Flashcards, Matching &amp; Typing.
           </p>
           <button type="button" class="btn btn-primary" onclick="app.switchView('add')">
-            ＋ Add Song
+            ＋ Add New Song (+50 XP)
           </button>
         </div>
 
-        <input type="search" id="homeFilterInput" class="input-field" placeholder="Search in your library..." oninput="app.renderHomeLists()">
+        <input type="search" id="homeFilterInput" class="input-field" placeholder="🔍 Search songs or lyrics..." oninput="app.renderHomeLists()">
 
         <div>
           <div class="section-title">
-            <span>🎵 My Songs</span>
+            <span>🎵 My KTV Library</span>
             <span class="badge" id="libraryCountBadge">0</span>
           </div>
           <div id="homeLibraryList" class="song-list"></div>
         </div>
 
         <div id="favoritesSectionWrap" style="display:none;">
-          <div class="section-title"><span>⭐ Favorites</span></div>
+          <div class="section-title"><span>⭐ Favorite Songs</span></div>
           <div id="homeFavoritesList" class="song-list"></div>
         </div>
 
         <!-- Subtle Backup Export / Import (JSON) -->
-        <div style="margin-top:8px; padding-top:12px; border-top:1px solid var(--border); display:flex; flex-direction:column; gap:8px;">
+        <div style="margin-top:4px; display:flex; flex-direction:column; gap:10px;">
           <button type="button" class="btn btn-subtle" onclick="app.toggleBackupPanel()">
             ⇄ Export / Import Backup (JSON)
           </button>
-          <div id="backupPanel" class="card" style="display:none; flex-direction:column; gap:10px;">
-            <p style="font-size:0.82rem; color:var(--text-muted);">
-              Download all your songs, cached translations, and saved words as a JSON backup file, or restore a backup on another device.
+          <div id="backupPanel" class="card" style="display:none; flex-direction:column; gap:12px;">
+            <p style="font-size:0.85rem; color:var(--text-muted);">
+              Download all your songs, SRS review schedules, XP/streak progress, HSK levels, and cached meanings as a JSON file, or restore on another device.
             </p>
-            <div style="display:flex; gap:8px;">
+            <div style="display:flex; gap:10px;">
               <button type="button" class="btn btn-sm btn-teal" style="flex:1;" onclick="app.exportBackupJson()">
                 ⬇️ Export JSON
               </button>
-              <label class="btn btn-sm" style="flex:1; cursor:pointer;">
+              <label class="btn btn-sm" style="flex:1; cursor:pointer; background:var(--bg-elevated);">
                 ⬆️ Import JSON
                 <input type="file" accept=".json,application/json" style="display:none" onchange="app.importBackupJson(this.files[0]); this.value='';">
               </label>
@@ -687,26 +1031,26 @@
         </div>
       </section>
 
-      <!-- VIEW 2: LYRICS READER -->
+      <!-- SUB-VIEW: LYRICS READER (Opened from Library) -->
       <section id="view-reader" class="view-section" aria-label="Lyrics Reader">
         <div class="reader-card">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; flex-wrap:wrap;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
             <button type="button" class="btn btn-sm" onclick="app.switchView('home')">
-              ← Back to Library
+              ← Library
             </button>
             <div style="display:flex; gap:6px;">
               <button type="button" class="btn btn-sm btn-subtle" id="readerFetchTransBtn" onclick="app.fetchMissingTranslationsForSong(app.state.currentSong?.id, this)">
-                🌐 Fetch Missing Translations
+                🌐 Translate All
               </button>
               <button type="button" class="btn btn-sm" onclick="app.openSegmentEditorModal()">
-                ✂️ Edit Split
+                ✂️ Split
               </button>
             </div>
           </div>
 
           <div>
-            <div style="font-weight:800; font-size:1.2rem; font-family:var(--font-zh);" id="readerTitle">—</div>
-            <div style="font-size:0.88rem; color:var(--text-muted);" id="readerArtist">—</div>
+            <div style="font-weight:900; font-size:1.3rem; font-family:var(--font-zh);" id="readerTitle">—</div>
+            <div style="font-size:0.9rem; color:var(--text-muted);" id="readerArtist">—</div>
           </div>
 
           <!-- Character Script Switcher: Traditional / Simplified / Both -->
@@ -728,47 +1072,48 @@
         <div id="lyricsViewport" class="lyrics-reader-list" aria-live="polite"></div>
       </section>
 
-      <!-- VIEW 3: ADD SONG -->
+      <!-- SUB-VIEW: ADD SONG (Opened from Library) -->
       <section id="view-add" class="view-section" aria-label="Add Song">
-        <div class="card">
-          <h2 class="section-title">＋ Add Song</h2>
-          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:14px;">
-            Paste plain Chinese lyrics or <code>.lrc</code> lyrics below. When you click Save, words are automatically segmented and Pinyin, Traditional/Simplified characters, and word meanings are generated.
+        <div class="card-elevated">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <button type="button" class="btn btn-sm" onclick="app.switchView('home')">← Back to Library</button>
+            <span class="badge badge-green">+50 XP Reward</span>
+          </div>
+          <h2 style="font-size:1.2rem; font-weight:900; margin-bottom:6px;">＋ Add KTV Song</h2>
+          <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">
+            Paste Chinese lyrics or <code>.lrc</code> text below. Words and full sentences are automatically segmented, converted to Pinyin &amp; Traditional/Simplified, and translated for offline practice.
           </p>
 
           <form onsubmit="app.importCustomSong(event)">
-            <!-- Field 1: Song Title -->
             <div class="form-group">
               <label class="form-label" for="importSongTitle">1. Song Title *</label>
               <input type="text" id="importSongTitle" class="input-field" required placeholder="e.g. 告白氣球">
             </div>
 
-            <!-- Field 2: Artist -->
             <div class="form-group">
               <label class="form-label" for="importSongArtist">2. Artist *</label>
               <input type="text" id="importSongArtist" class="input-field" required placeholder="e.g. 周杰倫 (Jay Chou)">
             </div>
 
-            <!-- Field 3: Lyrics -->
             <div class="form-group">
               <label class="form-label" for="importLrcTextarea">3. Lyrics (Chinese text or .LRC) *</label>
-              <textarea id="importLrcTextarea" rows="9" class="input-field" required style="font-family:var(--font-zh), monospace; font-size:0.95rem; line-height:1.6;" placeholder="Paste your Chinese lyrics here..."></textarea>
+              <textarea id="importLrcTextarea" rows="8" class="input-field" required style="font-family:var(--font-zh), monospace; font-size:0.95rem; line-height:1.6;" placeholder="Paste your Chinese lyrics here..."></textarea>
             </div>
 
             <div style="margin-bottom:14px;">
-              <label class="btn btn-sm" style="cursor:pointer; width:100%;">
+              <label class="btn btn-subtle" style="cursor:pointer; width:100%;">
                 📄 Or load text from a .TXT / .LRC file
                 <input type="file" id="importLrcFile" accept=".lrc,.txt" style="display:none" onchange="app.previewImportedLrcFile(this.files[0])">
               </label>
             </div>
 
             <!-- Translation progress indicator during Save -->
-            <div id="saveTranslationProgress" style="display:none; padding:10px 12px; margin-bottom:12px; border-radius:8px; background:rgba(20,184,166,0.15); border:1px solid var(--teal); color:#5eead4; font-size:0.88rem; font-weight:600; text-align:center;">
-              Translating words... 0/0
+            <div id="saveTranslationProgress" style="display:none; padding:12px; margin-bottom:14px; border-radius:16px; background:var(--duo-green-soft); color:#86efac; font-size:0.9rem; font-weight:800; text-align:center;">
+              Translating words &amp; sentences... 0/0
             </div>
 
             <button type="submit" class="btn btn-primary" id="saveSongSubmitBtn">
-              💾 Save Song
+              💾 Save Song &amp; Earn +50 XP
             </button>
           </form>
         </div>
@@ -777,188 +1122,401 @@
         <div class="card">
           <div class="section-title">
             <span>🔍 Find Lyrics on LRCLIB</span>
-            <span class="badge">Optional</span>
+            <span class="badge">Online</span>
           </div>
           <form onsubmit="app.searchLrclib(event)" style="display:flex; gap:8px; margin-bottom:10px;">
             <input type="text" id="lrcSearchTrack" class="input-field" placeholder="Search song title or artist...">
-            <button type="submit" class="btn btn-primary" style="width:auto; padding:0 16px;">Search</button>
+            <button type="submit" class="btn btn-blue" style="width:auto; padding:0 18px;">Search</button>
           </form>
-          <div id="lrcSearchStatus" style="font-size:0.82rem; color:var(--text-muted);"></div>
+          <div id="lrcSearchStatus" style="font-size:0.84rem; color:var(--text-muted);"></div>
           <div id="lrcSearchResults" style="display:flex; flex-direction:column; gap:8px; margin-top:8px;"></div>
         </div>
       </section>
 
-      <!-- VIEW 4: WORDS & FLASHCARDS -->
-      <section id="view-vocab" class="view-section" aria-label="Words">
-        <div class="card" style="display:flex; flex-direction:column; gap:10px;">
-          <div class="section-title" style="margin-bottom:0;">
-            <span>📚 Words & Flashcards</span>
-            <span class="badge" id="vocabTotalBadge">0 saved</span>
-          </div>
-          <button type="button" class="btn btn-gold" onclick="app.toggleFlashcardMode()">
-            🎴 Practice Flashcards
-          </button>
-          <div style="display:flex; gap:8px;">
-            <button type="button" class="btn btn-sm" style="flex:1;" onclick="app.openVocabEditModal()">＋ Add Word</button>
-            <button type="button" class="btn btn-sm" style="flex:1;" onclick="app.exportVocabCsv()">⬇️ CSV</button>
-            <label class="btn btn-sm" style="flex:1; cursor:pointer;">
-              ⬆️ CSV
-              <input type="file" accept=".csv,text/csv" style="display:none" onchange="app.importVocabCsv(this.files[0]); this.value='';">
-            </label>
-          </div>
-        </div>
-
-        <!-- FLASHCARDS SELF-PRACTICE MODE WITH SONG SELECTOR DROPDOWN -->
-        <div id="flashcardContainer" style="display:none;">
-          <div class="flashcard-box">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span class="badge" id="flashcardCounter">Card 0 / 0</span>
-              <button type="button" class="btn btn-sm" onclick="app.toggleFlashcardMode()">Close</button>
+      <!-- ================================================================= -->
+      <!-- TAB 2: PRACTICE (Flashcards SRS + Matching Mode + Typing Mode)    -->
+      <!-- ================================================================= -->
+      <section id="view-practice" class="view-section" aria-label="Practice">
+        <div class="flashcard-box" id="flashcardContainer">
+          <!-- Top Bar: Practice Mode Switcher (Flashcards / Matching / Typing) -->
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span class="badge badge-blue" id="flashcardCounter">Card 0 / 0</span>
+              <span class="badge badge-green" id="flashcardDueBadge">0 due today</span>
             </div>
 
-            <!-- Mode Switcher: Words vs Full Sentences (Lyrics lines) -->
-            <div class="segmented-row" style="grid-template-columns: repeat(2, 1fr);" role="group" aria-label="Flashcard learning mode">
-              <button type="button" class="seg-btn active" id="fcModeWordsBtn" onclick="app.setFlashcardUnitMode('words')">🔤 Words</button>
-              <button type="button" class="seg-btn" id="fcModeSentencesBtn" onclick="app.setFlashcardUnitMode('sentences')">📝 Sentences (Full Lines)</button>
+            <div class="segmented-row" role="group" aria-label="Select Practice Mode">
+              <button type="button" class="seg-btn active" id="pModeFlashcardsBtn" onclick="app.setPracticeInteractionMode('flashcards')">
+                🎴 Flashcards
+              </button>
+              <button type="button" class="seg-btn" id="pModeMatchingBtn" onclick="app.setPracticeInteractionMode('matching')">
+                🎯 Matching
+              </button>
+              <button type="button" class="seg-btn" id="pModeTypingBtn" onclick="app.setPracticeInteractionMode('typing')">
+                ⌨️ Typing
+              </button>
             </div>
+          </div>
 
-            <!-- Song Filter Dropdown: Always populated with all Library songs -->
-            <div style="text-align:left;">
-              <label class="form-label" for="flashcardSongFilter" style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">
-                Select deck / song:
+          <!-- SRS Filter Toggle: Due Today (Anki Default) vs All Cards -->
+          <div class="segmented-row" style="grid-template-columns: repeat(2, 1fr);" role="group" aria-label="SRS review filter">
+            <button type="button" class="seg-btn active" id="fcFilterDueBtn" onclick="app.setFlashcardDueOnly(true)">
+              ⏰ Due Today (<span id="fcDueCountInline">0</span>)
+            </button>
+            <button type="button" class="seg-btn" id="fcFilterAllBtn" onclick="app.setFlashcardDueOnly(false)">
+              🗂️ All Cards (<span id="fcAllCountInline">0</span>)
+            </button>
+          </div>
+
+          <!-- Unit Mode Switcher: Words vs Full Sentences (shown in Flashcards mode) -->
+          <div class="segmented-row" id="fcUnitModeRow" style="grid-template-columns: repeat(2, 1fr);" role="group" aria-label="Flashcard learning unit">
+            <button type="button" class="seg-btn active" id="fcModeWordsBtn" onclick="app.setFlashcardUnitMode('words')">🔤 Words</button>
+            <button type="button" class="seg-btn" id="fcModeSentencesBtn" onclick="app.setFlashcardUnitMode('sentences')">📝 Sentences</button>
+          </div>
+
+          <!-- Deck & HSK Filter Row -->
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; text-align:left;">
+            <div>
+              <label class="form-label" for="flashcardSongFilter" style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">
+                Deck / Song:
               </label>
-              <select id="flashcardSongFilter" class="input-field" style="min-height:42px; padding:8px 10px; font-size:0.9rem;" onchange="app.onFlashcardSongFilterChange(this.value)">
-                <option value="all_songs">All Library Songs (All unique words)</option>
-                <option value="saved_only">Saved / Starred Words Only</option>
+              <select id="flashcardSongFilter" class="input-field" style="min-height:42px; padding:6px 10px; font-size:0.84rem;" onchange="app.onFlashcardSongFilterChange(this.value)">
+                <option value="all_songs">All Library Songs</option>
+                <option value="saved_only">Saved / Starred Only</option>
               </select>
             </div>
-
-            <div id="flashcardEmptyMsg" style="display:none; padding:16px 8px; color:var(--text-muted); font-size:0.9rem;">
-              No items found for this selection. Add a song in 'Add Song' or tap Star on cards to save them.
+            <div>
+              <label class="form-label" for="flashcardHskFilter" style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">
+                Filter by HSK Level:
+              </label>
+              <select id="flashcardHskFilter" class="input-field" style="min-height:42px; padding:6px 10px; font-size:0.84rem;" onchange="app.onFlashcardHskFilterChange(this.value)">
+                <option value="all">All Levels</option>
+                <option value="1-2">Beginner 1-2</option>
+                <option value="3-4">Intermediate 3-4</option>
+                <option value="5-6-non">Advanced 5-6 / Non-HSK</option>
+              </select>
             </div>
+          </div>
 
-            <div id="flashcardActiveWrap">
-              <!-- FRONT (Question): Exclusively Traditional character / sentence (large & centered) + Star Button -->
-              <div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                  <div style="font-size:0.76rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;" id="flashcardFrontLabel">Traditional Character</div>
-                  <button type="button" class="btn btn-star-card" id="flashcardStarBtn" onclick="app.toggleStarCurrentFlashcard()">
-                    ☆ Star Word
-                  </button>
+          <!-- Empty / All Caught Up State -->
+          <div id="flashcardEmptyMsg" style="display:none; padding:22px 12px; color:var(--text-muted); font-size:0.94rem; flex-direction:column; gap:12px; align-items:center;">
+            <div style="font-size:2.2rem;">🎉</div>
+            <div id="flashcardEmptyText" style="font-weight:700; color:var(--text-main);">All caught up for today!</div>
+            <button type="button" class="btn btn-sm btn-blue" id="flashcardPracticeAllFallbackBtn" style="display:none;" onclick="app.setFlashcardDueOnly(false)">
+              Practice All Cards Anyway
+            </button>
+          </div>
+
+          <!-- Active Card Area -->
+          <div id="flashcardActiveWrap">
+            <!-- Header above character: Label + HSK Badge + Star Button -->
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:6px; margin-bottom:4px;">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:0.74rem; color:var(--text-muted); text-transform:uppercase; font-weight:800; letter-spacing:0.05em;" id="flashcardFrontLabel">Traditional</span>
+                  <span id="flashcardHskBadgeWrap"></span>
                 </div>
-                <div class="flashcard-trad-char" id="flashcardFrontTrad">—</div>
+                <button type="button" class="btn btn-star-card" id="flashcardStarBtn" onclick="app.toggleStarCurrentFlashcard()">
+                  ☆ Star Word
+                </button>
               </div>
 
-              <!-- FRONT ACTION BUTTONS: "Show answer" + "Next" (skip directly to next word/sentence) -->
-              <div id="flashcardFrontActions" style="display:flex; gap:8px;">
+              <!-- Large Centered Traditional Character -->
+              <div class="flashcard-trad-char" id="flashcardFrontTrad">—</div>
+              <div style="font-size:0.78rem; color:var(--text-muted);" id="flashcardSrsStatusText">New card</div>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- MODE 1: FLASHCARDS (SPACED REPETITION)                        -->
+            <!-- ============================================================= -->
+            <div id="practicePaneFlashcards">
+              <div id="flashcardFrontActions" style="display:flex; gap:10px; margin-top:14px;">
                 <button type="button" class="btn btn-primary" style="flex:2;" id="flashcardShowAnswerBtn" onclick="app.revealFlashcard()">
-                  Show answer
+                  Show Answer
                 </button>
                 <button type="button" class="btn" style="flex:1;" id="flashcardSkipNextBtn" onclick="app.stepFlashcard(1)">
                   Next ▶
                 </button>
               </div>
 
-              <!-- BACK (Revealed after clicking "Show answer"): Pinyin (with tones), Simplified character, Meaning & Edit Meaning -->
               <div class="flashcard-answer-area" id="flashcardBackContent">
-                <div class="info-row">
-                  <div class="info-label">Pinyin (with tones)</div>
-                  <div style="font-size:1.3rem; font-weight:700; color:var(--gold);" id="flashcardBackPinyin">—</div>
+                <div class="info-row" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+                  <div>
+                    <div class="info-label">Pinyin (with tones)</div>
+                    <div style="font-size:1.35rem; font-weight:800; color:var(--gold);" id="flashcardBackPinyin">—</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div class="info-label" id="flashcardBackSimpLabel">Simplified (简体)</div>
+                    <div style="font-size:1.45rem; font-weight:800; font-family:var(--font-zh); color:#5eead4;" id="flashcardBackSimp">—</div>
+                  </div>
                 </div>
-                <div class="info-row">
-                  <div class="info-label" id="flashcardBackSimpLabel">Simplified Character (简体)</div>
-                  <div style="font-size:1.5rem; font-weight:700; font-family:var(--font-zh); color:#5eead4;" id="flashcardBackSimp">—</div>
-                </div>
+
                 <div class="info-row">
                   <div class="info-label">Meaning</div>
-                  <div style="font-size:1.1rem; font-weight:600;" id="flashcardBackMeaning">—</div>
+                  <div style="font-size:1.12rem; font-weight:800;" id="flashcardBackMeaning">—</div>
                   <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;" id="flashcardBackNote"></div>
 
-                  <!-- Quick inline Edit Meaning field on Flashcard back -->
-                  <div style="display:flex; gap:6px; margin-top:8px;">
-                    <input type="text" id="flashcardEditMeaningInput" class="input-field" style="min-height:36px; padding:6px 10px; font-size:0.84rem;" placeholder="Edit meaning...">
+                  <div style="display:flex; gap:8px; margin-top:10px;">
+                    <input type="text" id="flashcardEditMeaningInput" class="input-field" style="min-height:38px; padding:6px 12px; font-size:0.85rem;" placeholder="Edit meaning...">
                     <button type="button" class="btn btn-sm btn-teal" onclick="app.saveFlashcardInlineMeaning()">Save</button>
                   </div>
                 </div>
 
-                <div style="display:flex; gap:8px; margin-top:6px;">
-                  <button type="button" class="btn" onclick="app.stepFlashcard(-1)">◀ Previous</button>
-                  <button type="button" class="btn btn-primary" onclick="app.stepFlashcard(1)">Next ▶</button>
+                <!-- MEMRISE-STYLE LEARNING IN CONTEXT -->
+                <div class="context-sentence-box" id="flashcardContextBox" style="display:none;">
+                  <div class="info-label" style="color:#7dd3fc;">🎤 KTV Lyric Context</div>
+                  <div style="font-family:var(--font-zh); font-size:1.18rem; font-weight:800; line-height:1.4;" id="flashcardContextZh">—</div>
+                  <div style="font-size:0.86rem; color:var(--gold); font-weight:700;" id="flashcardContextPinyin">—</div>
+                  <div style="font-size:0.88rem; color:var(--text-muted);" id="flashcardContextMeaning">—</div>
                 </div>
+
+                <!-- ANKI SRS 3 RATING BUTTONS (+10 XP each) -->
+                <div style="margin-top:4px;">
+                  <div style="font-size:0.78rem; color:var(--text-muted); font-weight:800; text-align:center; margin-bottom:6px;">
+                    How well did you know this? (+10 XP)
+                  </div>
+                  <div class="srs-rating-grid">
+                    <button type="button" class="srs-btn srs-btn-hard" onclick="app.rateFlashcardSRS('hard')">
+                      <span>Hard</span>
+                      <span class="srs-sub" id="srsLabelHard">1d (Tomorrow)</span>
+                    </button>
+                    <button type="button" class="srs-btn srs-btn-good" onclick="app.rateFlashcardSRS('good')">
+                      <span>Good</span>
+                      <span class="srs-sub" id="srsLabelGood">3d</span>
+                    </button>
+                    <button type="button" class="srs-btn srs-btn-easy" onclick="app.rateFlashcardSRS('easy')">
+                      <span>Easy</span>
+                      <span class="srs-sub" id="srsLabelEasy">7d</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- MODE 2: MATCHING MODE (MULTIPLE CHOICE, +5 XP)                -->
+            <!-- ============================================================= -->
+            <div id="practicePaneMatching" style="display:none; flex-direction:column; gap:10px; margin-top:10px;">
+              <div style="font-size:0.82rem; color:var(--text-muted); font-weight:700;">
+                Pick the correct Pinyin &amp; Meaning (+5 XP on first try):
+              </div>
+              <div class="matching-options-grid" id="matchingOptionsGrid"></div>
+              <div style="display:flex; justify-content:flex-end; margin-top:4px;">
+                <button type="button" class="btn btn-sm" onclick="app.stepFlashcard(1)">Skip / Next ▶</button>
+              </div>
+            </div>
+
+            <!-- ============================================================= -->
+            <!-- MODE 3: TYPING MODE (HARD MODE, TONE-INSENSITIVE, +15 XP)     -->
+            <!-- ============================================================= -->
+            <div id="practicePaneTyping" style="display:none; flex-direction:column; gap:12px; margin-top:10px;">
+              <div class="info-row" style="text-align:left;">
+                <div class="info-label">Meaning Prompt</div>
+                <div style="font-size:1.1rem; font-weight:800; color:#7dd3fc;" id="typingPromptMeaning">—</div>
+                <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;" id="typingPromptSimpNote"></div>
+              </div>
+
+              <form onsubmit="app.handleTypingSubmit(event)" style="display:flex; flex-direction:column; gap:10px;">
+                <input
+                  type="text"
+                  id="typingPinyinInput"
+                  class="input-field"
+                  placeholder="Type Pinyin without tones (e.g. pengyou)..."
+                  autocomplete="off"
+                  autocapitalize="none"
+                  autocorrect="off"
+                  spellcheck="false"
+                  enterkeyhint="done"
+                  style="font-size:1.05rem; font-weight:700; text-align:center;"
+                >
+                <div style="display:flex; gap:10px;">
+                  <button type="submit" class="btn btn-primary" style="flex:2;" id="typingCheckBtn">
+                    ✓ Check (+15 XP)
+                  </button>
+                  <button type="button" class="btn" style="flex:1;" onclick="app.stepFlashcard(1)">
+                    Next ▶
+                  </button>
+                </div>
+              </form>
+
+              <div id="typingFeedbackBox" class="typing-feedback-box">
+                <div id="typingFeedbackTitle"></div>
+                <div id="typingFeedbackDetail" style="font-size:0.86rem; opacity:0.95;"></div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Search & Sort Saved Words -->
-        <div style="display:flex; gap:8px;">
-          <input type="search" id="vocabSearchInput" class="input-field" placeholder="Search saved words..." oninput="app.renderVocabList()">
-          <select id="vocabSortSelect" class="input-field" style="width:auto;" aria-label="Sort words" onchange="app.renderVocabList()">
-            <option value="date-desc">Newest</option>
-            <option value="zh-asc">A → Z</option>
-          </select>
+        <!-- Saved / Starred Vocabulary List Below Practice Card -->
+        <div class="card">
+          <div class="section-title">
+            <span>⭐ Saved Words &amp; Sentences</span>
+            <span class="badge" id="vocabTotalBadge">0 saved</span>
+          </div>
+          <div style="display:flex; gap:8px; margin-bottom:12px;">
+            <button type="button" class="btn btn-sm" style="flex:1; background:var(--bg-elevated);" onclick="app.openVocabEditModal()">＋ Add Word</button>
+            <button type="button" class="btn btn-sm" style="flex:1; background:var(--bg-elevated);" onclick="app.exportVocabCsv()">⬇️ CSV</button>
+            <label class="btn btn-sm" style="flex:1; cursor:pointer; background:var(--bg-elevated);">
+              ⬆️ CSV
+              <input type="file" accept=".csv,text/csv" style="display:none" onchange="app.importVocabCsv(this.files[0]); this.value='';">
+            </label>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <input type="search" id="vocabSearchInput" class="input-field" placeholder="Search saved words..." oninput="app.renderVocabList()">
+            <select id="vocabSortSelect" class="input-field" style="width:auto;" aria-label="Sort words" onchange="app.renderVocabList()">
+              <option value="date-desc">Newest</option>
+              <option value="due-asc">Due Soonest</option>
+              <option value="zh-asc">A → Z</option>
+            </select>
+          </div>
         </div>
 
         <div id="vocabListContainer" class="song-list"></div>
       </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 3: PROGRESS (Streak 🔥, XP Goal ⚡, Dashboard & HSK Breakdown) -->
+      <!-- ================================================================= -->
+      <section id="view-progress" class="view-section" aria-label="Progress">
+        <!-- Streak Banner Card -->
+        <div class="card-elevated" style="background: linear-gradient(145deg, rgba(255, 150, 0, 0.2), rgba(30, 41, 59, 0.95)); border-color: rgba(255, 150, 0, 0.3);">
+          <div style="display:flex; align-items:center; gap:16px;">
+            <div style="font-size:3rem; line-height:1;">🔥</div>
+            <div>
+              <div style="font-size:2rem; font-weight:900; color:#ffb03a; line-height:1.1;">
+                <span id="progressStreakDays">0</span> Day Streak
+              </div>
+              <div style="font-size:0.9rem; color:var(--text-muted); margin-top:4px;" id="progressStreakSubtext">
+                Practice today to keep your flame lit!
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily XP Goal Progress Bar Card -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-weight:900; font-size:1.05rem;">🎯 Daily XP Goal</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">+10 SRS · +5 Match · +15 Type · +50 Song</div>
+            </div>
+            <span class="badge badge-green" id="dailyGoalBadge">0 / 50 XP</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="dailyGoalFill" style="width:0%;"></div>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--text-muted); font-weight:700;">
+            <span id="dailyGoalStatusText">50 XP left to reach today's goal</span>
+            <span>Total: <strong style="color:#7dd3fc;" id="progressTotalXp">0 XP</strong></span>
+          </div>
+        </div>
+
+        <!-- Dashboard Statistics Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span style="font-size:1.4rem;">🎓</span>
+            <div class="stat-value" style="color:var(--duo-green);" id="statWordsLearned">0</div>
+            <div class="stat-label">Total Words Learned</div>
+          </div>
+
+          <div class="stat-card">
+            <span style="font-size:1.4rem;">🎵</span>
+            <div class="stat-value" style="color:#7dd3fc;" id="statTotalSongs">0</div>
+            <div class="stat-label">Total Songs in Library</div>
+          </div>
+
+          <div class="stat-card wide" style="display:flex; flex-direction:row; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-size:1.3rem;">⏰</span>
+              <div class="stat-value" style="color:#ffb03a; margin-top:4px;" id="statWordsDueToday">0</div>
+              <div class="stat-label">Words to Review Today</div>
+            </div>
+            <button type="button" class="btn btn-primary" style="width:auto; padding:12px 20px;" onclick="app.switchView('practice')">
+              Start Review ▶
+            </button>
+          </div>
+        </div>
+
+        <!-- HSK Mastery Progress Breakdown Card -->
+        <div class="card">
+          <div class="section-title" style="margin-bottom:6px;">
+            <span>📊 HSK Mastery Breakdown</span>
+            <span class="badge badge-blue" id="hskDatasetStatusBadge">HSK 1–6</span>
+          </div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
+            Unique words mastered (rated <strong>Good</strong> or <strong>Easy</strong>) per HSK level compared to total unique words in your KTV library:
+          </p>
+          <div id="hskBreakdownContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
+        </div>
+      </section>
     </main>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Fixed Bottom Navigation Bar (3 Icons: Library, Practice, Progress) -->
     <nav class="bottom-nav" aria-label="Bottom Navigation">
       <button type="button" class="bottom-nav-btn active" data-view="home" onclick="app.switchView('home')">
-        <span class="nav-icon">🏠</span>
+        <span class="nav-icon">📚</span>
         <span>Library</span>
       </button>
-      <button type="button" class="bottom-nav-btn" data-view="add" onclick="app.switchView('add')">
-        <span class="nav-icon">＋</span>
-        <span>Add Song</span>
+      <button type="button" class="bottom-nav-btn" data-view="practice" onclick="app.switchView('practice')">
+        <span class="nav-icon">🎴</span>
+        <span>Practice (<span id="navDueCount">0</span>)</span>
       </button>
-      <button type="button" class="bottom-nav-btn" data-view="vocab" onclick="app.switchView('vocab')">
-        <span class="nav-icon">📚</span>
-        <span>Words (<span id="navVocabCount">0</span>)</span>
+      <button type="button" class="bottom-nav-btn" data-view="progress" onclick="app.switchView('progress')">
+        <span class="nav-icon">🏆</span>
+        <span>Progress</span>
       </button>
     </nav>
   </div>
-
-  <!-- MODAL 1: Word Details Popup -->
+  <!-- MODAL 1: Word Details Popup (with HSK Badge & Memrise KTV Context Preview) -->
   <div id="wordModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" onclick="if(event.target===this) app.closeWordModal()">
     <div class="modal-sheet">
       <div style="display:flex; justify-content:space-between; align-items:flex-start;">
         <div>
-          <div style="font-family:var(--font-zh); font-size:2rem; font-weight:800;" id="wordModalTitle">學習 / 学习</div>
-          <div style="font-size:1.15rem; color:var(--gold); font-weight:700;" id="wordModalPinyin">xué xí</div>
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+            <div style="font-family:var(--font-zh); font-size:2.1rem; font-weight:900;" id="wordModalTitle">學習 / 学习</div>
+            <span id="wordModalHskBadge"></span>
+          </div>
+          <div style="font-size:1.15rem; color:var(--gold); font-weight:800;" id="wordModalPinyin">xué xí</div>
         </div>
-        <button type="button" class="btn btn-sm" onclick="app.closeWordModal()">✕</button>
+        <button type="button" class="btn btn-sm" style="background:var(--bg-elevated);" onclick="app.closeWordModal()">✕</button>
       </div>
 
       <div class="info-row" style="display:flex; justify-content:space-between;">
-        <div><span class="info-label">Traditional (繁體)</span><div style="font-size:1.2rem; font-weight:700; font-family:var(--font-zh);" id="wordModalTrad">學習</div></div>
-        <div><span class="info-label">Simplified (简体)</span><div style="font-size:1.2rem; font-weight:700; font-family:var(--font-zh);" id="wordModalSimp">学习</div></div>
+        <div><span class="info-label">Traditional (繁體)</span><div style="font-size:1.25rem; font-weight:800; font-family:var(--font-zh);" id="wordModalTrad">學習</div></div>
+        <div><span class="info-label">Simplified (简体)</span><div style="font-size:1.25rem; font-weight:800; font-family:var(--font-zh);" id="wordModalSimp">学习</div></div>
       </div>
 
       <div class="info-row">
         <div class="info-label">Meaning (<span id="wordModalSourceBadge">Dictionary</span>)</div>
-        <div style="font-weight:700; font-size:1.05rem;" id="wordModalMeaning">—</div>
+        <div style="font-weight:800; font-size:1.08rem;" id="wordModalMeaning">—</div>
+      </div>
+
+      <!-- Context Sentence from KTV Song (Memrise Style) -->
+      <div class="context-sentence-box" id="wordModalContextBox" style="display:none;">
+        <div class="info-label" style="color:#7dd3fc;">🎤 KTV Lyric Context (Saved with word)</div>
+        <div style="font-family:var(--font-zh); font-size:1.08rem; font-weight:800;" id="wordModalContextZh">—</div>
+        <div style="font-size:0.82rem; color:var(--gold); font-weight:700;" id="wordModalContextPinyin">—</div>
+        <div style="font-size:0.84rem; color:var(--text-muted);" id="wordModalContextMeaning">—</div>
       </div>
 
       <div class="form-group" style="margin-bottom:4px;">
         <label class="form-label" for="wordModalCustomMeaning" style="font-size:0.8rem; color:var(--text-muted);">Edit meaning:</label>
-        <div style="display:flex; gap:6px;">
+        <div style="display:flex; gap:8px;">
           <input type="text" id="wordModalCustomMeaning" class="input-field" placeholder="Enter or edit meaning...">
           <button type="button" class="btn btn-sm btn-teal" onclick="app.saveWordMeaningOnly()">Update</button>
         </div>
       </div>
 
-      <input type="text" id="wordModalCustomNote" class="input-field" placeholder="Optional note (for Saved Words)...">
+      <input type="text" id="wordModalCustomNote" class="input-field" placeholder="Optional note...">
 
-      <div style="display:flex; gap:8px;">
-        <button type="button" class="btn btn-primary" style="flex:2;" onclick="app.saveCurrentWordToVocab()">⭐ Star / Save Word</button>
-        <button type="button" class="btn btn-teal" style="flex:1;" onclick="app.speakChineseWord()">🔊 Pronounce</button>
+      <div style="display:flex; gap:10px;">
+        <button type="button" class="btn btn-primary" style="flex:2;" onclick="app.saveCurrentWordToVocab()">⭐ Save Word + Context</button>
+        <button type="button" class="btn btn-teal" style="flex:1;" onclick="app.speakChineseWord()">🔊 Audio</button>
       </div>
 
       <div style="display:flex; gap:8px; justify-content:space-between;">
-        <a id="extLinkMdbg" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="flex:1;">MDBG ↗</a>
-        <a id="extLinkTranslate" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="flex:1;">Google Translate ↗</a>
+        <a id="extLinkMdbg" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="flex:1; background:var(--bg-elevated); text-decoration:none;">MDBG ↗</a>
+        <a id="extLinkTranslate" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm" style="flex:1; background:var(--bg-elevated); text-decoration:none;">Google Translate ↗</a>
       </div>
     </div>
   </div>
@@ -967,12 +1525,12 @@
   <div id="segmentModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" onclick="if(event.target===this) app.closeSegmentEditorModal()">
     <div class="modal-sheet">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:1.05rem; font-weight:700;">✂️ Edit Word Segmentation</h3>
-        <button type="button" class="btn btn-sm" onclick="app.closeSegmentEditorModal()">✕</button>
+        <h3 style="font-size:1.1rem; font-weight:800;">✂️ Edit Word Segmentation</h3>
+        <button type="button" class="btn btn-sm" style="background:var(--bg-elevated);" onclick="app.closeSegmentEditorModal()">✕</button>
       </div>
       <select id="segmentLineSelect" class="input-field" onchange="app.onSegmentLineSelectChange()"></select>
       <input type="text" id="segmentCustomInput" class="input-field" style="font-family:var(--font-zh); font-size:1.1rem;" placeholder="Words separated by spaces">
-      <div style="display:flex; gap:8px;">
+      <div style="display:flex; gap:10px;">
         <button type="button" class="btn" onclick="app.resetLineSegmentation()">Reset Auto</button>
         <button type="button" class="btn btn-primary" onclick="app.saveLineSegmentation()">Save</button>
       </div>
@@ -983,8 +1541,8 @@
   <div id="vocabEditModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" onclick="if(event.target===this) app.closeVocabEditModal()">
     <div class="modal-sheet">
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <h3 style="font-size:1.05rem; font-weight:700;" id="vocabEditModalHeading">Add Word</h3>
-        <button type="button" class="btn btn-sm" onclick="app.closeVocabEditModal()">✕</button>
+        <h3 style="font-size:1.1rem; font-weight:800;" id="vocabEditModalHeading">Add Word</h3>
+        <button type="button" class="btn btn-sm" style="background:var(--bg-elevated);" onclick="app.closeVocabEditModal()">✕</button>
       </div>
       <form onsubmit="app.saveVocabEditForm(event)" style="display:flex; flex-direction:column; gap:10px;">
         <input type="hidden" id="vocabEditId">
@@ -992,6 +1550,7 @@
         <input type="text" id="vocabEditTrad" class="input-field" placeholder="Traditional Chinese (繁體 - auto)">
         <input type="text" id="vocabEditPinyin" class="input-field" placeholder="Pinyin (auto)">
         <input type="text" id="vocabEditMeaning" class="input-field" required placeholder="Meaning *">
+        <input type="text" id="vocabEditContextSentence" class="input-field" placeholder="Context sentence from lyrics (optional)">
         <input type="text" id="vocabEditNote" class="input-field" placeholder="Note (optional)">
         <select id="vocabEditSongId" class="input-field">
           <option value="">Linked song: None (General)</option>
@@ -1003,7 +1562,12 @@
 
   <script>
     /**
-     * KTV Hanyu — Mobile-First Chinese KTV Lyrics Reader & Flashcards App
+     * KTV App — Premium Chinese Language Learning Web App
+     * Features:
+     * - Interactive Practice Modes: Flashcards (Anki SRS), Matching (Multiple Choice), Typing (Hard Mode)
+     * - HSK 1-6 Level Integration (CDN fetch + localStorage cache + offline seed + HSK filtering & breakdown)
+     * - Memrise-style KTV Lyric Sentence Context
+     * - Duolingo-style Gamification (Daily Streak 🔥, XP ⚡, Daily Goal)
      */
 
     // =========================================================================
@@ -1103,7 +1667,7 @@
       "安静": "quiet / peaceful", "安靜": "quiet / peaceful", "简单": "simple", "簡單": "simple", "容易": "easy", "难": "difficult / hard", "難": "difficult / hard",
       "真": "true / real", "假": "fake / false", "一样": "same", "一樣": "same", "特别": "special", "特別": "special",
 
-      // Objects, Body & Specific Mandopop / 告白氣球 Terms
+      // Objects, Body & Specific Mandopop / 告白氣球 / 江南 Terms
       "歌": "song", "歌声": "singing voice", "歌聲": "singing voice", "音乐": "music", "音樂": "music", "旋律": "melody",
       "声音": "voice / sound", "聲音": "voice / sound", "故事": "story", "名字": "name", "信": "letter / believe",
       "电话": "telephone / call", "電話": "telephone / call", "照片": "photo", "画面": "scene / picture", "畫面": "scene / picture",
@@ -1132,6 +1696,212 @@
     };
     const TRAD_TO_SIMP_MAP = {};
     Object.keys(SIMP_TO_TRAD_MAP).forEach(s => { TRAD_TO_SIMP_MAP[SIMP_TO_TRAD_MAP[s]] = s; });
+
+    // =========================================================================
+    // 2. HSK 1–6 LEVEL ENGINE (OFFLINE SEED + ASYNC CDN FETCH + LOCAL CACHE)
+    // =========================================================================
+    const HSK_BASE_SEED = {
+      // HSK 1
+      "我": 1, "你": 1, "他": 1, "她": 1, "我们": 1, "你们": 1, "他们": 1, "人": 1, "朋友": 1, "名字": 1,
+      "的": 1, "了": 1, "吗": 1, "呢": 1, "在": 1, "是": 1, "有": 1, "没有": 1, "不": 1, "没": 1,
+      "很": 1, "太": 1, "都": 1, "和": 1, "这": 1, "那": 1, "这里": 1, "那里": 1, "什么": 1, "怎么": 1,
+      "多少": 1, "谁": 1, "爱": 1, "喜欢": 1, "想": 1, "会": 1, "能": 1, "看": 1, "看见": 1, "听": 1,
+      "说话": 1, "说": 1, "来": 1, "去": 1, "回": 1, "坐": 1, "住": 1, "喝": 1, "吃": 1, "写": 1,
+      "读": 1, "学": 1, "学习": 1, "开": 1, "今天": 1, "明天": 1, "昨天": 1, "现在": 1, "时候": 1, "年": 1,
+      "月": 1, "日": 1, "岁": 1, "天": 1, "下雨": 1, "雨": 1, "水": 1, "茶": 1, "家": 1, "好": 1,
+      "大": 1, "小": 1, "多": 1, "少": 1, "热": 1, "冷": 1, "漂亮": 1, "高兴": 1, "再见": 1, "一点": 1,
+
+      // HSK 2
+      "它": 2, "大家": 2, "男人": 2, "女人": 2, "孩子": 2, "得": 2, "着": 2, "过": 2, "吧": 2, "别": 2,
+      "不要": 2, "真": 2, "最": 2, "还": 2, "也": 2, "就": 2, "再": 2, "因為": 2, "因为": 2, "所以": 2,
+      "但是": 2, "让": 2, "给": 2, "对": 2, "从": 2, "到": 2, "向": 2, "往": 2, "为什么": 2, "快乐": 2,
+      "笑": 2, "哭": 2, "等": 2, "希望": 2, "懂": 2, "要": 2, "可以": 2, "告诉": 2, "问": 2, "回答": 2,
+      "唱歌": 2, "唱": 2, "走": 2, "跑": 2, "站": 2, "睡": 2, "找": 2, "找到": 2, "送": 2, "打开": 2,
+      "开始": 2, "完": 2, "时间": 2, "每天": 2, "晴": 2, "雪": 2, "路": 2, "房间": 2, "门": 2, "长": 2,
+      "高": 2, "远": 2, "近": 2, "快": 2, "慢": 2, "早": 2, "晚": 2, "新": 2, "白": 2, "黑": 2, "红": 2,
+      "眼睛": 2, "手": 2, "咖啡": 2, "事情": 2,
+
+      // HSK 3
+      "自己": 3, "别人": 3, "地": 3, "啊": 3, "更": 3, "才": 3, "又": 3, "只": 3, "却": 3, "如果": 3,
+      "虽然": 3, "跟": 3, "把": 3, "被": 3, "为": 3, "为了": 3, "心": 3, "难过": 3, "开心": 3, "忘记": 3,
+      "记得": 3, "害怕": 3, "怕": 3, "离开": 3, "明白": 3, "相信": 3, "应该": 3, "拿": 3, "关": 3, "结束": 3,
+      "变": 3, "变化": 3, "过去": 3, "以前": 3, "以后": 3, "春": 3, "春天": 3, "夏": 3, "夏天": 3, "秋": 3,
+      "秋天": 3, "冬": 3, "冬天": 3, "季节": 3, "风": 3, "云": 3, "太阳": 3, "月亮": 3, "河": 3, "山": 3,
+      "花": 3, "树": 3, "世界": 3, "城市": 3, "地方": 3, "短": 3, "低": 3, "旧": 3, "老": 3, "年轻": 3,
+      "蓝": 3, "安静": 3, "简单": 3, "容易": 3, "难": 3, "一样": 3, "特别": 3, "音乐": 3, "声音": 3, "故事": 3,
+      "信": 3, "照片": 3, "脸": 3, "嘴": 3, "礼物": 3, "其实": 3,
+
+      // HSK 4
+      "爱情": 4, "伤心": 4, "痛苦": 4, "孤单": 4, "幸福": 4, "浪漫": 4, "感动": 4, "感觉": 4, "回忆": 4,
+      "梦": 4, "勇敢": 4, "后悔": 4, "眼泪": 4, "抱": 4, "放弃": 4, "陪": 4, "永远": 4, "拥有": 4, "失去": 4,
+      "不管": 4, "无论": 4, "与": 4, "只是": 4, "可是": 4, "飞": 4, "停": 4, "留": 4, "躺": 4, "醒": 4,
+      "改变": 4, "照": 4, "落": 4, "天空": 4, "阳光": 4, "光": 4, "海": 4, "海洋": 4, "地球": 4, "窗户": 4,
+      "美丽": 4, "暖": 4, "温暖": 4, "亮": 4, "假": 4, "秘密": 4, "代表": 4, "一切": 4,
+
+      // HSK 5
+      "恋爱": 5, "亲爱": 5, "宝贝": 5, "寂寞": 5, "孤独": 5, "温柔": 5, "思念": 5, "想念": 5, "怀念": 5,
+      "记忆": 5, "愿望": 5, "梦想": 5, "勇气": 5, "遗憾": 5, "微笑": 5, "拥抱": 5, "吻": 5, "分手": 5,
+      "告别": 5, "相遇": 5, "错过": 5, "陪伴": 5, "等待": 5, "一辈子": 5, "珍惜": 5, "在乎": 5, "吹": 5,
+      "飘": 5, "夜": 5, "夜晚": 5, "未来": 5, "瞬间": 5, "青春": 5, "彩虹": 5, "星星": 5, "玫瑰": 5,
+      "美好": 5, "暗": 5, "肩膀": 5, "背影": 5, "脚步": 5, "品尝": 5,
+
+      // HSK 6
+      "恋人": 6, "心痛": 6, "甜蜜": 6, "哭泣": 6, "守护": 6, "承诺": 6, "放手": 6, "飞翔": 6, "闪烁": 6,
+      "发光": 6, "岁月": 6, "微风": 6, "月光": 6, "星空": 6, "旋律": 6, "眼神": 6, "嘴角": 6, "唇": 6, "香气": 6
+    };
+
+    const hskEngine = {
+      /**
+       * Asynchronously fetches public HSK 1–6 word lists via CDN on startup
+       * and merges them into app.state.hskLevelCache in localStorage.
+       * Wrapped in try/catch with timeouts so corporate firewalls never block the app.
+       */
+      async loadHskDatasetFromCdn() {
+        const badgeEl = document.getElementById("hskDatasetStatusBadge");
+
+        // Ensure base seed is always available in cache immediately
+        if (!app.state.hskLevelCache || typeof app.state.hskLevelCache !== "object") {
+          app.state.hskLevelCache = {};
+        }
+        let seedAdded = false;
+        Object.keys(HSK_BASE_SEED).forEach(w => {
+          if (!app.state.hskLevelCache[w]) {
+            app.state.hskLevelCache[w] = HSK_BASE_SEED[w];
+            seedAdded = true;
+          }
+        });
+        if (seedAdded) {
+          app.saveLocalStorageKey("hskLevelCache", app.state.hskLevelCache);
+        }
+
+        // If we already cached the full CDN dataset (> 1500 entries), skip re-downloading
+        if (Object.keys(app.state.hskLevelCache).length > 1500) {
+          if (badgeEl) badgeEl.textContent = `HSK 1–6 Cached (${Object.keys(app.state.hskLevelCache).length})`;
+          return;
+        }
+
+        if (navigator.onLine === false) return;
+
+        try {
+          const levels = [1, 2, 3, 4, 5, 6];
+          let fetchedCount = 0;
+
+          await Promise.allSettled(
+            levels.map(async (lvl) => {
+              const urls = [
+                `https://cdn.jsdelivr.net/gh/clem109/hsk-vocabulary@master/hsk-vocab-json/hsk-level-${lvl}.json`,
+                `https://unpkg.com/hsk-words@1.0.0/hsk${lvl}.json`
+              ];
+
+              for (const url of urls) {
+                try {
+                  const ctrl = new AbortController();
+                  const timer = setTimeout(() => ctrl.abort(), 4500);
+                  const res = await fetch(url, { signal: ctrl.signal });
+                  clearTimeout(timer);
+                  if (!res.ok) continue;
+
+                  const data = await res.json();
+                  if (Array.isArray(data)) {
+                    data.forEach(entry => {
+                      const hanzi = typeof entry === "string"
+                        ? entry.trim()
+                        : (entry?.hanzi || entry?.simplified || entry?.word || "").trim();
+                      if (hanzi) {
+                        app.state.hskLevelCache[hanzi] = lvl;
+                        fetchedCount++;
+                      }
+                    });
+                    break;
+                  }
+                } catch (innerErr) {
+                  // Try next fallback URL or fail silently if blocked by firewall
+                }
+              }
+            })
+          );
+
+          if (fetchedCount > 0) {
+            app.saveLocalStorageKey("hskLevelCache", app.state.hskLevelCache);
+            if (badgeEl) {
+              badgeEl.textContent = `HSK 1–6 (${Object.keys(app.state.hskLevelCache).length} words)`;
+            }
+            app.renderCurrentFlashcard();
+            app.renderVocabList();
+            app.updateGamificationUI();
+          }
+        } catch (err) {
+          // Firewall or offline: silently keep seed/existing cache
+        }
+      },
+
+      /**
+       * Looks up the HSK level (1..6) for a Chinese word, or returns null if Non-HSK.
+       */
+      getWordHskLevel(word) {
+        if (!word) return null;
+        const clean = word.trim();
+        const simp = textHelper.toSimplified(clean);
+        const trad = textHelper.toTraditional(clean);
+        const cache = app.state.hskLevelCache || HSK_BASE_SEED;
+
+        if (cache[simp]) return Number(cache[simp]);
+        if (cache[clean]) return Number(cache[clean]);
+        if (cache[trad]) return Number(cache[trad]);
+        if (HSK_BASE_SEED[simp]) return Number(HSK_BASE_SEED[simp]);
+        if (HSK_BASE_SEED[clean]) return Number(HSK_BASE_SEED[clean]);
+
+        // For 2-character compound not directly in list, if all characters are in HSK, use highest char level
+        const chars = Array.from(simp);
+        if (chars.length > 1 && chars.length <= 3) {
+          const charLevels = chars.map(ch => cache[ch] || HSK_BASE_SEED[ch] || 0);
+          if (charLevels.every(l => l >= 1 && l <= 6)) {
+            return Math.max(...charLevels);
+          }
+        }
+
+        return null;
+      },
+
+      /**
+       * Generates the color-coded HTML badge for a given HSK level.
+       * - HSK 1-2: Green
+       * - HSK 3-4: Orange/Amber
+       * - HSK 5-6: Red/Rose
+       * - Non-HSK: Neutral Gray
+       */
+      getHskBadgeHtml(wordOrLevel, isSentence = false) {
+        if (isSentence) {
+          return `<span class="hsk-badge hsk-badge-none">Sentence</span>`;
+        }
+        const level = typeof wordOrLevel === "number"
+          ? wordOrLevel
+          : this.getWordHskLevel(wordOrLevel);
+
+        if (level === 1 || level === 2) {
+          return `<span class="hsk-badge hsk-badge-1-2">HSK ${level}</span>`;
+        }
+        if (level === 3 || level === 4) {
+          return `<span class="hsk-badge hsk-badge-3-4">HSK ${level}</span>`;
+        }
+        if (level === 5 || level === 6) {
+          return `<span class="hsk-badge hsk-badge-5-6">HSK ${level}</span>`;
+        }
+        return `<span class="hsk-badge hsk-badge-none">Non-HSK</span>`;
+      },
+
+      /**
+       * Checks if a card matches the selected HSK filter ("all", "1-2", "3-4", "5-6-non").
+       */
+      matchesHskFilter(card, filterVal) {
+        if (!filterVal || filterVal === "all") return true;
+        const lvl = card.hskLevel !== undefined ? card.hskLevel : this.getWordHskLevel(card.simp || card.original);
+        if (filterVal === "1-2") return lvl === 1 || lvl === 2;
+        if (filterVal === "3-4") return lvl === 3 || lvl === 4;
+        if (filterVal === "5-6-non") return lvl === 5 || lvl === 6 || !lvl;
+        return true;
+      }
+    };
 
     // Legacy IndexedDB migration helper
     const legacyIdbReader = {
@@ -1171,7 +1941,7 @@
     };
 
     // =========================================================================
-    // 2. TEXT, PINYIN, OPENCC, SEGMENTATION & TRANSLATION API HELPERS
+    // 3. TEXT, PINYIN, OPENCC, SEGMENTATION & TRANSLATION API HELPERS
     // =========================================================================
     const textHelper = {
       s2tConverter: null,
@@ -1208,9 +1978,20 @@
         return Array.from(str).map(ch => TRAD_TO_SIMP_MAP[ch] || ch).join("");
       },
 
-      stripTones(pinyinStr) {
+      /**
+       * Normalizes Pinyin for tone-insensitive Typing Mode checking:
+       * Strips all tone marks/diacritics, spaces, apostrophes, tone numbers,
+       * and normalizes ü/v so "péng yǒu" === "pengyou".
+       */
+      normalizePinyinForTyping(pinyinStr) {
         if (!pinyinStr) return "";
-        return pinyinStr.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        return String(pinyinStr)
+          .toLowerCase()
+          .replace(/ü/g, "v")
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/u:/g, "v")
+          .replace(/[0-9\s'’\-_,.;:!?()[\]]+/g, "");
       },
 
       getPinyin(word, withTones = true) {
@@ -1263,7 +2044,6 @@
         return result;
       },
 
-      // Synchronous lookup across Saved Words -> wordMeaningsCache -> KTV_BASE_DICT -> character breakdown
       getKnownMeaning(word) {
         if (!word) return "";
         const clean = word.trim();
@@ -1272,7 +2052,7 @@
 
         // 1. User's Saved Words
         const savedHit = app.state.vocab.find(v => v.simp === simp || v.trad === trad || v.simp === clean || v.trad === clean);
-        if (savedHit && savedHit.meaning) {
+        if (savedHit && savedHit.meaning && savedHit.meaning !== "—") {
           return { meaning: savedHit.meaning, source: "Saved Words" };
         }
 
@@ -1282,7 +2062,7 @@
         if (cache[simp]) return { meaning: cache[simp], source: "Cached Translation" };
         if (cache[trad]) return { meaning: cache[trad], source: "Cached Translation" };
 
-        // 3. Built-in 300+ KTV Base Dictionary
+        // 3. Built-in 320+ KTV Base Dictionary
         if (KTV_BASE_DICT[clean]) return { meaning: KTV_BASE_DICT[clean], source: "Built-in Dictionary" };
         if (KTV_BASE_DICT[simp]) return { meaning: KTV_BASE_DICT[simp], source: "Built-in Dictionary" };
         if (KTV_BASE_DICT[trad]) return { meaning: KTV_BASE_DICT[trad], source: "Built-in Dictionary" };
@@ -1304,6 +2084,7 @@
         const trad = this.toTraditional(clean);
         const pinyin = this.getPinyin(clean, true) || "—";
         const known = this.getKnownMeaning(clean);
+        const hskLevel = hskEngine.getWordHskLevel(simp);
 
         return {
           original: clean,
@@ -1311,16 +2092,16 @@
           simp,
           pinyin,
           meaning: known ? known.meaning : "",
-          source: known ? known.source : "Not translated yet"
+          source: known ? known.source : "Not translated yet",
+          hskLevel
         };
       },
 
-      // Fetch translation from public APIs with safe timeout & fallback
       async fetchTranslationFromApi(word) {
         const clean = (word || "").trim();
         if (!clean || !this.isChineseText(clean)) return "";
+        if (navigator.onLine === false) return "";
 
-        // 1. Try Google Translate GTX public endpoint first (fast & accurate for single words)
         try {
           const ctrl1 = new AbortController();
           const t1 = setTimeout(() => ctrl1.abort(), 4000);
@@ -1329,14 +2110,15 @@
           clearTimeout(t1);
           if (res1.ok) {
             const data1 = await res1.json();
-            const translated = data1?.[0]?.[0]?.[0];
+            const translated = Array.isArray(data1?.[0])
+              ? data1[0].map(seg => seg?.[0] || "").join("")
+              : data1?.[0]?.[0]?.[0];
             if (translated && typeof translated === "string" && translated.trim() && !this.isChineseText(translated)) {
               return translated.trim().toLowerCase();
             }
           }
         } catch (e) {}
 
-        // 2. Fallback to MyMemory public translation API
         try {
           const ctrl2 = new AbortController();
           const t2 = setTimeout(() => ctrl2.abort(), 4500);
@@ -1357,7 +2139,57 @@
     };
 
     // =========================================================================
-    // 3. MAIN APPLICATION CONTROLLER
+    // 4. ANKI-STYLE SPACED REPETITION SYSTEM (SRS) ENGINE
+    // =========================================================================
+    const srsEngine = {
+      getTodayDateStr() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      },
+
+      getFutureDateStr(daysToAdd) {
+        const d = new Date();
+        d.setDate(d.getDate() + Number(daysToAdd || 1));
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      },
+
+      getPreviewIntervals(currentInterval) {
+        const prev = Number(currentInterval) || 0;
+        const hardDays = 1;
+        const goodDays = prev > 1 ? prev * 2 : 3;
+        const easyDays = prev > 2 ? prev * 3 : 7;
+        return { hardDays, goodDays, easyDays };
+      },
+
+      calculateNextSrsState(currentInterval, rating) {
+        const { hardDays, goodDays, easyDays } = this.getPreviewIntervals(currentInterval);
+        let newInterval = hardDays;
+        if (rating === "good") newInterval = goodDays;
+        else if (rating === "easy") newInterval = easyDays;
+
+        return {
+          interval: newInterval,
+          nextReviewDate: this.getFutureDateStr(newInterval),
+          lastReviewedDate: this.getTodayDateStr(),
+          lastRating: rating
+        };
+      },
+
+      isCardDueToday(card) {
+        const today = this.getTodayDateStr();
+        if (!card || !card.nextReviewDate) return true;
+        return String(card.nextReviewDate).slice(0, 10) <= today;
+      }
+    };
+
+    // =========================================================================
+    // 5. MAIN APPLICATION CONTROLLER
     // =========================================================================
     const app = {
       state: {
@@ -1366,11 +2198,16 @@
         currentSong: null,
         parsedLines: [],
         selectedWord: null,
-        flashcardActive: false,
+        practiceInteractionMode: "flashcards", // "flashcards" | "matching" | "typing"
         flashcardIndex: 0,
         flashcardSongFilter: "all_songs",
+        flashcardHskFilter: "all", // "all" | "1-2" | "3-4" | "5-6-non"
         flashcardUnitMode: "words",
+        flashcardDueOnly: true,
         currentFlashcardItem: null,
+        matchingFirstAttempt: true,
+        matchingResolved: false,
+        typingChecked: false,
         settings: {
           scriptMode: "both",
           showPinyin: true,
@@ -1380,12 +2217,25 @@
         favorites: [],
         segmentOverrides: {},
         vocab: [],
-        wordMeaningsCache: {}
+        srsMap: {},
+        hskLevelCache: {},
+        wordMeaningsCache: {},
+        gamification: {
+          streakCount: 0,
+          lastPracticeDate: "",
+          totalXp: 0,
+          dailyGoalXp: 50,
+          dailyXpByDate: {}
+        }
       },
 
       async init() {
         await this.loadLocalStorageState();
+        this.verifyStreakContinuity();
         textHelper.init();
+
+        // Load HSK 1-6 dataset asynchronously with localStorage cache & firewall safety
+        hskEngine.loadHskDatasetFromCdn();
 
         setTimeout(() => {
           textHelper.init();
@@ -1394,7 +2244,8 @@
             this.renderLyrics();
           }
           this.populateSongSelects();
-          if (this.state.flashcardActive) this.renderCurrentFlashcard();
+          this.renderCurrentFlashcard();
+          this.updateGamificationUI();
         }, 800);
 
         window.addEventListener("online", () => this.updateNetworkStatus());
@@ -1405,6 +2256,8 @@
         this.renderHomeLists();
         this.renderVocabList();
         this.populateSongSelects();
+        this.renderCurrentFlashcard();
+        this.updateGamificationUI();
       },
 
       // -----------------------------------------------------------------------
@@ -1430,6 +2283,26 @@
             this.state.wordMeaningsCache = JSON.parse(savedMeanings) || {};
           }
 
+          const savedHskCache = localStorage.getItem("hskLevelCache");
+          if (savedHskCache) {
+            this.state.hskLevelCache = { ...HSK_BASE_SEED, ...(JSON.parse(savedHskCache) || {}) };
+          } else {
+            this.state.hskLevelCache = { ...HSK_BASE_SEED };
+          }
+
+          const savedSrsMap = localStorage.getItem("ktv_srs_map");
+          if (savedSrsMap) {
+            this.state.srsMap = JSON.parse(savedSrsMap) || {};
+          }
+
+          const savedGamification = localStorage.getItem("ktv_gamification");
+          if (savedGamification) {
+            this.state.gamification = {
+              ...this.state.gamification,
+              ...JSON.parse(savedGamification)
+            };
+          }
+
           let storedSongs = [];
           const rawSongs = localStorage.getItem("ktv_songs");
           if (rawSongs) storedSongs = JSON.parse(rawSongs);
@@ -1451,10 +2324,16 @@
 
           const savedVocab = localStorage.getItem("ktv_vocab");
           if (savedVocab) {
+            const today = srsEngine.getTodayDateStr();
             const parsedVocab = JSON.parse(savedVocab);
-            this.state.vocab = parsedVocab.filter(v =>
-              !["v-1", "v-2", "v-3", "v-4", "v-init-1", "v-init-2", "v-init-3", "v-init-4"].includes(v.id)
-            );
+            this.state.vocab = parsedVocab
+              .filter(v => !["v-1", "v-2", "v-3", "v-4", "v-init-1", "v-init-2", "v-init-3", "v-init-4"].includes(v.id))
+              .map(v => ({
+                ...v,
+                interval: Number(v.interval) || (this.state.srsMap[v.simp]?.interval || 1),
+                nextReviewDate: v.nextReviewDate || this.state.srsMap[v.simp]?.nextReviewDate || today,
+                lastRating: v.lastRating || this.state.srsMap[v.simp]?.lastRating || ""
+              }));
             this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
           } else {
             this.state.vocab = [];
@@ -1485,6 +2364,204 @@
         this.saveLocalStorageKey("ktv_word_meanings_cache", this.state.wordMeaningsCache);
       },
 
+      // -----------------------------------------------------------------------
+      // GAMIFICATION ENGINE (STREAK 🔥, XP ⚡, DAILY GOAL & HSK BREAKDOWN)
+      // -----------------------------------------------------------------------
+      verifyStreakContinuity() {
+        const g = this.state.gamification;
+        if (!g.lastPracticeDate) return;
+        const today = srsEngine.getTodayDateStr();
+        const yesterday = srsEngine.getFutureDateStr(-1);
+        if (g.lastPracticeDate !== today && g.lastPracticeDate !== yesterday) {
+          g.streakCount = 0;
+          this.saveLocalStorageKey("ktv_gamification", g);
+        }
+      },
+
+      recordPracticeActivity(xpAmount) {
+        const g = this.state.gamification;
+        const today = srsEngine.getTodayDateStr();
+        const yesterday = srsEngine.getFutureDateStr(-1);
+
+        if (g.lastPracticeDate !== today) {
+          if (g.lastPracticeDate === yesterday) {
+            g.streakCount = (Number(g.streakCount) || 0) + 1;
+          } else {
+            g.streakCount = 1;
+          }
+          g.lastPracticeDate = today;
+        }
+        this.awardXp(xpAmount);
+      },
+
+      awardXp(amount) {
+        const pts = Number(amount) || 0;
+        if (pts <= 0) return;
+        const g = this.state.gamification;
+        const today = srsEngine.getTodayDateStr();
+
+        g.totalXp = (Number(g.totalXp) || 0) + pts;
+        if (!g.dailyXpByDate || typeof g.dailyXpByDate !== "object") {
+          g.dailyXpByDate = {};
+        }
+        g.dailyXpByDate[today] = (Number(g.dailyXpByDate[today]) || 0) + pts;
+
+        this.saveLocalStorageKey("ktv_gamification", g);
+        this.updateGamificationUI();
+      },
+
+      getTotalWordsLearnedCount() {
+        const learnedSimp = new Set();
+        this.state.vocab.forEach(v => {
+          if (v && v.simp) learnedSimp.add(v.simp);
+        });
+        Object.keys(this.state.srsMap || {}).forEach(simp => {
+          if (this.state.srsMap[simp]?.reps > 0) learnedSimp.add(simp);
+        });
+        return learnedSimp.size;
+      },
+
+      getTotalDueTodayCount() {
+        const allCards = this.getRawFlashcardDeck("all_songs", "all");
+        return allCards.filter(c => srsEngine.isCardDueToday(c)).length;
+      },
+
+      /**
+       * Renders the visual HSK Mastery Breakdown in the Progress tab:
+       * Shows how many unique words the user knows per HSK level based on 'Good' or 'Easy' status.
+       */
+      renderHskBreakdown() {
+        const container = document.getElementById("hskBreakdownContainer");
+        if (!container) return;
+
+        // Collect all unique words from Library + Saved Words
+        const allWordsMap = new Map();
+        this.state.songs.forEach(song => {
+          this.extractUniqueWordsFromSong(song).forEach(w => {
+            if (!allWordsMap.has(w.simp)) allWordsMap.set(w.simp, w);
+          });
+        });
+        this.state.vocab.forEach(v => {
+          if (v && v.simp && !v.isSentence && Array.from(v.simp).length <= 4) {
+            if (!allWordsMap.has(v.simp)) allWordsMap.set(v.simp, v);
+          }
+        });
+
+        // Also include any word in srsMap that has been mastered (Good or Easy)
+        Object.keys(this.state.srsMap || {}).forEach(simp => {
+          if (!allWordsMap.has(simp) && Array.from(simp).length <= 4) {
+            allWordsMap.set(simp, { simp, original: simp });
+          }
+        });
+
+        const buckets = {
+          1: { label: "HSK 1", badgeClass: "hsk-badge-1-2", fill: "#22c55e", mastered: 0, total: 0 },
+          2: { label: "HSK 2", badgeClass: "hsk-badge-1-2", fill: "#22c55e", mastered: 0, total: 0 },
+          3: { label: "HSK 3", badgeClass: "hsk-badge-3-4", fill: "#f59e0b", mastered: 0, total: 0 },
+          4: { label: "HSK 4", badgeClass: "hsk-badge-3-4", fill: "#f59e0b", mastered: 0, total: 0 },
+          5: { label: "HSK 5", badgeClass: "hsk-badge-5-6", fill: "#f43f5e", mastered: 0, total: 0 },
+          6: { label: "HSK 6", badgeClass: "hsk-badge-5-6", fill: "#f43f5e", mastered: 0, total: 0 },
+          0: { label: "Non-HSK", badgeClass: "hsk-badge-none", fill: "#94a3b8", mastered: 0, total: 0 }
+        };
+
+        allWordsMap.forEach((wordObj, simp) => {
+          const lvl = hskEngine.getWordHskLevel(simp) || 0;
+          const bucket = buckets[lvl] || buckets[0];
+          bucket.total++;
+
+          const srsRec = this.state.srsMap[simp];
+          const vocabRec = this.state.vocab.find(v => v.simp === simp);
+          const interval = Number(srsRec?.interval || vocabRec?.interval || 1);
+          const lastRating = srsRec?.lastRating || vocabRec?.lastRating || "";
+
+          // Mastered = rated 'good' or 'easy' (or interval >= 3 days)
+          if (lastRating === "good" || lastRating === "easy" || interval >= 3) {
+            bucket.mastered++;
+          }
+        });
+
+        const order = [1, 2, 3, 4, 5, 6, 0];
+        container.innerHTML = order.map(key => {
+          const b = buckets[key];
+          const pct = b.total > 0 ? Math.min(100, Math.round((b.mastered / b.total) * 100)) : 0;
+          return `
+            <div class="hsk-progress-row">
+              <div style="min-width:74px;">
+                <span class="hsk-badge ${b.badgeClass}">${b.label}</span>
+              </div>
+              <div style="flex:1;">
+                <div style="height:10px; background:var(--bg-input); border-radius:999px; overflow:hidden;">
+                  <div style="height:100%; width:${pct}%; background:${b.fill}; border-radius:999px; transition:width 0.3s ease;"></div>
+                </div>
+              </div>
+              <div style="min-width:86px; text-align:right; font-size:0.82rem; font-weight:800; color:var(--text-main);">
+                ${b.mastered} <span style="color:var(--text-muted); font-weight:600;">/ ${b.total} known</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      },
+
+      updateGamificationUI() {
+        this.verifyStreakContinuity();
+        const g = this.state.gamification;
+        const today = srsEngine.getTodayDateStr();
+        const todayXp = Number(g.dailyXpByDate?.[today]) || 0;
+        const goalXp = Number(g.dailyGoalXp) || 50;
+        const pct = Math.min(100, Math.round((todayXp / goalXp) * 100));
+
+        const headerStreak = document.getElementById("headerStreakCount");
+        if (headerStreak) headerStreak.textContent = g.streakCount || 0;
+        const headerXp = document.getElementById("headerXpCount");
+        if (headerXp) headerXp.textContent = `${g.totalXp || 0} XP`;
+
+        const dueTodayCount = this.getTotalDueTodayCount();
+        const navDueEl = document.getElementById("navDueCount");
+        if (navDueEl) navDueEl.textContent = dueTodayCount;
+        const libDueBadge = document.getElementById("libraryDueHintBadge");
+        if (libDueBadge) {
+          libDueBadge.textContent = dueTodayCount > 0 ? `⏰ ${dueTodayCount} due today` : "✓ All caught up";
+        }
+
+        const streakDaysEl = document.getElementById("progressStreakDays");
+        if (streakDaysEl) streakDaysEl.textContent = g.streakCount || 0;
+
+        const streakSubEl = document.getElementById("progressStreakSubtext");
+        if (streakSubEl) {
+          streakSubEl.textContent = g.lastPracticeDate === today
+            ? "Awesome! You practiced today and kept your streak alive!"
+            : "Practice today in Flashcards, Matching, or Typing to light up your streak!";
+        }
+
+        const goalBadge = document.getElementById("dailyGoalBadge");
+        if (goalBadge) goalBadge.textContent = `${todayXp} / ${goalXp} XP`;
+
+        const goalFill = document.getElementById("dailyGoalFill");
+        if (goalFill) goalFill.style.width = `${pct}%`;
+
+        const goalStatus = document.getElementById("dailyGoalStatusText");
+        if (goalStatus) {
+          const remaining = Math.max(0, goalXp - todayXp);
+          goalStatus.textContent = remaining === 0
+            ? "🎉 Daily goal reached! Keep going!"
+            : `${remaining} XP left to reach today's goal`;
+        }
+
+        const totalXpEl = document.getElementById("progressTotalXp");
+        if (totalXpEl) totalXpEl.textContent = `${g.totalXp || 0} XP`;
+
+        const statLearned = document.getElementById("statWordsLearned");
+        if (statLearned) statLearned.textContent = this.getTotalWordsLearnedCount();
+
+        const statSongs = document.getElementById("statTotalSongs");
+        if (statSongs) statSongs.textContent = this.state.songs.length;
+
+        const statDue = document.getElementById("statWordsDueToday");
+        if (statDue) statDue.textContent = dueTodayCount;
+
+        this.renderHskBreakdown();
+      },
+
       showSystemAlert(msg) {
         const banner = document.getElementById("systemAlertBanner");
         const textEl = document.getElementById("systemAlertText");
@@ -1497,24 +2574,30 @@
       updateNetworkStatus() {
         const badge = document.getElementById("networkBadge");
         if (badge) {
-          badge.textContent = navigator.onLine !== false ? "Online" : "Offline";
+          badge.textContent = navigator.onLine !== false ? "Online" : "Offline Mode";
         }
       },
 
       switchView(viewName) {
-        this.state.currentView = viewName;
+        const targetView = viewName === "vocab" ? "practice" : viewName;
+        this.state.currentView = targetView;
+
         document.querySelectorAll(".view-section").forEach(sec => {
-          sec.classList.toggle("active", sec.id === `view-${viewName}`);
+          sec.classList.toggle("active", sec.id === `view-${targetView}`);
         });
+
         document.querySelectorAll(".bottom-nav-btn").forEach(btn => {
-          const target = btn.getAttribute("data-view");
-          btn.classList.toggle("active", target === viewName || (viewName === "reader" && target === "home"));
+          const navTarget = btn.getAttribute("data-view");
+          const isHomeSubView = (targetView === "reader" || targetView === "add") && navTarget === "home";
+          btn.classList.toggle("active", navTarget === targetView || isHomeSubView);
         });
-        if (viewName === "vocab") {
+
+        if (targetView === "practice") {
           this.populateSongSelects();
-          if (this.state.flashcardActive) {
-            this.renderCurrentFlashcard();
-          }
+          this.renderCurrentFlashcard();
+          this.renderVocabList();
+        } else if (targetView === "progress") {
+          this.updateGamificationUI();
         }
         window.scrollTo({ top: 0, behavior: "smooth" });
       },
@@ -1552,20 +2635,31 @@
       },
 
       // -----------------------------------------------------------------------
-      // EXTRACT UNIQUE CHINESE WORDS OR FULL SENTENCES FROM ANY SONG IN LIBRARY
+      // EXTRACT WORDS (WITH HSK LEVEL & MEMRISE SENTENCE CONTEXT) & SENTENCES
       // -----------------------------------------------------------------------
       extractUniqueWordsFromSong(song) {
         if (!song || !song.lrc) return [];
         const lines = this.parseLyricsLines(song.lrc);
         const seenSimp = new Set();
         const uniqueWords = [];
+        const today = srsEngine.getTodayDateStr();
 
         lines.forEach((ln, lineIdx) => {
           const overrideKey = `${song.id}:${lineIdx}`;
-          const tokens = textHelper.segmentLine(ln.zhText, this.state.segmentOverrides[overrideKey]);
+          const overrideStr = this.state.segmentOverrides[overrideKey];
+          const tokens = textHelper.segmentLine(ln.zhText, overrideStr);
+
+          const contextSentence = (ln.zhText || "").trim();
+          const contextSentenceTrad = textHelper.toTraditional(contextSentence);
+          const contextSentencePinyin = textHelper.getPinyin(contextSentence, true) || "";
+          const knownLineMeaning = textHelper.getKnownMeaning(contextSentence);
+          const contextSentenceMeaning =
+            ln.explicitMeaning ||
+            (knownLineMeaning ? knownLineMeaning.meaning : "") ||
+            this.buildLineMeaningGloss(contextSentence, ln.explicitMeaning, overrideStr);
+
           tokens.forEach(token => {
             const clean = token.trim();
-            // Filter out punctuation, numbers, and spaces
             if (!clean || !textHelper.isChineseText(clean)) return;
             const chineseOnly = Array.from(clean).filter(ch => textHelper.isChineseText(ch)).join("");
             if (!chineseOnly) return;
@@ -1577,6 +2671,9 @@
             const trad = textHelper.toTraditional(chineseOnly);
             const pinyin = textHelper.getPinyin(chineseOnly, true) || "";
             const known = textHelper.getKnownMeaning(chineseOnly);
+            const savedVocabItem = this.state.vocab.find(v => v.simp === simp || v.trad === trad);
+            const srsEntry = this.state.srsMap[simp] || {};
+            const hskLevel = hskEngine.getWordHskLevel(simp);
 
             uniqueWords.push({
               id: `songword-${song.id}-${simp}`,
@@ -1585,9 +2682,18 @@
               trad,
               pinyin,
               meaning: known ? known.meaning : "",
+              hskLevel,
               songId: song.id,
               songTitle: `${song.title}${song.artist ? " - " + song.artist : ""}`,
-              note: "",
+              note: savedVocabItem?.note || "",
+              contextSentence: savedVocabItem?.contextSentence || contextSentence,
+              contextSentenceTrad: savedVocabItem?.contextSentenceTrad || contextSentenceTrad,
+              contextSentencePinyin: savedVocabItem?.contextSentencePinyin || contextSentencePinyin,
+              contextSentenceMeaning: savedVocabItem?.contextSentenceMeaning || contextSentenceMeaning,
+              interval: Number(savedVocabItem?.interval || srsEntry.interval || 1),
+              nextReviewDate: savedVocabItem?.nextReviewDate || srsEntry.nextReviewDate || today,
+              lastRating: savedVocabItem?.lastRating || srsEntry.lastRating || "",
+              reps: Number(savedVocabItem?.reps || srsEntry.reps || 0),
               isSentence: false
             });
           });
@@ -1601,6 +2707,7 @@
         const lines = this.parseLyricsLines(song.lrc);
         const seenSimp = new Set();
         const uniqueSentences = [];
+        const today = srsEngine.getTodayDateStr();
 
         lines.forEach((ln, lineIdx) => {
           const cleanLine = (ln.zhText || "").trim();
@@ -1615,6 +2722,8 @@
           const known = textHelper.getKnownMeaning(cleanLine);
           const overrideKey = `${song.id}:${lineIdx}`;
           const fallbackGloss = this.buildLineMeaningGloss(cleanLine, ln.explicitMeaning, this.state.segmentOverrides[overrideKey]);
+          const savedVocabItem = this.state.vocab.find(v => v.simp === simp || v.trad === trad);
+          const srsEntry = this.state.srsMap[simp] || {};
 
           uniqueSentences.push({
             id: `songline-${song.id}-${lineIdx}`,
@@ -1624,9 +2733,15 @@
             pinyin,
             meaning: ln.explicitMeaning || (known ? known.meaning : "") || "",
             fallbackGloss: fallbackGloss || "",
+            hskLevel: null,
             songId: song.id,
             songTitle: `${song.title}${song.artist ? " - " + song.artist : ""}`,
             note: `Line ${lineIdx + 1}`,
+            contextSentence: "",
+            interval: Number(savedVocabItem?.interval || srsEntry.interval || 1),
+            nextReviewDate: savedVocabItem?.nextReviewDate || srsEntry.nextReviewDate || today,
+            lastRating: savedVocabItem?.lastRating || srsEntry.lastRating || "",
+            reps: Number(savedVocabItem?.reps || srsEntry.reps || 0),
             isSentence: true
           });
         });
@@ -1635,14 +2750,18 @@
       },
 
       // -----------------------------------------------------------------------
-      // TRANSLATE MISSING WORDS FOR A SONG (ON SAVE OR VIA BUTTON CLICK)
+      // TRANSLATE MISSING WORDS & SENTENCES FOR A SONG
       // -----------------------------------------------------------------------
       async fetchMissingTranslationsForSong(songId, btnEl = null) {
         const song = this.state.songs.find(s => s.id === songId);
         if (!song) return;
 
         const words = this.extractUniqueWordsFromSong(song);
-        const missingWords = words.filter(w => !textHelper.getKnownMeaning(w.original));
+        const sentences = this.extractUniqueSentencesFromSong(song);
+        const missingItems = [
+          ...words.filter(w => !textHelper.getKnownMeaning(w.original)),
+          ...sentences.filter(s => !s.meaning && !textHelper.getKnownMeaning(s.original))
+        ];
 
         const origBtnText = btnEl ? btnEl.textContent : "";
         if (btnEl) {
@@ -1650,7 +2769,7 @@
           btnEl.textContent = "Loading...";
         }
 
-        if (missingWords.length === 0) {
+        if (missingItems.length === 0) {
           if (btnEl) {
             btnEl.textContent = "✓ All translated";
             setTimeout(() => {
@@ -1662,21 +2781,20 @@
             this.state.parsedLines = this.parseLyricsLines(song.lrc);
             this.renderLyrics();
           }
-          if (this.state.flashcardActive) this.renderCurrentFlashcard();
+          this.renderCurrentFlashcard();
           return;
         }
 
         let completed = 0;
-        const total = missingWords.length;
-
-        // Translate in small parallel batches of 4 so it finishes quickly without rate-limiting
+        const total = missingItems.length;
         const batchSize = 4;
+
         for (let i = 0; i < total; i += batchSize) {
-          const batch = missingWords.slice(i, i + batchSize);
-          await Promise.all(batch.map(async (w) => {
-            const translated = await textHelper.fetchTranslationFromApi(w.original);
+          const batch = missingItems.slice(i, i + batchSize);
+          await Promise.all(batch.map(async (item) => {
+            const translated = await textHelper.fetchTranslationFromApi(item.original);
             if (translated) {
-              this.saveMeaningToCache(w.original, translated);
+              this.saveMeaningToCache(item.original, translated);
             }
             completed++;
             if (btnEl) {
@@ -1693,14 +2811,11 @@
           }, 1400);
         }
 
-        // Refresh active views
         if (this.state.currentSong && this.state.currentSong.id === songId) {
           this.state.parsedLines = this.parseLyricsLines(this.state.currentSong.lrc);
           this.renderLyrics();
         }
-        if (this.state.flashcardActive) {
-          this.renderCurrentFlashcard();
-        }
+        this.renderCurrentFlashcard();
       },
 
       // -----------------------------------------------------------------------
@@ -1724,8 +2839,8 @@
         if (libList) {
           if (this.state.songs.length === 0) {
             libList.innerHTML = `
-              <div class="card" style="text-align:center; color:var(--text-muted); padding:24px 16px;">
-                No songs yet. Click 'Add Song' to add your first KTV lyrics.
+              <div class="card" style="text-align:center; color:var(--text-muted); padding:28px 18px;">
+                No songs yet. Tap <strong>'+ Add New Song (+50 XP)'</strong> above to add your first KTV lyrics!
               </div>
             `;
           } else if (filtered.length === 0) {
@@ -1754,28 +2869,26 @@
 
       createSongItemHtml(song) {
         const isFav = this.state.favorites.includes(song.id);
+        const wordsCount = this.extractUniqueWordsFromSong(song).length;
         return `
           <div class="song-item">
             <div class="song-item-header">
               <div>
                 <div class="song-title">${this.escapeHtml(song.title)}</div>
-                <div class="song-artist">${this.escapeHtml(song.artist || "Unknown artist")}</div>
+                <div class="song-artist">${this.escapeHtml(song.artist || "Unknown artist")} · ${wordsCount} words</div>
               </div>
               <button type="button" class="fav-btn ${isFav ? "active" : ""}" title="Toggle Favorite" onclick="app.toggleFavorite('${song.id}')">
                 ${isFav ? "★" : "☆"}
               </button>
             </div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
               <button type="button" class="btn btn-primary btn-sm" style="flex:2;" onclick="app.openSong('${song.id}')">
                 📖 Read Lyrics
               </button>
-              <button type="button" class="btn btn-sm btn-gold" style="flex:1;" title="Practice this song in Flashcards" onclick="app.practiceSongFlashcards('${song.id}')">
-                🎴 Cards
+              <button type="button" class="btn btn-sm btn-gold" style="flex:1;" title="Practice this song" onclick="app.practiceSongFlashcards('${song.id}')">
+                🎴 Practice
               </button>
-              <button type="button" class="btn btn-sm btn-subtle" title="Fetch Missing Translations" onclick="app.fetchMissingTranslationsForSong('${song.id}', this)">
-                🌐 Fetch Missing Translations
-              </button>
-              <button type="button" class="btn btn-sm" title="Delete song" onclick="app.deleteCustomSong('${song.id}')">🗑️</button>
+              <button type="button" class="btn btn-sm btn-subtle" title="Delete song" onclick="app.deleteCustomSong('${song.id}')">🗑️</button>
             </div>
           </div>
         `;
@@ -1783,12 +2896,8 @@
 
       practiceSongFlashcards(songId) {
         this.state.flashcardSongFilter = `song:${songId}`;
-        this.state.flashcardActive = true;
         this.state.flashcardIndex = 0;
-        this.switchView("vocab");
-        this.populateSongSelects();
-        document.getElementById("flashcardContainer").style.display = "block";
-        this.renderCurrentFlashcard();
+        this.switchView("practice");
       },
 
       toggleFavorite(songId) {
@@ -1805,6 +2914,7 @@
         this.saveLocalStorageKey("ktv_songs", this.state.songs);
         this.renderHomeLists();
         this.populateSongSelects();
+        this.updateGamificationUI();
         if (this.state.currentSong && this.state.currentSong.id === songId) {
           this.state.currentSong = null;
           this.switchView("home");
@@ -1820,11 +2930,14 @@
 
       exportBackupJson() {
         const backupData = {
-          version: 2,
+          version: 4,
           exportedAt: new Date().toISOString(),
           songs: this.state.songs,
           vocab: this.state.vocab,
+          srsMap: this.state.srsMap,
+          gamification: this.state.gamification,
           wordMeaningsCache: this.state.wordMeaningsCache,
+          hskLevelCache: this.state.hskLevelCache,
           favorites: this.state.favorites,
           segmentOverrides: this.state.segmentOverrides,
           settings: this.state.settings
@@ -1833,7 +2946,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `ktv-hanyu-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        a.download = `ktv-app-backup-${new Date().toISOString().slice(0, 10)}.json`;
         a.click();
         URL.revokeObjectURL(url);
       },
@@ -1860,9 +2973,21 @@
               });
               this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
             }
+            if (data.srsMap && typeof data.srsMap === "object") {
+              this.state.srsMap = { ...this.state.srsMap, ...data.srsMap };
+              this.saveLocalStorageKey("ktv_srs_map", this.state.srsMap);
+            }
+            if (data.gamification && typeof data.gamification === "object") {
+              this.state.gamification = { ...this.state.gamification, ...data.gamification };
+              this.saveLocalStorageKey("ktv_gamification", this.state.gamification);
+            }
             if (data.wordMeaningsCache && typeof data.wordMeaningsCache === "object") {
               this.state.wordMeaningsCache = { ...this.state.wordMeaningsCache, ...data.wordMeaningsCache };
               this.saveLocalStorageKey("ktv_word_meanings_cache", this.state.wordMeaningsCache);
+            }
+            if (data.hskLevelCache && typeof data.hskLevelCache === "object") {
+              this.state.hskLevelCache = { ...this.state.hskLevelCache, ...data.hskLevelCache };
+              this.saveLocalStorageKey("hskLevelCache", this.state.hskLevelCache);
             }
             if (Array.isArray(data.favorites)) {
               this.state.favorites = data.favorites;
@@ -1875,6 +3000,7 @@
             this.renderHomeLists();
             this.renderVocabList();
             this.populateSongSelects();
+            this.updateGamificationUI();
             this.showSystemAlert("Backup imported successfully!");
           } catch (err) {
             this.showSystemAlert("Invalid JSON backup file.");
@@ -1915,6 +3041,9 @@
 
       buildLineMeaningGloss(zhText, explicitMeaning, overrideStr) {
         if (explicitMeaning) return explicitMeaning;
+        const knownLine = textHelper.getKnownMeaning(zhText);
+        if (knownLine && knownLine.meaning) return knownLine.meaning;
+
         const segs = textHelper.segmentLine(zhText, overrideStr);
         const gloss = segs
           .filter(w => textHelper.isChineseText(w))
@@ -2007,14 +3136,38 @@
       },
 
       // -----------------------------------------------------------------------
-      // WORD DETAILS MODAL (AUTO-FETCHES MEANING IF MISSING + ALLOWS EDITING)
+      // WORD DETAILS MODAL (WITH HSK BADGE & MEMRISE SENTENCE CONTEXT)
       // -----------------------------------------------------------------------
-      async openWordModal(word) {
+      async openWordModal(word, lineIdx = null) {
         const info = textHelper.lookupWordDetails(word);
-        this.state.selectedWord = info;
+
+        let contextSentence = "";
+        let contextSentenceTrad = "";
+        let contextSentencePinyin = "";
+        let contextSentenceMeaning = "";
+
+        if (lineIdx !== null && this.state.parsedLines[lineIdx]) {
+          const lineObj = this.state.parsedLines[lineIdx];
+          const songId = this.state.currentSong?.id || "default";
+          const overrideStr = this.state.segmentOverrides[`${songId}:${lineIdx}`];
+          contextSentence = (lineObj.zhText || "").trim();
+          contextSentenceTrad = textHelper.toTraditional(contextSentence);
+          contextSentencePinyin = textHelper.getPinyin(contextSentence, true) || "";
+          contextSentenceMeaning = this.buildLineMeaningGloss(contextSentence, lineObj.explicitMeaning, overrideStr);
+        }
+
+        this.state.selectedWord = {
+          ...info,
+          contextSentence,
+          contextSentenceTrad,
+          contextSentencePinyin,
+          contextSentenceMeaning
+        };
 
         document.getElementById("wordModalTitle").textContent =
           info.trad === info.simp ? info.trad : `${info.trad} / ${info.simp}`;
+        document.getElementById("wordModalHskBadge").innerHTML =
+          hskEngine.getHskBadgeHtml(info.hskLevel, false);
         document.getElementById("wordModalPinyin").textContent = info.pinyin;
         document.getElementById("wordModalTrad").textContent = info.trad;
         document.getElementById("wordModalSimp").textContent = info.simp;
@@ -2025,6 +3178,19 @@
         document.getElementById("wordModalCustomNote").value =
           this.state.currentSong ? `From: ${this.state.currentSong.title}` : "";
 
+        const ctxBox = document.getElementById("wordModalContextBox");
+        if (ctxBox) {
+          if (contextSentence) {
+            ctxBox.style.display = "flex";
+            document.getElementById("wordModalContextZh").innerHTML =
+              this.highlightWordInSentence(contextSentenceTrad || contextSentence, info.trad, info.simp);
+            document.getElementById("wordModalContextPinyin").textContent = contextSentencePinyin;
+            document.getElementById("wordModalContextMeaning").textContent = contextSentenceMeaning || "";
+          } else {
+            ctxBox.style.display = "none";
+          }
+        }
+
         const encoded = encodeURIComponent(info.simp);
         document.getElementById("extLinkMdbg").href =
           `https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=${encoded}`;
@@ -2033,7 +3199,6 @@
 
         document.getElementById("wordModalBackdrop").classList.add("open");
 
-        // Automatically fetch translation if not yet known
         if (!info.meaning) {
           const fetched = await textHelper.fetchTranslationFromApi(info.original);
           if (fetched) {
@@ -2056,6 +3221,19 @@
         }
       },
 
+      highlightWordInSentence(sentence, tradWord, simpWord) {
+        const safeSentence = this.escapeHtml(sentence || "");
+        const safeTrad = this.escapeHtml(tradWord || "");
+        const safeSimp = this.escapeHtml(simpWord || "");
+        if (safeTrad && safeSentence.includes(safeTrad)) {
+          return safeSentence.replaceAll(safeTrad, `<span class="context-highlight">${safeTrad}</span>`);
+        }
+        if (safeSimp && safeSentence.includes(safeSimp)) {
+          return safeSentence.replaceAll(safeSimp, `<span class="context-highlight">${safeSimp}</span>`);
+        }
+        return safeSentence;
+      },
+
       closeWordModal() {
         document.getElementById("wordModalBackdrop").classList.remove("open");
       },
@@ -2071,7 +3249,6 @@
         document.getElementById("wordModalMeaning").textContent = newMeaning;
         document.getElementById("wordModalSourceBadge").textContent = "Edited & Cached";
 
-        // Also update if already in Saved Words
         const existing = this.state.vocab.find(v => v.simp === w.simp || v.trad === w.trad);
         if (existing) {
           existing.meaning = newMeaning;
@@ -2108,11 +3285,16 @@
           meaning: customMeaning,
           note: customNote,
           songId: this.state.currentSong ? this.state.currentSong.id : "",
-          songTitle: this.state.currentSong ? this.state.currentSong.title : ""
+          songTitle: this.state.currentSong ? this.state.currentSong.title : "",
+          contextSentence: w.contextSentence || "",
+          contextSentenceTrad: w.contextSentenceTrad || "",
+          contextSentencePinyin: w.contextSentencePinyin || "",
+          contextSentenceMeaning: w.contextSentenceMeaning || ""
         });
 
         this.closeWordModal();
         this.renderLyrics();
+        this.showSystemAlert(`Saved "${w.trad}" with full KTV sentence context!`);
       },
 
       // -----------------------------------------------------------------------
@@ -2164,7 +3346,7 @@
       },
 
       // -----------------------------------------------------------------------
-      // ADD SONG (WITH "Translating words... X/Y" PROGRESS INDICATOR)
+      // ADD SONG (+50 XP REWARD & PRE-CACHING WORDS + SENTENCES)
       // -----------------------------------------------------------------------
       previewImportedLrcFile(file) {
         if (!file) return;
@@ -2198,32 +3380,35 @@
           dateAdded: new Date().toISOString()
         };
 
-        // Extract all unique words and translate missing ones with progress indicator
         const uniqueWords = this.extractUniqueWordsFromSong(newSong);
-        const missingWords = uniqueWords.filter(w => !textHelper.getKnownMeaning(w.original));
+        const uniqueSentences = this.extractUniqueSentencesFromSong(newSong);
+        const missingItems = [
+          ...uniqueWords.filter(w => !textHelper.getKnownMeaning(w.original)),
+          ...uniqueSentences.filter(s => !s.meaning && !textHelper.getKnownMeaning(s.original))
+        ];
 
         const progressBox = document.getElementById("saveTranslationProgress");
         const submitBtn = document.getElementById("saveSongSubmitBtn");
 
-        if (missingWords.length > 0) {
+        if (missingItems.length > 0 && navigator.onLine !== false) {
           if (progressBox) {
             progressBox.style.display = "block";
-            progressBox.textContent = `Translating words... 0/${missingWords.length}`;
+            progressBox.textContent = `Translating words & sentences... 0/${missingItems.length}`;
           }
           if (submitBtn) submitBtn.disabled = true;
 
           let doneCount = 0;
           const batchSize = 4;
-          for (let i = 0; i < missingWords.length; i += batchSize) {
-            const batch = missingWords.slice(i, i + batchSize);
-            await Promise.all(batch.map(async (w) => {
-              const translated = await textHelper.fetchTranslationFromApi(w.original);
+          for (let i = 0; i < missingItems.length; i += batchSize) {
+            const batch = missingItems.slice(i, i + batchSize);
+            await Promise.all(batch.map(async (item) => {
+              const translated = await textHelper.fetchTranslationFromApi(item.original);
               if (translated) {
-                this.saveMeaningToCache(w.original, translated);
+                this.saveMeaningToCache(item.original, translated);
               }
               doneCount++;
               if (progressBox) {
-                progressBox.textContent = `Translating words... ${doneCount}/${missingWords.length}`;
+                progressBox.textContent = `Translating words & sentences... ${doneCount}/${missingItems.length}`;
               }
             }));
           }
@@ -2235,8 +3420,12 @@
         this.state.songs.unshift(newSong);
         this.saveLocalStorageKey("ktv_songs", this.state.songs);
 
+        this.awardXp(50);
+        this.showSystemAlert(`🎉 Song "${title}" added! You earned +50 XP!`);
+
         this.renderHomeLists();
         this.populateSongSelects();
+        this.updateGamificationUI();
 
         document.getElementById("importSongTitle").value = "";
         document.getElementById("importSongArtist").value = "";
@@ -2270,7 +3459,7 @@
           resultsEl.innerHTML = items.slice(0, 8).map((item, idx) => `
             <div class="info-row" style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
               <div>
-                <div style="font-weight:700; font-family:var(--font-zh);">${this.escapeHtml(item.trackName || item.name || "Unknown")}</div>
+                <div style="font-weight:800; font-family:var(--font-zh);">${this.escapeHtml(item.trackName || item.name || "Unknown")}</div>
                 <div style="font-size:0.8rem; color:var(--text-muted);">${this.escapeHtml(item.artistName || "—")}</div>
               </div>
               <button type="button" class="btn btn-sm btn-primary" onclick="app.fillFormFromLrclib(${idx})">Use Lyrics</button>
@@ -2291,18 +3480,71 @@
       },
 
       // -----------------------------------------------------------------------
-      // FLASHCARDS & SONG SELECTOR DROPDOWN (WORDS + FULL SENTENCES MODES)
+      // PRACTICE TAB: MODE SWITCHER (FLASHCARDS / MATCHING / TYPING) & FILTERS
       // -----------------------------------------------------------------------
+      setPracticeInteractionMode(mode) {
+        const validModes = ["flashcards", "matching", "typing"];
+        this.state.practiceInteractionMode = validModes.includes(mode) ? mode : "flashcards";
+        this.state.flashcardIndex = 0;
+
+        // Matching & Typing modes practice words; switch unit mode to words automatically if needed
+        const unitRow = document.getElementById("fcUnitModeRow");
+        if (this.state.practiceInteractionMode !== "flashcards") {
+          this.state.flashcardUnitMode = "words";
+          const wordsBtn = document.getElementById("fcModeWordsBtn");
+          const sentencesBtn = document.getElementById("fcModeSentencesBtn");
+          if (wordsBtn) wordsBtn.classList.add("active");
+          if (sentencesBtn) sentencesBtn.classList.remove("active");
+          if (unitRow) unitRow.style.display = "none";
+        } else {
+          if (unitRow) unitRow.style.display = "grid";
+        }
+
+        document.getElementById("pModeFlashcardsBtn")?.classList.toggle("active", this.state.practiceInteractionMode === "flashcards");
+        document.getElementById("pModeMatchingBtn")?.classList.toggle("active", this.state.practiceInteractionMode === "matching");
+        document.getElementById("pModeTypingBtn")?.classList.toggle("active", this.state.practiceInteractionMode === "typing");
+
+        document.getElementById("practicePaneFlashcards").style.display =
+          this.state.practiceInteractionMode === "flashcards" ? "block" : "none";
+        document.getElementById("practicePaneMatching").style.display =
+          this.state.practiceInteractionMode === "matching" ? "flex" : "none";
+        document.getElementById("practicePaneTyping").style.display =
+          this.state.practiceInteractionMode === "typing" ? "flex" : "none";
+
+        this.populateSongSelects();
+        this.renderCurrentFlashcard();
+      },
+
+      setFlashcardDueOnly(dueOnly) {
+        this.state.flashcardDueOnly = !!dueOnly;
+        this.state.flashcardIndex = 0;
+
+        document.getElementById("fcFilterDueBtn")?.classList.toggle("active", this.state.flashcardDueOnly);
+        document.getElementById("fcFilterAllBtn")?.classList.toggle("active", !this.state.flashcardDueOnly);
+
+        this.renderCurrentFlashcard();
+      },
+
       setFlashcardUnitMode(unitMode) {
         this.state.flashcardUnitMode = unitMode === "sentences" ? "sentences" : "words";
         this.state.flashcardIndex = 0;
 
-        const wordsBtn = document.getElementById("fcModeWordsBtn");
-        const sentencesBtn = document.getElementById("fcModeSentencesBtn");
-        if (wordsBtn) wordsBtn.classList.toggle("active", this.state.flashcardUnitMode === "words");
-        if (sentencesBtn) sentencesBtn.classList.toggle("active", this.state.flashcardUnitMode === "sentences");
+        document.getElementById("fcModeWordsBtn")?.classList.toggle("active", this.state.flashcardUnitMode === "words");
+        document.getElementById("fcModeSentencesBtn")?.classList.toggle("active", this.state.flashcardUnitMode === "sentences");
 
         this.populateSongSelects();
+        this.renderCurrentFlashcard();
+      },
+
+      onFlashcardSongFilterChange(val) {
+        this.state.flashcardSongFilter = val || "all_songs";
+        this.state.flashcardIndex = 0;
+        this.renderCurrentFlashcard();
+      },
+
+      onFlashcardHskFilterChange(val) {
+        this.state.flashcardHskFilter = val || "all";
+        this.state.flashcardIndex = 0;
         this.renderCurrentFlashcard();
       },
 
@@ -2313,17 +3555,17 @@
           const isSentenceMode = this.state.flashcardUnitMode === "sentences";
           const unitLabel = isSentenceMode ? "sentences" : "words";
 
-          const allSongsCount = this.getFlashcardDeck("all_songs").length;
+          const allSongsCount = this.getRawFlashcardDeck("all_songs", "all").length;
           const savedCount = this.state.vocab.length;
 
           const optionsHtml = [
-            `<option value="all_songs">All Library Songs (${allSongsCount} unique ${unitLabel})</option>`,
-            `<option value="saved_only">Saved / Starred Words & Sentences Only (${savedCount})</option>`,
+            `<option value="all_songs">All Library Songs (${allSongsCount} ${unitLabel})</option>`,
+            `<option value="saved_only">Saved / Starred Only (${savedCount})</option>`,
             ...this.state.songs.map(song => {
               const count = isSentenceMode
                 ? this.extractUniqueSentencesFromSong(song).length
                 : this.extractUniqueWordsFromSong(song).length;
-              const label = `${song.title}${song.artist ? " - " + song.artist : ""} (${count} ${unitLabel})`;
+              const label = `${song.title}${song.artist ? " - " + song.artist : ""} (${count})`;
               return `<option value="song:${song.id}">${this.escapeHtml(label)}</option>`;
             })
           ];
@@ -2349,78 +3591,70 @@
         }
       },
 
-      getFlashcardDeck(filterValue) {
+      /**
+       * Returns all cards for the selected song/deck and HSK level filter
+       * before applying the Due Today filter.
+       */
+      getRawFlashcardDeck(filterValue, hskFilterOverride = null) {
         const mode = filterValue || this.state.flashcardSongFilter || "all_songs";
+        const hskFilter = hskFilterOverride !== null ? hskFilterOverride : (this.state.flashcardHskFilter || "all");
         const isSentenceMode = this.state.flashcardUnitMode === "sentences";
+        const today = srsEngine.getTodayDateStr();
 
-        // 1. Saved / Starred Words & Sentences Only
+        let baseList = [];
+
         if (mode === "saved_only") {
-          return this.state.vocab.map(v => ({
+          baseList = this.state.vocab.map(v => ({
             ...v,
-            meaning: v.meaning || textHelper.getKnownMeaning(v.simp)?.meaning || ""
+            hskLevel: hskEngine.getWordHskLevel(v.simp),
+            meaning: v.meaning || textHelper.getKnownMeaning(v.simp)?.meaning || "",
+            interval: Number(v.interval) || (this.state.srsMap[v.simp]?.interval || 1),
+            nextReviewDate: v.nextReviewDate || this.state.srsMap[v.simp]?.nextReviewDate || today,
+            lastRating: v.lastRating || this.state.srsMap[v.simp]?.lastRating || ""
           }));
-        }
-
-        // 2. Specific song from Library ("song:<id>")
-        if (mode.startsWith("song:")) {
+        } else if (mode.startsWith("song:")) {
           const songId = mode.slice(5);
           const song = this.state.songs.find(s => s.id === songId);
-          if (!song) return [];
-          return isSentenceMode
-            ? this.extractUniqueSentencesFromSong(song)
-            : this.extractUniqueWordsFromSong(song);
-        }
-
-        // 3. Default: "All Library Songs" + any extra Saved items
-        const seenSimp = new Set();
-        const combined = [];
-
-        this.state.songs.forEach(song => {
-          const items = isSentenceMode
-            ? this.extractUniqueSentencesFromSong(song)
-            : this.extractUniqueWordsFromSong(song);
-          items.forEach(item => {
-            if (!seenSimp.has(item.simp)) {
-              seenSimp.add(item.simp);
-              combined.push(item);
-            }
+          if (song) {
+            baseList = isSentenceMode
+              ? this.extractUniqueSentencesFromSong(song)
+              : this.extractUniqueWordsFromSong(song);
+          }
+        } else {
+          const seenSimp = new Set();
+          this.state.songs.forEach(song => {
+            const items = isSentenceMode
+              ? this.extractUniqueSentencesFromSong(song)
+              : this.extractUniqueWordsFromSong(song);
+            items.forEach(item => {
+              if (!seenSimp.has(item.simp)) {
+                seenSimp.add(item.simp);
+                baseList.push(item);
+              }
+            });
           });
-        });
 
-        if (!isSentenceMode) {
-          this.state.vocab.forEach(v => {
-            if (!seenSimp.has(v.simp)) {
-              seenSimp.add(v.simp);
-              combined.push(v);
-            }
-          });
+          if (!isSentenceMode) {
+            this.state.vocab.forEach(v => {
+              if (!seenSimp.has(v.simp)) {
+                seenSimp.add(v.simp);
+                baseList.push({
+                  ...v,
+                  hskLevel: hskEngine.getWordHskLevel(v.simp),
+                  interval: Number(v.interval) || 1,
+                  nextReviewDate: v.nextReviewDate || today
+                });
+              }
+            });
+          }
         }
 
-        return combined;
-      },
-
-      toggleFlashcardMode() {
-        this.state.flashcardActive = !this.state.flashcardActive;
-        this.state.flashcardIndex = 0;
-        this.populateSongSelects();
-
-        // If user has songs in Library, default to first song or all_songs so deck is never empty
-        if (this.state.flashcardActive && this.state.songs.length > 0 && this.state.flashcardSongFilter === "saved_only" && this.state.vocab.length === 0) {
-          this.state.flashcardSongFilter = `song:${this.state.songs[0].id}`;
-          document.getElementById("flashcardSongFilter").value = this.state.flashcardSongFilter;
+        // Apply HSK Level Filter
+        if (!isSentenceMode && hskFilter !== "all") {
+          baseList = baseList.filter(card => hskEngine.matchesHskFilter(card, hskFilter));
         }
 
-        document.getElementById("flashcardContainer").style.display =
-          this.state.flashcardActive ? "block" : "none";
-        if (this.state.flashcardActive) {
-          this.renderCurrentFlashcard();
-        }
-      },
-
-      onFlashcardSongFilterChange(val) {
-        this.state.flashcardSongFilter = val || "all_songs";
-        this.state.flashcardIndex = 0;
-        this.renderCurrentFlashcard();
+        return baseList;
       },
 
       updateFlashcardStarButtonUI(item) {
@@ -2442,7 +3676,6 @@
 
         const existingIdx = this.state.vocab.findIndex(v => v.simp === item.simp || v.trad === item.trad);
         if (existingIdx >= 0) {
-          // Remove from Starred Words if already starred
           const removedId = this.state.vocab[existingIdx].id;
           this.deleteVocabItem(removedId);
           this.updateFlashcardStarButtonUI(item);
@@ -2452,7 +3685,6 @@
           return;
         }
 
-        // Otherwise add current word or sentence to Starred Words
         const latestKnown = textHelper.getKnownMeaning(item.original || item.simp);
         const currentInputMeaning = document.getElementById("flashcardEditMeaningInput")?.value.trim();
         const resolvedMeaning = currentInputMeaning || (latestKnown ? latestKnown.meaning : "") || item.meaning || item.fallbackGloss || "—";
@@ -2464,7 +3696,13 @@
           meaning: resolvedMeaning,
           note: item.note || "",
           songId: item.songId || "",
-          songTitle: item.songTitle || ""
+          songTitle: item.songTitle || "",
+          contextSentence: item.contextSentence || "",
+          contextSentenceTrad: item.contextSentenceTrad || "",
+          contextSentencePinyin: item.contextSentencePinyin || "",
+          contextSentenceMeaning: item.contextSentenceMeaning || "",
+          interval: item.interval || 1,
+          nextReviewDate: item.nextReviewDate || srsEngine.getTodayDateStr()
         });
 
         this.updateFlashcardStarButtonUI(item);
@@ -2473,16 +3711,248 @@
         }
       },
 
+      /**
+       * Persists SRS review state for a practiced item (`hard` | `good` | `easy`).
+       */
+      saveCardSrsOutcome(item, rating) {
+        if (!item) return;
+        const nextSrs = srsEngine.calculateNextSrsState(item.interval, rating);
+        const prevReps = Number(item.reps || this.state.srsMap[item.simp]?.reps || 0);
+
+        this.state.srsMap[item.simp] = {
+          interval: nextSrs.interval,
+          nextReviewDate: nextSrs.nextReviewDate,
+          lastReviewedDate: nextSrs.lastReviewedDate,
+          lastRating: rating,
+          reps: prevReps + 1
+        };
+        this.saveLocalStorageKey("ktv_srs_map", this.state.srsMap);
+
+        const vocabIdx = this.state.vocab.findIndex(v => v.simp === item.simp || v.trad === item.trad);
+        if (vocabIdx >= 0) {
+          this.state.vocab[vocabIdx].interval = nextSrs.interval;
+          this.state.vocab[vocabIdx].nextReviewDate = nextSrs.nextReviewDate;
+          this.state.vocab[vocabIdx].lastRating = rating;
+          this.state.vocab[vocabIdx].reps = prevReps + 1;
+          this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
+          this.renderVocabList();
+        }
+      },
+
+      /**
+       * Mode 1: Anki SRS Flashcard Rating Handler (+10 XP)
+       */
+      rateFlashcardSRS(rating) {
+        const item = this.state.currentFlashcardItem;
+        if (!item) return;
+
+        this.saveCardSrsOutcome(item, rating);
+        this.recordPracticeActivity(10);
+
+        if (!this.state.flashcardDueOnly) {
+          this.state.flashcardIndex += 1;
+        }
+        this.renderCurrentFlashcard();
+      },
+
+      /**
+       * Mode 2: Matching Mode (Multiple Choice) Generator & Click Handler (+5 XP on first try)
+       */
+      renderMatchingModeOptions(item, resolvedMeaning, fullPool) {
+        const gridEl = document.getElementById("matchingOptionsGrid");
+        if (!gridEl || !item) return;
+
+        this.state.matchingFirstAttempt = true;
+        this.state.matchingResolved = false;
+
+        const correctPinyin = item.pinyin || textHelper.getPinyin(item.simp, true) || "—";
+        const correctMeaning = resolvedMeaning || item.fallbackGloss || "Chinese word";
+
+        // Gather distractor pool from other words in library/vocab + KTV_BASE_DICT fallback
+        const distractors = [];
+        const usedSimp = new Set([item.simp]);
+
+        const shuffledPool = [...fullPool].sort(() => Math.random() - 0.5);
+        for (const cand of shuffledPool) {
+          if (distractors.length >= 3) break;
+          if (!cand || usedSimp.has(cand.simp)) continue;
+          const m = textHelper.getKnownMeaning(cand.original || cand.simp)?.meaning || cand.meaning || "";
+          const p = cand.pinyin || textHelper.getPinyin(cand.simp, true) || "";
+          if (m && p && m !== correctMeaning) {
+            usedSimp.add(cand.simp);
+            distractors.push({ pinyin: p, meaning: m, isCorrect: false });
+          }
+        }
+
+        // Fallback to KTV_BASE_DICT entries if library has fewer than 4 words
+        const fallbackKeys = ["朋友", "爱情", "快乐", "时间", "温柔", "梦想", "阳光", "微笑", "世界", "回忆"];
+        for (const fk of fallbackKeys) {
+          if (distractors.length >= 3) break;
+          if (usedSimp.has(fk)) continue;
+          const fm = KTV_BASE_DICT[fk];
+          const fp = textHelper.getPinyin(fk, true) || fk;
+          if (fm && fm !== correctMeaning) {
+            usedSimp.add(fk);
+            distractors.push({ pinyin: fp, meaning: fm, isCorrect: false });
+          }
+        }
+
+        const options = [
+          { pinyin: correctPinyin, meaning: correctMeaning, isCorrect: true },
+          ...distractors.slice(0, 3)
+        ].sort(() => Math.random() - 0.5);
+
+        gridEl.innerHTML = options.map((opt, idx) => `
+          <button type="button" class="match-option-btn" data-correct="${opt.isCorrect ? "1" : "0"}" onclick="app.handleMatchingChoice(this)">
+            <span style="font-size:1rem; font-weight:800; color:var(--gold);">${idx + 1}. ${this.escapeHtml(opt.pinyin)}</span>
+            <span style="font-size:0.9rem; font-weight:700; color:var(--text-main);">${this.escapeHtml(opt.meaning)}</span>
+          </button>
+        `).join("");
+      },
+
+      handleMatchingChoice(btnEl) {
+        if (this.state.matchingResolved || !btnEl) return;
+        this.state.matchingResolved = true;
+
+        const isCorrect = btnEl.getAttribute("data-correct") === "1";
+        const allBtns = document.querySelectorAll("#matchingOptionsGrid .match-option-btn");
+
+        allBtns.forEach(b => {
+          b.disabled = true;
+          if (b.getAttribute("data-correct") === "1") {
+            b.classList.add("correct");
+          }
+        });
+
+        const item = this.state.currentFlashcardItem;
+        if (isCorrect) {
+          btnEl.classList.add("correct");
+          if (this.state.matchingFirstAttempt) {
+            this.saveCardSrsOutcome(item, "good");
+            this.recordPracticeActivity(5); // +5 XP for first-try Matching success
+          }
+        } else {
+          btnEl.classList.add("wrong");
+          this.saveCardSrsOutcome(item, "hard");
+        }
+
+        setTimeout(() => {
+          if (!this.state.flashcardDueOnly || !isCorrect) {
+            this.state.flashcardIndex += 1;
+          }
+          this.renderCurrentFlashcard();
+        }, 950);
+      },
+
+      /**
+       * Mode 3: Typing Mode (Hard Mode, Tone-Insensitive Pinyin Check, +15 XP)
+       */
+      renderTypingModePrompt(item, resolvedMeaning) {
+        this.state.typingChecked = false;
+        const meaningEl = document.getElementById("typingPromptMeaning");
+        const simpNoteEl = document.getElementById("typingPromptSimpNote");
+        const inputEl = document.getElementById("typingPinyinInput");
+        const feedbackBox = document.getElementById("typingFeedbackBox");
+        const checkBtn = document.getElementById("typingCheckBtn");
+
+        if (meaningEl) {
+          meaningEl.textContent = resolvedMeaning || item.fallbackGloss || "Type the Pinyin for this character";
+        }
+        if (simpNoteEl) {
+          simpNoteEl.textContent = item.trad !== item.simp
+            ? `Simplified: ${item.simp}${item.songTitle ? " · 🎵 " + item.songTitle : ""}`
+            : (item.songTitle ? `🎵 ${item.songTitle}` : "");
+        }
+        if (feedbackBox) {
+          feedbackBox.className = "typing-feedback-box";
+        }
+        if (checkBtn) {
+          checkBtn.textContent = "✓ Check (+15 XP)";
+        }
+        if (inputEl) {
+          inputEl.value = "";
+          inputEl.disabled = false;
+          setTimeout(() => {
+            try { inputEl.focus({ preventScroll: true }); } catch (e) {}
+          }, 60);
+        }
+      },
+
+      handleTypingSubmit(event) {
+        if (event) event.preventDefault();
+        const item = this.state.currentFlashcardItem;
+        if (!item) return;
+
+        // If already checked, pressing Enter / Check advances to the next card
+        if (this.state.typingChecked) {
+          this.stepFlashcard(1);
+          return;
+        }
+
+        const inputEl = document.getElementById("typingPinyinInput");
+        const userRaw = (inputEl?.value || "").trim();
+        if (!userRaw) return;
+
+        const targetPinyin = item.pinyin || textHelper.getPinyin(item.simp, true) || "";
+        const normalizedTarget = textHelper.normalizePinyinForTyping(targetPinyin);
+        const normalizedUser = textHelper.normalizePinyinForTyping(userRaw);
+
+        const isCorrect = normalizedTarget.length > 0 && normalizedUser === normalizedTarget;
+        this.state.typingChecked = true;
+
+        const feedbackBox = document.getElementById("typingFeedbackBox");
+        const feedbackTitle = document.getElementById("typingFeedbackTitle");
+        const feedbackDetail = document.getElementById("typingFeedbackDetail");
+        const checkBtn = document.getElementById("typingCheckBtn");
+
+        if (isCorrect) {
+          if (feedbackBox) feedbackBox.className = "typing-feedback-box correct";
+          if (feedbackTitle) feedbackTitle.textContent = "✅ Spotless! +15 XP";
+          if (feedbackDetail) feedbackDetail.textContent = `Pinyin with tones: ${targetPinyin}`;
+          this.saveCardSrsOutcome(item, "easy");
+          this.recordPracticeActivity(15); // +15 XP for spotless Typing answer
+        } else {
+          if (feedbackBox) feedbackBox.className = "typing-feedback-box wrong";
+          if (feedbackTitle) feedbackTitle.textContent = "❌ Not quite!";
+          if (feedbackDetail) feedbackDetail.textContent = `Correct Pinyin: ${targetPinyin} (${normalizedTarget})`;
+          this.saveCardSrsOutcome(item, "hard");
+        }
+
+        if (checkBtn) {
+          checkBtn.textContent = "Next Word ▶";
+        }
+      },
+
       async renderCurrentFlashcard() {
-        const activeDeck = this.getFlashcardDeck(this.state.flashcardSongFilter);
+        const rawDeck = this.getRawFlashcardDeck(this.state.flashcardSongFilter);
+        const dueDeck = rawDeck.filter(c => srsEngine.isCardDueToday(c));
+        const activeDeck = this.state.flashcardDueOnly ? dueDeck : rawDeck;
+
+        const dueInline = document.getElementById("fcDueCountInline");
+        if (dueInline) dueInline.textContent = dueDeck.length;
+        const allInline = document.getElementById("fcAllCountInline");
+        if (allInline) allInline.textContent = rawDeck.length;
+        const dueBadge = document.getElementById("flashcardDueBadge");
+        if (dueBadge) dueBadge.textContent = `${dueDeck.length} due today`;
+
         const emptyMsg = document.getElementById("flashcardEmptyMsg");
+        const emptyText = document.getElementById("flashcardEmptyText");
+        const practiceAllBtn = document.getElementById("flashcardPracticeAllFallbackBtn");
         const activeWrap = document.getElementById("flashcardActiveWrap");
         const counterEl = document.getElementById("flashcardCounter");
 
         if (!activeDeck.length) {
           if (counterEl) counterEl.textContent = "Card 0 / 0";
-          if (emptyMsg) emptyMsg.style.display = "block";
+          if (emptyMsg) emptyMsg.style.display = "flex";
           if (activeWrap) activeWrap.style.display = "none";
+
+          if (rawDeck.length > 0 && this.state.flashcardDueOnly) {
+            if (emptyText) emptyText.textContent = "🎉 All due reviews for this filter completed today!";
+            if (practiceAllBtn) practiceAllBtn.style.display = "inline-flex";
+          } else {
+            if (emptyText) emptyText.textContent = "No cards match this deck / HSK filter yet.";
+            if (practiceAllBtn) practiceAllBtn.style.display = "none";
+          }
           return;
         }
 
@@ -2495,8 +3965,6 @@
         this.state.currentFlashcardItem = item;
 
         const isSentence = this.state.flashcardUnitMode === "sentences" || !!item.isSentence || (item.simp && item.simp.length > 4);
-
-        // Front: Exclusively Traditional character / sentence (or Simplified if no Traditional exists)
         const frontChar = (item.trad && item.trad.trim()) ? item.trad.trim() : item.simp;
 
         counterEl.textContent = `Card ${idx + 1} / ${total}`;
@@ -2506,18 +3974,41 @@
 
         const frontLabelEl = document.getElementById("flashcardFrontLabel");
         if (frontLabelEl) {
-          frontLabelEl.textContent = isSentence ? "Traditional Sentence (繁體)" : "Traditional Character (繁體)";
+          frontLabelEl.textContent = isSentence ? "Traditional Sentence" : "Traditional Character";
         }
         const backSimpLabelEl = document.getElementById("flashcardBackSimpLabel");
         if (backSimpLabelEl) {
-          backSimpLabelEl.textContent = isSentence ? "Simplified Sentence (简体)" : "Simplified Character (简体)";
+          backSimpLabelEl.textContent = isSentence ? "Simplified Sentence (简体)" : "Simplified (简体)";
         }
+
+        // Render HSK Badge on Practice Card
+        const hskBadgeWrap = document.getElementById("flashcardHskBadgeWrap");
+        if (hskBadgeWrap) {
+          hskBadgeWrap.innerHTML = hskEngine.getHskBadgeHtml(item.simp, isSentence);
+        }
+
+        // Update SRS Status & Rating Button Interval Labels
+        const srsStatusEl = document.getElementById("flashcardSrsStatusText");
+        if (srsStatusEl) {
+          const reps = Number(item.reps || this.state.srsMap[item.simp]?.reps || 0);
+          srsStatusEl.textContent = reps > 0
+            ? `Interval: ${item.interval || 1}d · Next review: ${item.nextReviewDate || "Today"}`
+            : "New card · Due today";
+        }
+
+        const { hardDays, goodDays, easyDays } = srsEngine.getPreviewIntervals(item.interval);
+        const lblHard = document.getElementById("srsLabelHard");
+        const lblGood = document.getElementById("srsLabelGood");
+        const lblEasy = document.getElementById("srsLabelEasy");
+        if (lblHard) lblHard.textContent = `${hardDays}d (Tomorrow)`;
+        if (lblGood) lblGood.textContent = `${goodDays}d`;
+        if (lblEasy) lblEasy.textContent = `${easyDays}d`;
 
         this.updateFlashcardStarButtonUI(item);
 
-        // Check latest meaning from cache/dictionary
+        // Resolve Meaning
         const latestKnown = textHelper.getKnownMeaning(item.original || item.simp);
-        const resolvedMeaning = latestKnown ? latestKnown.meaning : (item.meaning || "");
+        let resolvedMeaning = latestKnown ? latestKnown.meaning : (item.meaning || "");
 
         document.getElementById("flashcardBackPinyin").textContent =
           item.pinyin || textHelper.getPinyin(item.simp || frontChar, true) || "—";
@@ -2529,18 +4020,51 @@
         document.getElementById("flashcardBackNote").textContent =
           item.songTitle ? `🎵 ${item.songTitle}${item.note ? " · " + item.note : ""}` : (item.note || "");
 
+        // Render Memrise-style KTV Context Sentence Box on Back of Flashcard
+        const ctxBox = document.getElementById("flashcardContextBox");
+        if (ctxBox) {
+          if (!isSentence && item.contextSentence) {
+            ctxBox.style.display = "flex";
+            const ctxTrad = item.contextSentenceTrad || textHelper.toTraditional(item.contextSentence);
+            const ctxPinyin = item.contextSentencePinyin || textHelper.getPinyin(item.contextSentence, true);
+            const knownCtxMeaning = textHelper.getKnownMeaning(item.contextSentence);
+            const ctxMeaning = (knownCtxMeaning ? knownCtxMeaning.meaning : "") || item.contextSentenceMeaning || "";
+
+            document.getElementById("flashcardContextZh").innerHTML =
+              this.highlightWordInSentence(ctxTrad, item.trad, item.simp);
+            document.getElementById("flashcardContextPinyin").textContent = ctxPinyin;
+            document.getElementById("flashcardContextMeaning").textContent = ctxMeaning;
+          } else {
+            ctxBox.style.display = "none";
+          }
+        }
+
         document.getElementById("flashcardBackContent").classList.remove("revealed");
         const frontActions = document.getElementById("flashcardFrontActions");
         if (frontActions) frontActions.style.display = "flex";
 
-        // If meaning is still missing (or only a word-by-word gloss for a sentence), fetch full translation in the background and cache it
-        if (!resolvedMeaning) {
+        // Update Matching Mode or Typing Mode UI if active
+        if (this.state.practiceInteractionMode === "matching") {
+          const fullPool = this.getRawFlashcardDeck("all_songs", "all");
+          this.renderMatchingModeOptions(item, resolvedMeaning, fullPool);
+        } else if (this.state.practiceInteractionMode === "typing") {
+          this.renderTypingModePrompt(item, resolvedMeaning);
+        }
+
+        if (!resolvedMeaning && navigator.onLine !== false) {
           const fetched = await textHelper.fetchTranslationFromApi(item.original || item.simp);
           if (fetched) {
             this.saveMeaningToCache(item.original || item.simp, fetched);
+            resolvedMeaning = fetched;
             if (this.state.currentFlashcardItem && this.state.currentFlashcardItem.simp === item.simp) {
               document.getElementById("flashcardBackMeaning").textContent = fetched;
               document.getElementById("flashcardEditMeaningInput").value = fetched;
+              if (this.state.practiceInteractionMode === "matching") {
+                this.renderMatchingModeOptions(item, fetched, this.getRawFlashcardDeck("all_songs", "all"));
+              } else if (this.state.practiceInteractionMode === "typing") {
+                const tm = document.getElementById("typingPromptMeaning");
+                if (tm) tm.textContent = fetched;
+              }
             }
           } else if (!item.fallbackGloss) {
             if (this.state.currentFlashcardItem && this.state.currentFlashcardItem.simp === item.simp) {
@@ -2566,7 +4090,6 @@
         item.meaning = val;
         document.getElementById("flashcardBackMeaning").textContent = val;
 
-        // Also update if in Saved Words
         const existing = this.state.vocab.find(v => v.simp === item.simp || v.trad === item.trad);
         if (existing) {
           existing.meaning = val;
@@ -2584,12 +4107,28 @@
       },
 
       // -----------------------------------------------------------------------
-      // SAVED WORDS CRUD & CSV EXPORT / IMPORT
+      // SAVED WORDS CRUD (WITH HSK BADGE, CONTEXT SENTENCE & SRS FIELDS)
       // -----------------------------------------------------------------------
-      upsertVocabItem({ id, simp, trad, pinyin, meaning, note, songId, songTitle }) {
+      upsertVocabItem({
+        id,
+        simp,
+        trad,
+        pinyin,
+        meaning,
+        note,
+        songId,
+        songTitle,
+        contextSentence,
+        contextSentenceTrad,
+        contextSentencePinyin,
+        contextSentenceMeaning,
+        interval,
+        nextReviewDate
+      }) {
         const cleanSimp = textHelper.toSimplified(simp.trim());
         const cleanTrad = (trad && trad.trim()) ? trad.trim() : textHelper.toTraditional(cleanSimp);
         const cleanPinyin = (pinyin && pinyin.trim()) ? pinyin.trim() : (textHelper.getPinyin(cleanSimp, true) || "—");
+        const today = srsEngine.getTodayDateStr();
 
         if (meaning && meaning.trim() && meaning.trim() !== "—") {
           this.saveMeaningToCache(cleanSimp, meaning.trim());
@@ -2602,6 +4141,11 @@
         const resolvedSong = songId ? this.state.songs.find(s => s.id === songId) : null;
         const resolvedSongTitle = songTitle || (resolvedSong ? resolvedSong.title : "");
 
+        const cleanCtx = (contextSentence || "").trim();
+        const cleanCtxTrad = (contextSentenceTrad || (cleanCtx ? textHelper.toTraditional(cleanCtx) : "")).trim();
+        const cleanCtxPinyin = (contextSentencePinyin || (cleanCtx ? textHelper.getPinyin(cleanCtx, true) : "")).trim();
+        const cleanCtxMeaning = (contextSentenceMeaning || "").trim();
+
         if (existingIdx >= 0) {
           const prev = this.state.vocab[existingIdx];
           const songIds = Array.from(new Set([...(prev.songIds || []), ...(prev.songId ? [prev.songId] : []), ...(songId ? [songId] : [])]));
@@ -2611,10 +4155,16 @@
             trad: cleanTrad,
             pinyin: cleanPinyin,
             meaning: meaning.trim(),
-            note: (note || "").trim(),
+            note: (note !== undefined ? note : (prev.note || "")).trim(),
             songId: songId || prev.songId || "",
             songTitle: resolvedSongTitle || prev.songTitle || "",
-            songIds
+            songIds,
+            contextSentence: cleanCtx || prev.contextSentence || "",
+            contextSentenceTrad: cleanCtxTrad || prev.contextSentenceTrad || "",
+            contextSentencePinyin: cleanCtxPinyin || prev.contextSentencePinyin || "",
+            contextSentenceMeaning: cleanCtxMeaning || prev.contextSentenceMeaning || "",
+            interval: Number(interval || prev.interval || 1),
+            nextReviewDate: nextReviewDate || prev.nextReviewDate || today
           };
         } else {
           this.state.vocab.unshift({
@@ -2627,6 +4177,14 @@
             songId: songId || "",
             songTitle: resolvedSongTitle || "",
             songIds: songId ? [songId] : [],
+            contextSentence: cleanCtx,
+            contextSentenceTrad: cleanCtxTrad,
+            contextSentencePinyin: cleanCtxPinyin,
+            contextSentenceMeaning: cleanCtxMeaning,
+            interval: Number(interval || this.state.srsMap[cleanSimp]?.interval || 1),
+            nextReviewDate: nextReviewDate || this.state.srsMap[cleanSimp]?.nextReviewDate || today,
+            lastRating: this.state.srsMap[cleanSimp]?.lastRating || "",
+            reps: Number(this.state.srsMap[cleanSimp]?.reps || 0),
             dateAdded: new Date().toISOString()
           });
         }
@@ -2634,12 +4192,10 @@
         this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
         this.renderVocabList();
         this.populateSongSelects();
+        this.updateGamificationUI();
       },
 
       renderVocabList() {
-        const countEl = document.getElementById("navVocabCount");
-        if (countEl) countEl.textContent = this.state.vocab.length;
-
         const badgeEl = document.getElementById("vocabTotalBadge");
         if (badgeEl) badgeEl.textContent = `${this.state.vocab.length} saved`;
 
@@ -2656,6 +4212,7 @@
             item.trad.toLowerCase().includes(q) ||
             item.pinyin.toLowerCase().includes(q) ||
             item.meaning.toLowerCase().includes(q) ||
+            (item.contextSentence || "").toLowerCase().includes(q) ||
             (item.note || "").toLowerCase().includes(q) ||
             (item.songTitle || "").toLowerCase().includes(q)
           );
@@ -2663,31 +4220,50 @@
 
         list.sort((a, b) => {
           if (sortMode === "zh-asc") return a.simp.localeCompare(b.simp, "zh");
+          if (sortMode === "due-asc") return String(a.nextReviewDate || "").localeCompare(String(b.nextReviewDate || ""));
           return new Date(b.dateAdded) - new Date(a.dateAdded);
         });
 
         if (list.length === 0) {
-          container.innerHTML = `<div class="card" style="color:var(--text-muted); font-size:0.88rem;">No starred words yet. Tip: Click '🎴 Practice Flashcards' above to immediately practice all words from any song in your Library!</div>`;
+          container.innerHTML = `<div class="card" style="color:var(--text-muted); font-size:0.88rem; text-align:center;">No starred words yet. Tap any word in a song's lyrics or tap '☆ Star Word' on a practice card to save it with its KTV sentence context!</div>`;
           return;
         }
 
         container.innerHTML = list.map(item => {
           const titleChars = item.trad === item.simp ? item.trad : `${item.trad} (${item.simp})`;
+          const isDue = srsEngine.isCardDueToday(item);
+          const isSent = Array.from(item.simp || "").length > 4;
+          const hskBadge = hskEngine.getHskBadgeHtml(item.simp, isSent);
+
           return `
             <div class="song-item">
               <div class="song-item-header">
                 <div>
-                  <div class="song-title" style="font-size:1.3rem;">${this.escapeHtml(titleChars)}</div>
-                  <div style="color:var(--gold); font-weight:700; font-size:0.92rem;">${this.escapeHtml(item.pinyin)}</div>
+                  <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    <div class="song-title" style="font-size:1.3rem;">${this.escapeHtml(titleChars)}</div>
+                    ${hskBadge}
+                  </div>
+                  <div style="color:var(--gold); font-weight:800; font-size:0.92rem;">${this.escapeHtml(item.pinyin)}</div>
                 </div>
-                <div style="display:flex; gap:6px;">
-                  <button type="button" class="btn btn-sm" title="Edit word" onclick="app.openVocabEditModal('${item.id}')">✏️</button>
-                  <button type="button" class="btn btn-sm" title="Delete word" onclick="app.deleteVocabItem('${item.id}')">🗑️</button>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <span class="badge ${isDue ? "badge-orange" : "badge-green"}">
+                    ${isDue ? "Due today" : `${item.interval || 1}d`}
+                  </span>
+                  <button type="button" class="btn btn-sm" style="background:var(--bg-elevated);" title="Edit word" onclick="app.openVocabEditModal('${item.id}')">✏️</button>
+                  <button type="button" class="btn btn-sm" style="background:var(--bg-elevated);" title="Delete word" onclick="app.deleteVocabItem('${item.id}')">🗑️</button>
                 </div>
               </div>
-              <div style="font-weight:600; font-size:0.95rem;">${this.escapeHtml(item.meaning)}</div>
-              ${item.songTitle ? `<div style="font-size:0.78rem; color:#5eead4;">🎵 ${this.escapeHtml(item.songTitle)}</div>` : ""}
-              ${item.note ? `<div style="font-size:0.8rem; color:var(--text-muted);">${this.escapeHtml(item.note)}</div>` : ""}
+              <div style="font-weight:800; font-size:0.98rem;">${this.escapeHtml(item.meaning)}</div>
+              ${item.contextSentence ? `
+                <div class="context-sentence-box" style="padding:10px 12px;">
+                  <div style="font-family:var(--font-zh); font-weight:800; font-size:0.95rem;">
+                    ${this.highlightWordInSentence(item.contextSentenceTrad || item.contextSentence, item.trad, item.simp)}
+                  </div>
+                  ${item.contextSentencePinyin ? `<div style="font-size:0.78rem; color:var(--gold);">${this.escapeHtml(item.contextSentencePinyin)}</div>` : ""}
+                  ${item.contextSentenceMeaning ? `<div style="font-size:0.8rem; color:var(--text-muted);">${this.escapeHtml(item.contextSentenceMeaning)}</div>` : ""}
+                </div>
+              ` : ""}
+              ${item.songTitle ? `<div style="font-size:0.78rem; color:#5eead4; font-weight:700;">🎵 ${this.escapeHtml(item.songTitle)}</div>` : ""}
             </div>
           `;
         }).join("");
@@ -2703,6 +4279,7 @@
         document.getElementById("vocabEditTrad").value = item ? item.trad : "";
         document.getElementById("vocabEditPinyin").value = item ? item.pinyin : "";
         document.getElementById("vocabEditMeaning").value = item ? item.meaning : "";
+        document.getElementById("vocabEditContextSentence").value = item ? (item.contextSentence || "") : "";
         document.getElementById("vocabEditNote").value = item ? (item.note || "") : "";
         document.getElementById("vocabEditSongId").value = item ? (item.songId || "") : (this.state.currentSong?.id || "");
         document.getElementById("vocabEditModalBackdrop").classList.add("open");
@@ -2727,12 +4304,15 @@
         if (event) event.preventDefault();
         const chosenSongId = document.getElementById("vocabEditSongId").value;
         const chosenSong = this.state.songs.find(s => s.id === chosenSongId);
+        const ctxSentence = document.getElementById("vocabEditContextSentence").value.trim();
+
         this.upsertVocabItem({
           id: document.getElementById("vocabEditId").value || null,
           simp: document.getElementById("vocabEditSimp").value,
           trad: document.getElementById("vocabEditTrad").value,
           pinyin: document.getElementById("vocabEditPinyin").value,
           meaning: document.getElementById("vocabEditMeaning").value,
+          contextSentence: ctxSentence,
           note: document.getElementById("vocabEditNote").value,
           songId: chosenSongId,
           songTitle: chosenSong ? chosenSong.title : ""
@@ -2746,6 +4326,7 @@
         this.saveLocalStorageKey("ktv_vocab", this.state.vocab);
         this.renderVocabList();
         this.populateSongSelects();
+        this.updateGamificationUI();
         this.renderLyrics();
       },
 
@@ -2754,10 +4335,22 @@
           this.showSystemAlert("Your Saved Words list is empty.");
           return;
         }
-        const headers = ["Traditional", "Simplified", "Pinyin", "Meaning", "Song_Title", "Date_Added", "Note"];
-        const rows = this.state.vocab.map(v => [
-          v.trad, v.simp, v.pinyin, v.meaning, v.songTitle || "", v.dateAdded, v.note || ""
-        ].map(c => `"${String(c || "").replace(/"/g, '""')}"`).join(","));
+        const headers = ["Traditional", "Simplified", "Pinyin", "Meaning", "HSK_Level", "Context_Sentence", "Next_Review_Date", "Interval_Days", "Song_Title", "Note"];
+        const rows = this.state.vocab.map(v => {
+          const lvl = hskEngine.getWordHskLevel(v.simp);
+          return [
+            v.trad,
+            v.simp,
+            v.pinyin,
+            v.meaning,
+            lvl ? `HSK ${lvl}` : "Non-HSK",
+            v.contextSentence || "",
+            v.nextReviewDate || "",
+            v.interval || 1,
+            v.songTitle || "",
+            v.note || ""
+          ].map(c => `"${String(c || "").replace(/"/g, '""')}"`).join(",");
+        });
 
         const csvContent = "\uFEFF" + [headers.join(","), ...rows].join("\n");
         const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
@@ -2782,8 +4375,11 @@
                 simp: cols[1] || cols[0],
                 pinyin: cols[2],
                 meaning: cols[3],
-                songTitle: cols[4] || "",
-                note: cols[6] || cols[5] || ""
+                contextSentence: cols[5] || cols[4] || "",
+                nextReviewDate: cols[6] || srsEngine.getTodayDateStr(),
+                interval: Number(cols[7]) || 1,
+                songTitle: cols[8] || "",
+                note: cols[9] || ""
               });
             }
           }
