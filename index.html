@@ -5,8 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#0f172a">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>KTV Hanyu — Learn Chinese with Lyrics</title>
+  <meta name="apple-mobile-web-app-title" content="KTV App">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%23e11d48'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-size='108' font-family='sans-serif' font-weight='bold' fill='%23ffffff'%3E%E6%AD%8C%3C/text%3E%3C/svg%3E">
+  <title>KTV App — Learn Chinese with Lyrics</title>
 
   <!-- External CDN libraries for Pinyin and Traditional/Simplified Chinese conversion -->
   <script src="https://cdn.jsdelivr.net/npm/pinyin-pro@3.19.6/dist/index.js" defer onerror="window.__pinyinLoadError=true"></script>
@@ -491,6 +495,30 @@
       color: var(--text-main);
       margin: 8px 0;
       text-align: center;
+      word-break: break-word;
+    }
+
+    .flashcard-trad-char.sentence-mode {
+      font-size: 1.85rem;
+      line-height: 1.45;
+      margin: 10px 0;
+    }
+
+    .btn-star-card {
+      width: auto;
+      padding: 6px 14px;
+      min-height: 36px;
+      font-size: 0.85rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background-color: var(--bg-input);
+      color: var(--text-muted);
+    }
+
+    .btn-star-card.starred {
+      background-color: rgba(245, 158, 11, 0.2);
+      border-color: var(--gold);
+      color: #fde68a;
     }
 
     .flashcard-answer-area {
@@ -788,6 +816,12 @@
               <button type="button" class="btn btn-sm" onclick="app.toggleFlashcardMode()">Close</button>
             </div>
 
+            <!-- Mode Switcher: Words vs Full Sentences (Lyrics lines) -->
+            <div class="segmented-row" style="grid-template-columns: repeat(2, 1fr);" role="group" aria-label="Flashcard learning mode">
+              <button type="button" class="seg-btn active" id="fcModeWordsBtn" onclick="app.setFlashcardUnitMode('words')">🔤 Words</button>
+              <button type="button" class="seg-btn" id="fcModeSentencesBtn" onclick="app.setFlashcardUnitMode('sentences')">📝 Sentences (Full Lines)</button>
+            </div>
+
             <!-- Song Filter Dropdown: Always populated with all Library songs -->
             <div style="text-align:left;">
               <label class="form-label" for="flashcardSongFilter" style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">
@@ -800,20 +834,30 @@
             </div>
 
             <div id="flashcardEmptyMsg" style="display:none; padding:16px 8px; color:var(--text-muted); font-size:0.9rem;">
-              No words found for this selection. Add a song in 'Add Song' or tap words in a song to star them.
+              No items found for this selection. Add a song in 'Add Song' or tap Star on cards to save them.
             </div>
 
             <div id="flashcardActiveWrap">
-              <!-- FRONT (Question): Exclusively Traditional character (large & centered) -->
+              <!-- FRONT (Question): Exclusively Traditional character / sentence (large & centered) + Star Button -->
               <div>
-                <div style="font-size:0.76rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;">Traditional Character</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                  <div style="font-size:0.76rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em;" id="flashcardFrontLabel">Traditional Character</div>
+                  <button type="button" class="btn btn-star-card" id="flashcardStarBtn" onclick="app.toggleStarCurrentFlashcard()">
+                    ☆ Star Word
+                  </button>
+                </div>
                 <div class="flashcard-trad-char" id="flashcardFrontTrad">—</div>
               </div>
 
-              <!-- BUTTON: "Show answer" -->
-              <button type="button" class="btn btn-primary" id="flashcardShowAnswerBtn" onclick="app.revealFlashcard()">
-                Show answer
-              </button>
+              <!-- FRONT ACTION BUTTONS: "Show answer" + "Next" (skip directly to next word/sentence) -->
+              <div id="flashcardFrontActions" style="display:flex; gap:8px;">
+                <button type="button" class="btn btn-primary" style="flex:2;" id="flashcardShowAnswerBtn" onclick="app.revealFlashcard()">
+                  Show answer
+                </button>
+                <button type="button" class="btn" style="flex:1;" id="flashcardSkipNextBtn" onclick="app.stepFlashcard(1)">
+                  Next ▶
+                </button>
+              </div>
 
               <!-- BACK (Revealed after clicking "Show answer"): Pinyin (with tones), Simplified character, Meaning & Edit Meaning -->
               <div class="flashcard-answer-area" id="flashcardBackContent">
@@ -822,7 +866,7 @@
                   <div style="font-size:1.3rem; font-weight:700; color:var(--gold);" id="flashcardBackPinyin">—</div>
                 </div>
                 <div class="info-row">
-                  <div class="info-label">Simplified Character (简体)</div>
+                  <div class="info-label" id="flashcardBackSimpLabel">Simplified Character (简体)</div>
                   <div style="font-size:1.5rem; font-weight:700; font-family:var(--font-zh); color:#5eead4;" id="flashcardBackSimp">—</div>
                 </div>
                 <div class="info-row">
@@ -839,7 +883,7 @@
 
                 <div style="display:flex; gap:8px; margin-top:6px;">
                   <button type="button" class="btn" onclick="app.stepFlashcard(-1)">◀ Previous</button>
-                  <button type="button" class="btn btn-primary" onclick="app.stepFlashcard(1)">Next card ▶</button>
+                  <button type="button" class="btn btn-primary" onclick="app.stepFlashcard(1)">Next ▶</button>
                 </div>
               </div>
             </div>
@@ -1325,6 +1369,7 @@
         flashcardActive: false,
         flashcardIndex: 0,
         flashcardSongFilter: "all_songs",
+        flashcardUnitMode: "words",
         currentFlashcardItem: null,
         settings: {
           scriptMode: "both",
@@ -1507,7 +1552,7 @@
       },
 
       // -----------------------------------------------------------------------
-      // EXTRACT UNIQUE CHINESE WORDS FROM ANY SONG IN LIBRARY
+      // EXTRACT UNIQUE CHINESE WORDS OR FULL SENTENCES FROM ANY SONG IN LIBRARY
       // -----------------------------------------------------------------------
       extractUniqueWordsFromSong(song) {
         if (!song || !song.lrc) return [];
@@ -1542,12 +1587,51 @@
               meaning: known ? known.meaning : "",
               songId: song.id,
               songTitle: `${song.title}${song.artist ? " - " + song.artist : ""}`,
-              note: ""
+              note: "",
+              isSentence: false
             });
           });
         });
 
         return uniqueWords;
+      },
+
+      extractUniqueSentencesFromSong(song) {
+        if (!song || !song.lrc) return [];
+        const lines = this.parseLyricsLines(song.lrc);
+        const seenSimp = new Set();
+        const uniqueSentences = [];
+
+        lines.forEach((ln, lineIdx) => {
+          const cleanLine = (ln.zhText || "").trim();
+          if (!cleanLine || !textHelper.isChineseText(cleanLine)) return;
+
+          const simp = textHelper.toSimplified(cleanLine);
+          if (seenSimp.has(simp)) return;
+          seenSimp.add(simp);
+
+          const trad = textHelper.toTraditional(cleanLine);
+          const pinyin = textHelper.getPinyin(cleanLine, true) || "";
+          const known = textHelper.getKnownMeaning(cleanLine);
+          const overrideKey = `${song.id}:${lineIdx}`;
+          const fallbackGloss = this.buildLineMeaningGloss(cleanLine, ln.explicitMeaning, this.state.segmentOverrides[overrideKey]);
+
+          uniqueSentences.push({
+            id: `songline-${song.id}-${lineIdx}`,
+            original: cleanLine,
+            simp,
+            trad,
+            pinyin,
+            meaning: ln.explicitMeaning || (known ? known.meaning : "") || "",
+            fallbackGloss: fallbackGloss || "",
+            songId: song.id,
+            songTitle: `${song.title}${song.artist ? " - " + song.artist : ""}`,
+            note: `Line ${lineIdx + 1}`,
+            isSentence: true
+          });
+        });
+
+        return uniqueSentences;
       },
 
       // -----------------------------------------------------------------------
@@ -2207,21 +2291,39 @@
       },
 
       // -----------------------------------------------------------------------
-      // FLASHCARDS & SONG SELECTOR DROPDOWN (ALWAYS POPULATED FROM LIBRARY)
+      // FLASHCARDS & SONG SELECTOR DROPDOWN (WORDS + FULL SENTENCES MODES)
       // -----------------------------------------------------------------------
+      setFlashcardUnitMode(unitMode) {
+        this.state.flashcardUnitMode = unitMode === "sentences" ? "sentences" : "words";
+        this.state.flashcardIndex = 0;
+
+        const wordsBtn = document.getElementById("fcModeWordsBtn");
+        const sentencesBtn = document.getElementById("fcModeSentencesBtn");
+        if (wordsBtn) wordsBtn.classList.toggle("active", this.state.flashcardUnitMode === "words");
+        if (sentencesBtn) sentencesBtn.classList.toggle("active", this.state.flashcardUnitMode === "sentences");
+
+        this.populateSongSelects();
+        this.renderCurrentFlashcard();
+      },
+
       populateSongSelects() {
         const filterSelect = document.getElementById("flashcardSongFilter");
         if (filterSelect) {
           const prevVal = this.state.flashcardSongFilter || "all_songs";
-          const allSongsWordsCount = this.getFlashcardDeck("all_songs").length;
-          const savedWordsCount = this.state.vocab.length;
+          const isSentenceMode = this.state.flashcardUnitMode === "sentences";
+          const unitLabel = isSentenceMode ? "sentences" : "words";
+
+          const allSongsCount = this.getFlashcardDeck("all_songs").length;
+          const savedCount = this.state.vocab.length;
 
           const optionsHtml = [
-            `<option value="all_songs">All Library Songs (${allSongsWordsCount} unique words)</option>`,
-            `<option value="saved_only">Saved / Starred Words Only (${savedWordsCount})</option>`,
+            `<option value="all_songs">All Library Songs (${allSongsCount} unique ${unitLabel})</option>`,
+            `<option value="saved_only">Saved / Starred Words & Sentences Only (${savedCount})</option>`,
             ...this.state.songs.map(song => {
-              const count = this.extractUniqueWordsFromSong(song).length;
-              const label = `${song.title}${song.artist ? " - " + song.artist : ""} (${count} words)`;
+              const count = isSentenceMode
+                ? this.extractUniqueSentencesFromSong(song).length
+                : this.extractUniqueWordsFromSong(song).length;
+              const label = `${song.title}${song.artist ? " - " + song.artist : ""} (${count} ${unitLabel})`;
               return `<option value="song:${song.id}">${this.escapeHtml(label)}</option>`;
             })
           ];
@@ -2249,8 +2351,9 @@
 
       getFlashcardDeck(filterValue) {
         const mode = filterValue || this.state.flashcardSongFilter || "all_songs";
+        const isSentenceMode = this.state.flashcardUnitMode === "sentences";
 
-        // 1. Saved / Starred Words Only
+        // 1. Saved / Starred Words & Sentences Only
         if (mode === "saved_only") {
           return this.state.vocab.map(v => ({
             ...v,
@@ -2263,29 +2366,35 @@
           const songId = mode.slice(5);
           const song = this.state.songs.find(s => s.id === songId);
           if (!song) return [];
-          return this.extractUniqueWordsFromSong(song);
+          return isSentenceMode
+            ? this.extractUniqueSentencesFromSong(song)
+            : this.extractUniqueWordsFromSong(song);
         }
 
-        // 3. Default: "All Library Songs (All unique words)" + any extra Saved Words
+        // 3. Default: "All Library Songs" + any extra Saved items
         const seenSimp = new Set();
         const combined = [];
 
         this.state.songs.forEach(song => {
-          const words = this.extractUniqueWordsFromSong(song);
-          words.forEach(w => {
-            if (!seenSimp.has(w.simp)) {
-              seenSimp.add(w.simp);
-              combined.push(w);
+          const items = isSentenceMode
+            ? this.extractUniqueSentencesFromSong(song)
+            : this.extractUniqueWordsFromSong(song);
+          items.forEach(item => {
+            if (!seenSimp.has(item.simp)) {
+              seenSimp.add(item.simp);
+              combined.push(item);
             }
           });
         });
 
-        this.state.vocab.forEach(v => {
-          if (!seenSimp.has(v.simp)) {
-            seenSimp.add(v.simp);
-            combined.push(v);
-          }
-        });
+        if (!isSentenceMode) {
+          this.state.vocab.forEach(v => {
+            if (!seenSimp.has(v.simp)) {
+              seenSimp.add(v.simp);
+              combined.push(v);
+            }
+          });
+        }
 
         return combined;
       },
@@ -2314,6 +2423,56 @@
         this.renderCurrentFlashcard();
       },
 
+      updateFlashcardStarButtonUI(item) {
+        const starBtn = document.getElementById("flashcardStarBtn");
+        if (!starBtn || !item) return;
+        const isStarred = this.state.vocab.some(v => v.simp === item.simp || v.trad === item.trad);
+        const isSentence = !!item.isSentence || (item.simp && item.simp.length > 4);
+        starBtn.classList.toggle("starred", isStarred);
+        if (isStarred) {
+          starBtn.textContent = "★ Starred";
+        } else {
+          starBtn.textContent = isSentence ? "☆ Star Sentence" : "☆ Star Word";
+        }
+      },
+
+      toggleStarCurrentFlashcard() {
+        const item = this.state.currentFlashcardItem;
+        if (!item) return;
+
+        const existingIdx = this.state.vocab.findIndex(v => v.simp === item.simp || v.trad === item.trad);
+        if (existingIdx >= 0) {
+          // Remove from Starred Words if already starred
+          const removedId = this.state.vocab[existingIdx].id;
+          this.deleteVocabItem(removedId);
+          this.updateFlashcardStarButtonUI(item);
+          if (this.state.flashcardSongFilter === "saved_only") {
+            this.renderCurrentFlashcard();
+          }
+          return;
+        }
+
+        // Otherwise add current word or sentence to Starred Words
+        const latestKnown = textHelper.getKnownMeaning(item.original || item.simp);
+        const currentInputMeaning = document.getElementById("flashcardEditMeaningInput")?.value.trim();
+        const resolvedMeaning = currentInputMeaning || (latestKnown ? latestKnown.meaning : "") || item.meaning || item.fallbackGloss || "—";
+
+        this.upsertVocabItem({
+          simp: item.simp,
+          trad: item.trad,
+          pinyin: item.pinyin || textHelper.getPinyin(item.simp, true) || "—",
+          meaning: resolvedMeaning,
+          note: item.note || "",
+          songId: item.songId || "",
+          songTitle: item.songTitle || ""
+        });
+
+        this.updateFlashcardStarButtonUI(item);
+        if (this.state.currentSong) {
+          this.renderLyrics();
+        }
+      },
+
       async renderCurrentFlashcard() {
         const activeDeck = this.getFlashcardDeck(this.state.flashcardSongFilter);
         const emptyMsg = document.getElementById("flashcardEmptyMsg");
@@ -2335,11 +2494,26 @@
         const item = activeDeck[idx];
         this.state.currentFlashcardItem = item;
 
-        // Front: Exclusively Traditional character (or Simplified if no Traditional exists)
+        const isSentence = this.state.flashcardUnitMode === "sentences" || !!item.isSentence || (item.simp && item.simp.length > 4);
+
+        // Front: Exclusively Traditional character / sentence (or Simplified if no Traditional exists)
         const frontChar = (item.trad && item.trad.trim()) ? item.trad.trim() : item.simp;
 
         counterEl.textContent = `Card ${idx + 1} / ${total}`;
-        document.getElementById("flashcardFrontTrad").textContent = frontChar;
+        const frontTradEl = document.getElementById("flashcardFrontTrad");
+        frontTradEl.textContent = frontChar;
+        frontTradEl.classList.toggle("sentence-mode", isSentence);
+
+        const frontLabelEl = document.getElementById("flashcardFrontLabel");
+        if (frontLabelEl) {
+          frontLabelEl.textContent = isSentence ? "Traditional Sentence (繁體)" : "Traditional Character (繁體)";
+        }
+        const backSimpLabelEl = document.getElementById("flashcardBackSimpLabel");
+        if (backSimpLabelEl) {
+          backSimpLabelEl.textContent = isSentence ? "Simplified Sentence (简体)" : "Simplified Character (简体)";
+        }
+
+        this.updateFlashcardStarButtonUI(item);
 
         // Check latest meaning from cache/dictionary
         const latestKnown = textHelper.getKnownMeaning(item.original || item.simp);
@@ -2350,15 +2524,16 @@
         document.getElementById("flashcardBackSimp").textContent =
           item.simp || textHelper.toSimplified(frontChar);
         document.getElementById("flashcardBackMeaning").textContent =
-          resolvedMeaning || "Translating...";
-        document.getElementById("flashcardEditMeaningInput").value = resolvedMeaning || "";
+          resolvedMeaning || item.fallbackGloss || "Translating...";
+        document.getElementById("flashcardEditMeaningInput").value = resolvedMeaning || item.fallbackGloss || "";
         document.getElementById("flashcardBackNote").textContent =
           item.songTitle ? `🎵 ${item.songTitle}${item.note ? " · " + item.note : ""}` : (item.note || "");
 
         document.getElementById("flashcardBackContent").classList.remove("revealed");
-        document.getElementById("flashcardShowAnswerBtn").style.display = "inline-flex";
+        const frontActions = document.getElementById("flashcardFrontActions");
+        if (frontActions) frontActions.style.display = "flex";
 
-        // If meaning is still missing, fetch it in the background and cache it
+        // If meaning is still missing (or only a word-by-word gloss for a sentence), fetch full translation in the background and cache it
         if (!resolvedMeaning) {
           const fetched = await textHelper.fetchTranslationFromApi(item.original || item.simp);
           if (fetched) {
@@ -2367,7 +2542,7 @@
               document.getElementById("flashcardBackMeaning").textContent = fetched;
               document.getElementById("flashcardEditMeaningInput").value = fetched;
             }
-          } else {
+          } else if (!item.fallbackGloss) {
             if (this.state.currentFlashcardItem && this.state.currentFlashcardItem.simp === item.simp) {
               document.getElementById("flashcardBackMeaning").textContent = "No meaning yet — edit below";
             }
@@ -2377,7 +2552,8 @@
 
       revealFlashcard() {
         document.getElementById("flashcardBackContent").classList.add("revealed");
-        document.getElementById("flashcardShowAnswerBtn").style.display = "none";
+        const frontActions = document.getElementById("flashcardFrontActions");
+        if (frontActions) frontActions.style.display = "none";
       },
 
       saveFlashcardInlineMeaning() {
@@ -2647,6 +2823,20 @@
     };
 
     window.addEventListener("DOMContentLoaded", () => app.init());
+
+    // Register Service Worker for 100% offline PWA support
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker
+          .register("./sw.js")
+          .then((reg) => {
+            console.log("Service Worker registered with scope:", reg.scope);
+          })
+          .catch((err) => {
+            console.warn("Service Worker registration failed:", err);
+          });
+      });
+    }
   </script>
 </body>
 </html>
