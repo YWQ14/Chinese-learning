@@ -1,4 +1,4 @@
-const CACHE_NAME = "ktv-app-offline-v1";
+const CACHE_NAME = "ktv-app-offline-v2";
 
 // Core app files & external CDN scripts cached for 100% offline use
 const PRECACHE_URLS = [
@@ -54,17 +54,21 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// 3. FETCH: Offline-first (Cache-First) strategy for app shell & CDN libraries
+// 3. FETCH: Network-first for live APIs; Offline-first (Cache-First) for app shell & CDN libraries
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
 
   const requestUrl = new URL(event.request.url);
 
-  // Live API lookups (translation / LRCLIB): try network first, fallback to cache if available
+  // Live API lookups (translation / LRCLIB / YouTube & Spotify oEmbed):
+  // Always try network first with exact query parameters, fallback to exact cache match if offline
   const isLiveApi =
     requestUrl.hostname.includes("googleapis.com") ||
     requestUrl.hostname.includes("mymemory.translated.net") ||
-    requestUrl.hostname.includes("lrclib.net");
+    requestUrl.hostname.includes("lrclib.net") ||
+    requestUrl.hostname.includes("youtube.com") ||
+    requestUrl.hostname.includes("youtu.be") ||
+    requestUrl.hostname.includes("spotify.com");
 
   if (isLiveApi) {
     event.respondWith(
@@ -73,9 +77,12 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Only ignore query strings (?...) when matching local app shell files (e.g. ./index.html)
+  const isSameOrigin = requestUrl.origin === self.location.origin;
+
   // Offline-first (Cache-First) for local HTML/manifest & CDN scripts
   event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+    caches.match(event.request, { ignoreSearch: isSameOrigin }).then((cachedResponse) => {
       if (cachedResponse) {
         return cachedResponse;
       }

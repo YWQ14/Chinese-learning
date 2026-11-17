@@ -41,11 +41,11 @@
       --hard-red-soft: rgba(255, 75, 75, 0.16);
       --teal: #14b8a6;
 
-      --border-subtle: rgba(255, 255, 255, 0.07);
-      --radius-2xl: 20px;
-      --radius-3xl: 26px;
-      --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.18);
-      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.28);
+      --border-subtle: rgba(255, 255, 255, 0.09);
+      --radius-2xl: 18px;
+      --radius-3xl: 22px;
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.14);
+      --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.2);
 
       --safe-top: env(safe-area-inset-top, 0px);
       --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -92,8 +92,9 @@
       background-color: var(--bg-app);
       display: flex;
       flex-direction: column;
-      padding-bottom: calc(88px + var(--safe-bottom));
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.45);
+      padding-bottom: calc(92px + var(--safe-bottom));
+      border-left: 1px solid var(--border-subtle);
+      border-right: 1px solid var(--border-subtle);
     }
 
     /* Top Header with Brand, Streak 🔥 & XP ⚡ */
@@ -101,9 +102,7 @@
       position: sticky;
       top: 0;
       z-index: 30;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      background-color: var(--bg-app);
       padding: calc(12px + var(--safe-top)) 18px 12px;
       display: flex;
       align-items: center;
@@ -126,7 +125,7 @@
       height: 36px;
       padding: 0 7px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #58cc02, #22c55e);
+      background-color: var(--duo-green);
       color: #fff;
       display: flex;
       align-items: center;
@@ -135,7 +134,7 @@
       font-weight: 800;
       font-size: 0.92rem;
       letter-spacing: -0.02em;
-      box-shadow: 0 4px 10px rgba(88, 204, 2, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.14);
     }
 
     .header-stats {
@@ -757,12 +756,74 @@
       color: #fecaca;
     }
 
-    /* Memrise-Style Context Box */
+    /* Bonus Point / Perfect Tones Celebration Animation */
+    .typing-feedback-box.bonus {
+      display: flex;
+      background-color: rgba(255, 200, 0, 0.16);
+      border: 2px solid var(--gold);
+      color: #fef08a;
+      animation: bonusPopGlow 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes bonusPopGlow {
+      0% {
+        transform: scale(0.92);
+        box-shadow: 0 0 0 0 rgba(255, 200, 0, 0.65);
+      }
+      50% {
+        transform: scale(1.03);
+        box-shadow: 0 0 24px 6px rgba(255, 200, 0, 0.35);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(255, 200, 0, 0);
+      }
+    }
+
+    @keyframes bonusFloatUp {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 10px) scale(0.75);
+      }
+      25% {
+        opacity: 1;
+        transform: translate(-50%, -6px) scale(1.08);
+      }
+      75% {
+        opacity: 1;
+        transform: translate(-50%, -22px) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -38px) scale(0.92);
+      }
+    }
+
+    .bonus-xp-burst {
+      position: fixed;
+      left: 50%;
+      top: 36%;
+      transform: translate(-50%, 0);
+      z-index: 120;
+      pointer-events: none;
+      background-color: var(--gold);
+      color: #0f172a;
+      font-weight: 900;
+      font-size: 1.05rem;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 2px solid #ffffff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.38);
+      white-space: nowrap;
+      animation: bonusFloatUp 1.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* Clean Tactile Context Box (Memrise Style) */
     .context-sentence-box {
-      background: linear-gradient(145deg, rgba(10, 132, 255, 0.1), rgba(88, 204, 2, 0.08));
-      border-radius: 18px;
+      background-color: var(--bg-input);
+      border-radius: 16px;
       padding: 14px 16px;
-      border: 1px solid rgba(125, 211, 252, 0.18);
+      border: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -778,8 +839,9 @@
     /* Gamification & Progress Dashboard (Duolingo Style) */
     .progress-bar-track {
       width: 100%;
-      height: 16px;
+      height: 14px;
       background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
       border-radius: 999px;
       overflow: hidden;
       margin: 10px 0 6px;
@@ -787,9 +849,9 @@
 
     .progress-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #58cc02, #86efac);
+      background-color: var(--duo-green);
       border-radius: 999px;
-      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: width 0.3s ease;
     }
 
     .stats-grid {
@@ -801,8 +863,7 @@
     .stat-card {
       background-color: var(--bg-card);
       border-radius: var(--radius-2xl);
-      padding: 18px 16px;
-      box-shadow: var(--shadow-sm);
+      padding: 16px;
       border: 1px solid var(--border-subtle);
       display: flex;
       flex-direction: column;
@@ -814,14 +875,14 @@
     }
 
     .stat-value {
-      font-size: 1.85rem;
+      font-size: 1.75rem;
       font-weight: 900;
       letter-spacing: -0.02em;
       line-height: 1.1;
     }
 
     .stat-label {
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
       font-weight: 700;
     }
@@ -839,7 +900,7 @@
       border-bottom: none;
     }
 
-    /* Fixed Bottom Navigation Bar (3 Icons: Library, Practice, Progress) */
+    /* Fixed Bottom Navigation Bar (5 Compact Tabs: Library, Add, Practice, Test, Progress) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -847,32 +908,32 @@
       transform: translateX(-50%);
       width: 100%;
       max-width: 430px;
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background-color: var(--bg-app);
       border-top: 1px solid var(--border-subtle);
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      padding: 6px 10px calc(8px + var(--safe-bottom));
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      padding: 6px 8px calc(8px + var(--safe-bottom));
       z-index: 40;
     }
 
     .bottom-nav-btn {
-      min-height: 58px;
-      border-radius: 16px;
+      min-height: 54px;
+      border-radius: 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 3px;
       color: var(--text-muted);
-      font-size: 0.78rem;
+      font-size: 0.7rem;
       font-weight: 800;
-      transition: all 0.15s ease;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      padding: 4px 2px;
     }
 
     .bottom-nav-btn .nav-icon {
-      font-size: 1.35rem;
+      font-size: 1.2rem;
       line-height: 1;
     }
 
@@ -881,12 +942,33 @@
       background-color: var(--duo-green-soft);
     }
 
+    /* Speaker / Listen Button Styling */
+    .btn-listen {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      color: #7dd3fc;
+      font-weight: 800;
+      border-radius: 12px;
+      padding: 7px 12px;
+      min-height: 36px;
+      font-size: 0.82rem;
+      width: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: none;
+    }
+
+    .btn-listen:active {
+      background-color: var(--ios-blue-soft);
+      transform: scale(0.96);
+    }
+
     /* Bottom Sheet Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background-color: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(4px);
+      background-color: rgba(0, 0, 0, 0.74);
       z-index: 100;
       display: none;
       align-items: flex-end;
@@ -903,17 +985,18 @@
       max-height: 88dvh;
       overflow-y: auto;
       background-color: var(--bg-card);
-      border-top-left-radius: 26px;
-      border-top-right-radius: 26px;
-      padding: 24px 20px calc(24px + var(--safe-bottom));
+      border-top: 1px solid var(--border-subtle);
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 22px 18px calc(22px + var(--safe-bottom));
       display: flex;
       flex-direction: column;
       gap: 14px;
-      box-shadow: var(--shadow-md);
     }
 
     .info-row {
       background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
       border-radius: 16px;
       padding: 12px 16px;
     }
@@ -932,6 +1015,7 @@
       padding: 12px 16px;
       border-radius: 16px;
       background-color: var(--ios-blue-soft);
+      border: 1px solid rgba(10, 132, 255, 0.3);
       color: #bae6fd;
       font-size: 0.88rem;
       font-weight: 700;
@@ -947,13 +1031,13 @@
     }
 
     /* ===================================================================== */
-    /* MULTI-USER PROFILE SELECTION SCREEN (Netflix / Duolingo Style)        */
+    /* MULTI-USER PROFILE SELECTION SCREEN (Clean Tactile Style)             */
     /* ===================================================================== */
     .profile-gate-backdrop {
       position: fixed;
       inset: 0;
       z-index: 90;
-      background: radial-gradient(circle at 50% 18%, #1e293b 0%, #0b1120 75%);
+      background-color: var(--bg-body);
       display: none;
       align-items: center;
       justify-content: center;
@@ -1096,31 +1180,35 @@
     <main class="view-container">
 
       <!-- ================================================================= -->
-      <!-- TAB 1: LIBRARY (Songs + Add Song + Lyrics Reader)                 -->
+      <!-- TAB 1: LIBRARY (Songs + HSK Overview + Backup)                    -->
       <!-- ================================================================= -->
       <section id="view-home" class="view-section active" aria-label="Library">
-        <!-- Hero Card -->
-        <div class="card-elevated">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+        <!-- Clean Header Card -->
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
             <span class="badge badge-green" id="networkBadge">Online</span>
             <span class="badge badge-orange" id="libraryDueHintBadge" style="cursor:pointer;" onclick="app.switchView('practice')">0 due today</span>
           </div>
-          <h1 style="font-size:1.3rem; font-weight:900; letter-spacing:-0.02em; margin-bottom:6px;">
-            Learn Chinese with KTV
-          </h1>
-          <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:16px;">
-            Read lyrics with Pinyin, HSK badges &amp; meanings, save words with full KTV sentence context, and master them with Flashcards, Matching &amp; Typing.
-          </p>
-          <button type="button" class="btn btn-primary" onclick="app.switchView('add')">
-            ＋ Add New Song (+50 XP)
-          </button>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+            <div>
+              <h1 style="font-size:1.25rem; font-weight:900; letter-spacing:-0.02em;">
+                🎤 KTV Library
+              </h1>
+              <div style="font-size:0.84rem; color:var(--text-muted);">
+                Tap a song to read lyrics or practice flashcards
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-primary" onclick="app.switchView('add')">
+              ＋ Add Song
+            </button>
+          </div>
         </div>
 
         <input type="search" id="homeFilterInput" class="input-field" placeholder="🔍 Search songs or lyrics..." oninput="app.renderHomeLists()">
 
         <div>
           <div class="section-title">
-            <span>🎵 My KTV Library</span>
+            <span>🎵 My Songs</span>
             <span class="badge" id="libraryCountBadge">0</span>
           </div>
           <div id="homeLibraryList" class="song-list"></div>
@@ -1133,13 +1221,10 @@
 
         <!-- Library HSK Overview: Uploaded Songs / Words / Characters per HSK Level -->
         <div class="card" id="libraryHskOverviewCard">
-          <div class="section-title" style="margin-bottom:6px;">
-            <span>📊 Library Words &amp; Characters by HSK</span>
+          <div class="section-title" style="margin-bottom:8px;">
+            <span>📊 Library by HSK Level</span>
             <span class="badge badge-blue" id="libHskSummaryBadge">0 words · 0 chars</span>
           </div>
-          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
-            Overview of all unique words and Chinese characters extracted from your uploaded KTV lyrics, grouped by HSK level. Tap any item to inspect its meaning &amp; pronunciation.
-          </p>
 
           <!-- Toggle between Unique Words and Unique Single Characters -->
           <div class="segmented-row" style="grid-template-columns: repeat(2, 1fr); margin-bottom:10px;">
@@ -1164,9 +1249,6 @@
             ⇄ Export / Import Backup (JSON)
           </button>
           <div id="backupPanel" class="card" style="display:none; flex-direction:column; gap:12px;">
-            <p style="font-size:0.85rem; color:var(--text-muted);">
-              Download all your songs, SRS review schedules, XP/streak progress, HSK levels, and cached meanings as a JSON file, or restore on another device.
-            </p>
             <div style="display:flex; gap:10px;">
               <button type="button" class="btn btn-sm btn-teal" style="flex:1;" onclick="app.exportBackupJson()">
                 ⬇️ Export JSON
@@ -1189,7 +1271,7 @@
             </button>
             <div style="display:flex; gap:6px;">
               <button type="button" class="btn btn-sm btn-subtle" id="readerFetchTransBtn" onclick="app.fetchMissingTranslationsForSong(app.state.currentSong?.id, this)">
-                🌐 Translate All
+                🌐 Fetch Missing Translations
               </button>
               <button type="button" class="btn btn-sm" onclick="app.openSegmentEditorModal()">
                 ✂️ Split
@@ -1221,37 +1303,58 @@
         <div id="lyricsViewport" class="lyrics-reader-list" aria-live="polite"></div>
       </section>
 
-      <!-- SUB-VIEW: ADD SONG (Opened from Library) -->
+      <!-- ================================================================= -->
+      <!-- TAB 2: ADD SONG (YouTube/Spotify URL Import + Manual + LRCLIB)    -->
+      <!-- ================================================================= -->
       <section id="view-add" class="view-section" aria-label="Add Song">
-        <div class="card-elevated">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
-            <button type="button" class="btn btn-sm" onclick="app.switchView('home')">← Back to Library</button>
-            <span class="badge badge-green">+50 XP Reward</span>
+        <!-- YouTube / Spotify URL Smart Importer -->
+        <div class="card">
+          <div class="section-title" style="margin-bottom:8px;">
+            <span>🔗 Import via YouTube or Spotify Link</span>
+            <span class="badge badge-blue">Auto-Fill</span>
           </div>
-          <h2 style="font-size:1.2rem; font-weight:900; margin-bottom:6px;">＋ Add KTV Song</h2>
-          <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:16px;">
-            Paste Chinese lyrics or <code>.lrc</code> text below. Words and full sentences are automatically segmented, converted to Pinyin &amp; Traditional/Simplified, and translated for offline practice.
-          </p>
+          <form onsubmit="app.fetchFromMediaUrl(event)" style="display:flex; flex-direction:column; gap:10px;">
+            <input
+              type="url"
+              id="mediaUrlInput"
+              class="input-field"
+              placeholder="Paste YouTube or Spotify URL..."
+              autocomplete="off"
+            >
+            <button type="submit" class="btn btn-blue" id="fetchMediaUrlBtn">
+              🔍 Fetch Info &amp; Lyrics
+            </button>
+          </form>
+          <div id="mediaUrlStatus" style="display:none; margin-top:10px; font-size:0.85rem; color:var(--text-muted); font-weight:700;"></div>
+          <div id="mediaUrlLrcResults" style="display:none; flex-direction:column; gap:8px; margin-top:10px;"></div>
+        </div>
+
+        <!-- Song Form -->
+        <div class="card">
+          <div class="section-title" style="margin-bottom:10px;">
+            <span>➕ Song Details</span>
+            <span class="badge badge-green" id="addSongXpRewardBadge">+25 XP (1×/day)</span>
+          </div>
 
           <form onsubmit="app.importCustomSong(event)">
             <div class="form-group">
-              <label class="form-label" for="importSongTitle">1. Song Title *</label>
+              <label class="form-label" for="importSongTitle">Song Title *</label>
               <input type="text" id="importSongTitle" class="input-field" required placeholder="e.g. 告白氣球">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="importSongArtist">2. Artist *</label>
+              <label class="form-label" for="importSongArtist">Artist *</label>
               <input type="text" id="importSongArtist" class="input-field" required placeholder="e.g. 周杰倫 (Jay Chou)">
             </div>
 
             <div class="form-group">
-              <label class="form-label" for="importLrcTextarea">3. Lyrics (Chinese text or .LRC) *</label>
-              <textarea id="importLrcTextarea" rows="8" class="input-field" required style="font-family:var(--font-zh), monospace; font-size:0.95rem; line-height:1.6;" placeholder="Paste your Chinese lyrics here..."></textarea>
+              <label class="form-label" for="importLrcTextarea">Lyrics (Chinese text or .LRC) *</label>
+              <textarea id="importLrcTextarea" rows="7" class="input-field" required style="font-family:var(--font-zh), monospace; font-size:0.95rem; line-height:1.6;" placeholder="Paste Chinese lyrics here..."></textarea>
             </div>
 
             <div style="margin-bottom:14px;">
-              <label class="btn btn-subtle" style="cursor:pointer; width:100%;">
-                📄 Or load from .TXT / .LRC / .JSON Backup
+              <label class="btn btn-subtle" style="cursor:pointer; width:100%; border:1px solid var(--border-subtle);">
+                📄 Load from .TXT / .LRC / .JSON file
                 <input type="file" id="importLrcFile" accept=".lrc,.txt,.json,application/json" style="display:none" onchange="app.previewImportedLrcFile(this.files[0]); this.value='';">
               </label>
             </div>
@@ -1262,19 +1365,19 @@
             </div>
 
             <button type="submit" class="btn btn-primary" id="saveSongSubmitBtn">
-              💾 Save Song &amp; Earn +50 XP
+              💾 Save Song (+25 XP · 1×/day)
             </button>
           </form>
         </div>
 
-        <!-- Optional: Search lyrics on LRCLIB -->
+        <!-- Direct Search on LRCLIB -->
         <div class="card">
           <div class="section-title">
-            <span>🔍 Find Lyrics on LRCLIB</span>
-            <span class="badge">Online</span>
+            <span>🔎 Search LRCLIB by Title</span>
+            <span class="badge">Lyrics DB</span>
           </div>
-          <form onsubmit="app.searchLrclib(event)" style="display:flex; gap:8px; margin-bottom:10px;">
-            <input type="text" id="lrcSearchTrack" class="input-field" placeholder="Search song title or artist...">
+          <form onsubmit="app.searchLrclib(event)" style="display:flex; gap:8px; margin-bottom:8px;">
+            <input type="text" id="lrcSearchTrack" class="input-field" placeholder="Song title or artist...">
             <button type="submit" class="btn btn-blue" style="width:auto; padding:0 18px;">Search</button>
           </form>
           <div id="lrcSearchStatus" style="font-size:0.84rem; color:var(--text-muted);"></div>
@@ -1283,26 +1386,23 @@
       </section>
 
       <!-- ================================================================= -->
-      <!-- TAB 2: PRACTICE (Flashcards SRS + Matching Mode + Typing Mode)    -->
+      <!-- TAB 3: PRACTICE (Flashcards SRS + Matching Mode ONLY)             -->
       <!-- ================================================================= -->
       <section id="view-practice" class="view-section" aria-label="Practice">
         <div class="flashcard-box" id="flashcardContainer">
-          <!-- Top Bar: Practice Mode Switcher (Flashcards / Matching / Typing) -->
+          <!-- Top Bar: Practice Mode Switcher (Flashcards SRS / Matching) -->
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
               <span class="badge badge-blue" id="flashcardCounter">Card 0 / 0</span>
               <span class="badge badge-green" id="flashcardDueBadge">0 due today</span>
             </div>
 
-            <div class="segmented-row" role="group" aria-label="Select Practice Mode">
+            <div class="segmented-row" style="grid-template-columns: repeat(2, 1fr);" role="group" aria-label="Select Practice Mode">
               <button type="button" class="seg-btn active" id="pModeFlashcardsBtn" onclick="app.setPracticeInteractionMode('flashcards')">
-                🎴 Flashcards
+                🎴 Flashcards (SRS)
               </button>
               <button type="button" class="seg-btn" id="pModeMatchingBtn" onclick="app.setPracticeInteractionMode('matching')">
                 🎯 Matching
-              </button>
-              <button type="button" class="seg-btn" id="pModeTypingBtn" onclick="app.setPracticeInteractionMode('typing')">
-                ⌨️ Typing
               </button>
             </div>
           </div>
@@ -1336,7 +1436,7 @@
             </div>
             <div>
               <label class="form-label" for="flashcardHskFilter" style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">
-                Filter by HSK Level:
+                HSK Level:
               </label>
               <select id="flashcardHskFilter" class="input-field" style="min-height:42px; padding:6px 10px; font-size:0.84rem;" onchange="app.onFlashcardHskFilterChange(this.value)">
                 <option value="all">All Levels</option>
@@ -1389,6 +1489,14 @@
               </div>
 
               <div class="flashcard-answer-area" id="flashcardBackContent">
+                <!-- Pronunciation Audio Button directly under Show Answer -->
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                  <button type="button" class="btn-listen" onclick="app.speakCurrentFlashcardWord()">
+                    🔊 Listen
+                  </button>
+                  <span style="font-size:0.76rem; color:var(--text-muted); font-weight:700;">Mandarin (zh-CN)</span>
+                </div>
+
                 <div class="info-row" style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
                   <div>
                     <div class="info-label">Pinyin (with tones)</div>
@@ -1411,18 +1519,23 @@
                   </div>
                 </div>
 
-                <!-- MEMRISE-STYLE LEARNING IN CONTEXT -->
+                <!-- MEMRISE-STYLE LEARNING IN CONTEXT + SMALL SPEAKER ICON -->
                 <div class="context-sentence-box" id="flashcardContextBox" style="display:none;">
-                  <div class="info-label" style="color:#7dd3fc;">🎤 KTV Lyric Context</div>
+                  <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                    <div class="info-label" style="color:#7dd3fc; margin-bottom:0;">🎤 KTV Lyric Context</div>
+                    <button type="button" class="btn-listen" style="padding:4px 9px; min-height:28px; font-size:0.76rem;" title="Listen to example sentence" onclick="app.speakCurrentFlashcardContext()">
+                      🔊 Sentence
+                    </button>
+                  </div>
                   <div style="font-family:var(--font-zh); font-size:1.18rem; font-weight:800; line-height:1.4;" id="flashcardContextZh">—</div>
                   <div style="font-size:0.86rem; color:var(--gold); font-weight:700;" id="flashcardContextPinyin">—</div>
                   <div style="font-size:0.88rem; color:var(--text-muted);" id="flashcardContextMeaning">—</div>
                 </div>
 
-                <!-- ANKI SRS 3 RATING BUTTONS (+10 XP each) -->
+                <!-- ANKI SRS 3 RATING BUTTONS (+5 XP Word / +10 XP Sentence) -->
                 <div style="margin-top:4px;">
-                  <div style="font-size:0.78rem; color:var(--text-muted); font-weight:800; text-align:center; margin-bottom:6px;">
-                    How well did you know this? (+10 XP)
+                  <div style="font-size:0.78rem; color:var(--text-muted); font-weight:800; text-align:center; margin-bottom:6px;" id="flashcardSrsXpHint">
+                    Rate your recall (+5 XP)
                   </div>
                   <div class="srs-rating-grid">
                     <button type="button" class="srs-btn srs-btn-hard" onclick="app.rateFlashcardSRS('hard')">
@@ -1447,50 +1560,31 @@
             <!-- ============================================================= -->
             <div id="practicePaneMatching" style="display:none; flex-direction:column; gap:10px; margin-top:10px;">
               <div style="font-size:0.82rem; color:var(--text-muted); font-weight:700;">
-                Pick the correct Pinyin &amp; Meaning (+5 XP on first try):
+                Pick the correct Pinyin &amp; Meaning (+5 XP):
               </div>
               <div class="matching-options-grid" id="matchingOptionsGrid"></div>
-              <div style="display:flex; justify-content:flex-end; margin-top:4px;">
-                <button type="button" class="btn btn-sm" onclick="app.stepFlashcard(1)">Skip / Next ▶</button>
-              </div>
-            </div>
 
-            <!-- ============================================================= -->
-            <!-- MODE 3: TYPING MODE (HARD MODE, TONE-INSENSITIVE, +15 XP)     -->
-            <!-- ============================================================= -->
-            <div id="practicePaneTyping" style="display:none; flex-direction:column; gap:12px; margin-top:10px;">
-              <div class="info-row" style="text-align:left;">
-                <div class="info-label">Meaning Prompt</div>
-                <div style="font-size:1.1rem; font-weight:800; color:#7dd3fc;" id="typingPromptMeaning">—</div>
-                <div style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;" id="typingPromptSimpNote"></div>
-              </div>
-
-              <form onsubmit="app.handleTypingSubmit(event)" style="display:flex; flex-direction:column; gap:10px;">
-                <input
-                  type="text"
-                  id="typingPinyinInput"
-                  class="input-field"
-                  placeholder="Type Pinyin without tones (e.g. pengyou)..."
-                  autocomplete="off"
-                  autocapitalize="none"
-                  autocorrect="off"
-                  spellcheck="false"
-                  enterkeyhint="done"
-                  style="font-size:1.05rem; font-weight:700; text-align:center;"
-                >
-                <div style="display:flex; gap:10px;">
-                  <button type="submit" class="btn btn-primary" style="flex:2;" id="typingCheckBtn">
-                    ✓ Check (+15 XP)
+              <!-- Matching Result Bar with 🔊 Listen & Next Button -->
+              <div id="matchingResultBar" class="info-row" style="display:none; align-items:center; justify-content:space-between; gap:10px;">
+                <div style="text-align:left;">
+                  <div style="font-weight:800; font-size:0.9rem;" id="matchingResultStatusText">✅ Correct!</div>
+                  <div style="font-size:0.8rem; color:var(--gold); font-weight:700;" id="matchingResultSubText"></div>
+                </div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <button type="button" class="btn-listen" onclick="app.speakCurrentFlashcardWord()">
+                    🔊 Listen
                   </button>
-                  <button type="button" class="btn" style="flex:1;" onclick="app.stepFlashcard(1)">
+                  <button type="button" class="btn btn-sm btn-primary" onclick="app.advanceMatchingCard()">
                     Next ▶
                   </button>
                 </div>
-              </form>
+              </div>
 
-              <div id="typingFeedbackBox" class="typing-feedback-box">
-                <div id="typingFeedbackTitle"></div>
-                <div id="typingFeedbackDetail" style="font-size:0.86rem; opacity:0.95;"></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:4px;">
+                <button type="button" class="btn-listen" onclick="app.speakCurrentFlashcardWord()">
+                  🔊 Listen
+                </button>
+                <button type="button" class="btn btn-sm" onclick="app.stepFlashcard(1)">Skip ▶</button>
               </div>
             </div>
           </div>
@@ -1524,11 +1618,186 @@
       </section>
 
       <!-- ================================================================= -->
-      <!-- TAB 3: PROGRESS (Profile Header, Streak 🔥, XP Goal ⚡ & HSK)     -->
+      <!-- TAB 4: TEST (Configurable Pinyin & Tone Recognition Quiz)         -->
+      <!-- ================================================================= -->
+      <section id="view-test" class="view-section" aria-label="Test">
+        <!-- STEP 1: TEST SETUP SCREEN -->
+        <div class="card" id="testSetupPane" style="display:flex; flex-direction:column; gap:14px;">
+          <div class="section-title" style="margin-bottom:2px;">
+            <span>✍️ Pinyin &amp; Tone Test</span>
+            <span class="badge badge-green">10 Questions</span>
+          </div>
+
+          <!-- 1. Content Type -->
+          <div>
+            <label class="form-label" style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">
+              1. Content Type
+            </label>
+            <div class="segmented-row" style="grid-template-columns: repeat(3, 1fr);">
+              <button type="button" class="seg-btn active" data-test-content="words" onclick="app.setTestConfig('contentType', 'words')">
+                🔤 Words only
+              </button>
+              <button type="button" class="seg-btn" data-test-content="sentences" onclick="app.setTestConfig('contentType', 'sentences')">
+                📝 Sentences only
+              </button>
+              <button type="button" class="seg-btn" data-test-content="mixed" onclick="app.setTestConfig('contentType', 'mixed')">
+                🔀 Mixed
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Song Selection -->
+          <div>
+            <label class="form-label" for="testSongSelect" style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">
+              2. Song Selection
+            </label>
+            <select id="testSongSelect" class="input-field" onchange="app.setTestConfig('songFilter', this.value)">
+              <option value="all_songs">All Songs in Library</option>
+            </select>
+          </div>
+
+          <!-- 3. HSK Level -->
+          <div>
+            <label class="form-label" for="testHskSelect" style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">
+              3. HSK Level
+            </label>
+            <select id="testHskSelect" class="input-field" onchange="app.setTestConfig('hskFilter', this.value)">
+              <option value="all">All / Mixed</option>
+              <option value="1-2">HSK 1–2 (Beginner)</option>
+              <option value="3-4">HSK 3–4 (Intermediate)</option>
+              <option value="5-6">HSK 5–6 (Advanced)</option>
+            </select>
+          </div>
+
+          <!-- 4. Test Type -->
+          <div>
+            <label class="form-label" style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:6px;">
+              4. Test Type
+            </label>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <button type="button" class="match-option-btn correct" id="testTypeBtnChar" onclick="app.setTestConfig('testType', 'char_to_pinyin')">
+                <span style="font-weight:800; font-size:0.95rem;">Option 1: Characters → Pinyin</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">See Chinese characters, type the Pinyin</span>
+              </button>
+              <button type="button" class="match-option-btn" id="testTypeBtnMeaning" onclick="app.setTestConfig('testType', 'meaning_to_pinyin')">
+                <span style="font-weight:800; font-size:0.95rem;">Option 2: Meaning → Pinyin</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">See English/Dutch meaning, type the Pinyin</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="info-row" style="font-size:0.8rem; color:var(--text-muted);">
+            💡 <strong>Scoring (Tests weigh more than Practice!):</strong><br>
+            • <strong>🔤 Words:</strong> <strong>+15 XP</strong> (1 pt) · <strong>🎯 +25 XP</strong> (2 pts with exact tones)<br>
+            • <strong>📝 Sentences:</strong> <strong>+25 XP</strong> (1 pt) · <strong>🎯 +40 XP</strong> (2 pts with exact tones)
+          </div>
+
+          <button type="button" class="btn btn-primary" onclick="app.startTestSession()">
+            Start Test 🚀
+          </button>
+        </div>
+
+        <!-- STEP 2: ACTIVE QUESTION RUNNER -->
+        <div class="flashcard-box" id="testRunnerPane" style="display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-blue" id="testQuestionCounter">Question 1 / 10</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="badge badge-green" id="testLiveScoreBadge">0 XP</span>
+              <button type="button" class="btn btn-sm btn-subtle" style="min-height:30px; padding:4px 10px;" onclick="app.quitTestSession()">✕ Quit</button>
+            </div>
+          </div>
+
+          <div class="progress-bar-track" style="margin:2px 0;">
+            <div class="progress-bar-fill" id="testProgressBarFill" style="width:10%;"></div>
+          </div>
+
+          <!-- Prompt Display -->
+          <div style="padding:8px 0;">
+            <div style="display:flex; justify-content:center; align-items:center; gap:8px; margin-bottom:6px;">
+              <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; font-weight:800;" id="testPromptTypeLabel">Characters → Pinyin</span>
+              <span id="testQuestionHskBadge"></span>
+            </div>
+            <div class="flashcard-trad-char" id="testPromptMainText">—</div>
+            <div style="font-size:0.84rem; color:var(--text-muted);" id="testPromptSubText"></div>
+          </div>
+
+          <!-- Answer Form -->
+          <form onsubmit="app.submitTestAnswer(event)" style="display:flex; flex-direction:column; gap:10px;">
+            <input
+              type="text"
+              id="testAnswerInput"
+              class="input-field"
+              placeholder="Type Pinyin (e.g. ni3 hao3, nǐ hǎo, or nihao)..."
+              autocomplete="off"
+              autocapitalize="none"
+              autocorrect="off"
+              spellcheck="false"
+              enterkeyhint="done"
+              style="font-size:1.05rem; font-weight:700; text-align:center;"
+            >
+            <button type="submit" class="btn btn-primary" id="testSubmitBtn">
+              Check Answer
+            </button>
+          </form>
+
+          <!-- Question Feedback + 🔊 Listen Button -->
+          <div id="testFeedbackBox" class="typing-feedback-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+              <div style="font-size:1rem; font-weight:900;" id="testFeedbackTitle"></div>
+              <button type="button" class="btn-listen" onclick="app.speakCurrentTestQuestion()">
+                🔊 Listen
+              </button>
+            </div>
+            <div style="font-family:var(--font-zh); font-size:1.2rem; font-weight:800; margin-top:4px;" id="testFeedbackChars"></div>
+            <div style="font-size:0.95rem; color:var(--gold); font-weight:800;" id="testFeedbackPinyin"></div>
+            <div style="font-size:0.88rem; color:var(--text-main);" id="testFeedbackMeaning"></div>
+          </div>
+        </div>
+
+        <!-- STEP 3: TEST SUMMARY SCREEN -->
+        <div class="card" id="testSummaryPane" style="display:none; flex-direction:column; gap:16px; text-align:center;">
+          <div style="font-size:2.6rem; line-height:1;">🏆</div>
+          <div>
+            <h2 style="font-size:1.35rem; font-weight:900;">Test Complete!</h2>
+            <p style="font-size:0.88rem; color:var(--text-muted);" id="testSummarySubtitle">Great job practicing your Pinyin &amp; tones.</p>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card" style="align-items:center;">
+              <div class="stat-value" style="color:var(--duo-green);" id="testSumAccuracy">0%</div>
+              <div class="stat-label">Overall Accuracy</div>
+            </div>
+            <div class="stat-card" style="align-items:center;">
+              <div class="stat-value" style="color:var(--gold);" id="testSumToneAccuracy">0%</div>
+              <div class="stat-label">Tone Accuracy 🎯</div>
+            </div>
+            <div class="stat-card" style="align-items:center;">
+              <div class="stat-value" style="color:#7dd3fc;" id="testSumPoints">0 / 20</div>
+              <div class="stat-label">Total Score (pts)</div>
+            </div>
+            <div class="stat-card" style="align-items:center;">
+              <div class="stat-value" style="color:#ffb03a;" id="testSumXp">+0 XP</div>
+              <div class="stat-label">XP Earned ⚡</div>
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px;">
+            <button type="button" class="btn" style="flex:1;" onclick="app.resetTestViewToSetup()">
+              ⚙️ Settings
+            </button>
+            <button type="button" class="btn btn-primary" style="flex:2;" onclick="app.startTestSession()">
+              🔄 Play Again
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================================================================= -->
+      <!-- TAB 5: PROGRESS (Profile Header, Streak 🔥, XP Goal ⚡, Test, HSK) -->
       <!-- ================================================================= -->
       <section id="view-progress" class="view-section" aria-label="Progress">
         <!-- Active User Profile Card (Switch Profile & Delete Profile Menu) -->
-        <div class="card-elevated" style="display:flex; flex-direction:column; gap:12px;">
+        <div class="card" style="display:flex; flex-direction:column; gap:12px;">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div style="display:flex; align-items:center; gap:12px;">
               <div class="profile-avatar md" id="progressProfileAvatar" style="background:#58cc02;">A</div>
@@ -1562,17 +1831,17 @@
           </div>
         </div>
 
-        <!-- Streak Banner Card -->
-        <div class="card-elevated" style="background: linear-gradient(145deg, rgba(255, 150, 0, 0.2), rgba(30, 41, 59, 0.95)); border-color: rgba(255, 150, 0, 0.3);">
+        <!-- Streak Banner Card (Clean Solid Surface) -->
+        <div class="card" style="border-color: rgba(255, 150, 0, 0.35);">
           <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
-            <div style="display:flex; align-items:center; gap:16px;">
-              <div style="font-size:3rem; line-height:1;">🔥</div>
+            <div style="display:flex; align-items:center; gap:14px;">
+              <div style="font-size:2.6rem; line-height:1;">🔥</div>
               <div>
-                <div style="font-size:2rem; font-weight:900; color:#ffb03a; line-height:1.1;">
+                <div style="font-size:1.75rem; font-weight:900; color:#ffb03a; line-height:1.1;">
                   <span id="progressStreakDays">0</span> Day Streak
                 </div>
-                <div style="font-size:0.9rem; color:var(--text-muted); margin-top:4px;" id="progressStreakSubtext">
-                  Practice today to keep your flame lit!
+                <div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;" id="progressStreakSubtext">
+                  Practice or take a test today to keep your streak lit!
                 </div>
               </div>
             </div>
@@ -1587,15 +1856,15 @@
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
               <div style="font-weight:900; font-size:1.05rem;">🎯 Daily XP Goal</div>
-              <div style="font-size:0.8rem; color:var(--text-muted);">+10 SRS · +5 Match · +15 Type · +50 Song</div>
+              <div style="font-size:0.76rem; color:var(--text-muted);">Practice +5/+10 · Test Words +15/+25 · Sentences +25/+40 · 1st Song +25</div>
             </div>
-            <span class="badge badge-green" id="dailyGoalBadge">0 / 50 XP</span>
+            <span class="badge badge-green" id="dailyGoalBadge">0 / 200 XP</span>
           </div>
           <div class="progress-bar-track">
             <div class="progress-bar-fill" id="dailyGoalFill" style="width:0%;"></div>
           </div>
           <div style="display:flex; justify-content:space-between; font-size:0.82rem; color:var(--text-muted); font-weight:700;">
-            <span id="dailyGoalStatusText">50 XP left to reach today's goal</span>
+            <span id="dailyGoalStatusText">200 XP left to reach today's goal</span>
             <span>Total: <strong style="color:#7dd3fc;" id="progressTotalXp">0 XP</strong></span>
           </div>
         </div>
@@ -1604,7 +1873,7 @@
         <div class="stats-grid">
           <div class="stat-card">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:1.4rem;">🎓</span>
+              <span style="font-size:1.3rem;">🎓</span>
               <button type="button" class="btn btn-sm btn-subtle" style="width:auto; padding:4px 8px; min-height:28px; font-size:0.74rem;" title="Reset Total Words Learned" onclick="app.openResetConfirmModal('words')">
                 ↺ Reset
               </button>
@@ -1614,20 +1883,59 @@
           </div>
 
           <div class="stat-card">
-            <span style="font-size:1.4rem;">🎵</span>
+            <span style="font-size:1.3rem;">🎵</span>
             <div class="stat-value" style="color:#7dd3fc;" id="statTotalSongs">0</div>
             <div class="stat-label">Total Songs in Library</div>
           </div>
 
           <div class="stat-card wide" style="display:flex; flex-direction:row; justify-content:space-between; align-items:center;">
             <div>
-              <span style="font-size:1.3rem;">⏰</span>
+              <span style="font-size:1.25rem;">⏰</span>
               <div class="stat-value" style="color:#ffb03a; margin-top:4px;" id="statWordsDueToday">0</div>
               <div class="stat-label">Words to Review Today</div>
             </div>
             <button type="button" class="btn btn-primary" style="width:auto; padding:12px 20px;" onclick="app.switchView('practice')">
               Start Review ▶
             </button>
+          </div>
+        </div>
+
+        <!-- 📝 Test Statistics Section -->
+        <div class="card">
+          <div class="section-title" style="margin-bottom:10px;">
+            <span>📝 Test Statistics</span>
+            <button type="button" class="btn btn-sm btn-subtle" style="min-height:30px; padding:4px 10px; font-size:0.76rem;" onclick="app.switchView('test')">
+              Take Test ▶
+            </button>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value" style="color:#7dd3fc; font-size:1.45rem;" id="statTestsCompleted">0</div>
+              <div class="stat-label">Tests Completed</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" style="color:var(--duo-green); font-size:1.45rem;" id="statTestAvgScore">0%</div>
+              <div class="stat-label">Average Score %</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" style="color:var(--gold); font-size:1.45rem;" id="statTestToneAcc">0%</div>
+              <div class="stat-label">Tone Accuracy %</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" style="color:#ffb03a; font-size:1.45rem;" id="statTestTotalXp">0 XP</div>
+              <div class="stat-label">XP from Tests ⚡</div>
+            </div>
+          </div>
+
+          <!-- Compact Recent Test History (Capped at Last 20 Tests) -->
+          <div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-subtle);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:0.82rem; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.04em;">
+                🕒 Recent Tests (Last 20)
+              </span>
+              <span class="badge" id="testHistoryCountBadge">0 / 20</span>
+            </div>
+            <div id="testHistoryListContainer" style="display:flex; flex-direction:column; gap:6px; max-height:240px; overflow-y:auto;"></div>
           </div>
         </div>
 
@@ -1638,7 +1946,7 @@
             <span class="badge badge-blue" id="hskDatasetStatusBadge">HSK 1–6</span>
           </div>
           <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:12px;">
-            Unique words mastered (rated <strong>Good</strong> or <strong>Easy</strong>) per HSK level compared to total unique words in your KTV library:
+            Unique words mastered (rated <strong>Good</strong> or <strong>Easy</strong>) per HSK level:
           </p>
           <div id="hskBreakdownContainer" style="display:flex; flex-direction:column; gap:6px;"></div>
         </div>
@@ -1648,9 +1956,6 @@
           <div class="section-title" style="margin-bottom:0;">
             <span>⚙️ Reset Statistics</span>
           </div>
-          <p style="font-size:0.82rem; color:var(--text-muted);">
-            Reset your Daily Streak &amp; XP or your learned word progress. Your songs in the Library are never deleted.
-          </p>
           <div style="display:flex; gap:10px;">
             <button type="button" class="btn btn-sm" style="flex:1; background:var(--streak-orange-soft); color:#fdba74; border:1px solid rgba(255,150,0,0.3);" onclick="app.openResetConfirmModal('streak')">
               🔥 Reset Streak &amp; XP
@@ -1660,26 +1965,46 @@
             </button>
           </div>
         </div>
+
+        <!-- LocalStorage Usage Indicator Card -->
+        <div class="card" style="display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+            <span style="font-size:0.88rem; font-weight:800; color:var(--text-main);" id="localStorageUsageText">
+              💾 Local Storage: 0.00 MB / 5.00 MB (0%)
+            </span>
+          </div>
+          <div class="progress-bar-track" style="height:10px; margin:2px 0 0;">
+            <div class="progress-bar-fill" id="localStorageUsageFill" style="width:0%; background-color:var(--duo-green);"></div>
+          </div>
+        </div>
       </section>
     </main>
 
-    <!-- Fixed Bottom Navigation Bar (3 Icons: Library, Practice, Progress) -->
+    <!-- Fixed Bottom Navigation Bar (5 Compact Tabs: Library, Add, Practice, Test, Progress) -->
     <nav class="bottom-nav" aria-label="Bottom Navigation">
       <button type="button" class="bottom-nav-btn active" data-view="home" onclick="app.switchView('home')">
         <span class="nav-icon">📚</span>
         <span>Library</span>
       </button>
+      <button type="button" class="bottom-nav-btn" data-view="add" onclick="app.switchView('add')">
+        <span class="nav-icon">➕</span>
+        <span>Add</span>
+      </button>
       <button type="button" class="bottom-nav-btn" data-view="practice" onclick="app.switchView('practice')">
         <span class="nav-icon">🎴</span>
         <span>Practice (<span id="navDueCount">0</span>)</span>
       </button>
+      <button type="button" class="bottom-nav-btn" data-view="test" onclick="app.switchView('test')">
+        <span class="nav-icon">✍️</span>
+        <span>Test</span>
+      </button>
       <button type="button" class="bottom-nav-btn" data-view="progress" onclick="app.switchView('progress')">
-        <span class="nav-icon">🏆</span>
+        <span class="nav-icon">📊</span>
         <span>Progress</span>
       </button>
     </nav>
   </div>
-  <!-- MODAL 1: Word Details Popup (with HSK Badge & Memrise KTV Context Preview) -->
+  <!-- MODAL 1: Word Details Popup (with HSK Badge, 🔊 Listen & Memrise KTV Context Preview) -->
   <div id="wordModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" onclick="if(event.target===this) app.closeWordModal()">
     <div class="modal-sheet">
       <div style="display:flex; justify-content:space-between; align-items:flex-start;">
@@ -1705,7 +2030,10 @@
 
       <!-- Context Sentence from KTV Song (Memrise Style) -->
       <div class="context-sentence-box" id="wordModalContextBox" style="display:none;">
-        <div class="info-label" style="color:#7dd3fc;">🎤 KTV Lyric Context (Saved with word)</div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="info-label" style="color:#7dd3fc; margin-bottom:0;">🎤 KTV Lyric Context</div>
+          <button type="button" class="btn-listen" style="padding:3px 8px; min-height:26px; font-size:0.74rem;" onclick="app.speakModalContextSentence()">🔊 Sentence</button>
+        </div>
         <div style="font-family:var(--font-zh); font-size:1.08rem; font-weight:800;" id="wordModalContextZh">—</div>
         <div style="font-size:0.82rem; color:var(--gold); font-weight:700;" id="wordModalContextPinyin">—</div>
         <div style="font-size:0.84rem; color:var(--text-muted);" id="wordModalContextMeaning">—</div>
@@ -1723,7 +2051,7 @@
 
       <div style="display:flex; gap:10px;">
         <button type="button" class="btn btn-primary" style="flex:2;" onclick="app.saveCurrentWordToVocab()">⭐ Save Word + Context</button>
-        <button type="button" class="btn btn-teal" style="flex:1;" onclick="app.speakChineseWord()">🔊 Audio</button>
+        <button type="button" class="btn btn-teal" style="flex:1;" onclick="app.speakChineseWord()">🔊 Listen</button>
       </div>
 
       <div style="display:flex; gap:8px; justify-content:space-between;">
@@ -2258,11 +2586,11 @@
       },
 
       /**
-       * Normalizes Pinyin for tone-insensitive Typing Mode checking:
+       * Normalizes Pinyin for base (tone-insensitive) comparison:
        * Strips all tone marks/diacritics, spaces, apostrophes, tone numbers,
        * and normalizes ü/v so "péng yǒu" === "pengyou".
        */
-      normalizePinyinForTyping(pinyinStr) {
+      normalizePinyinBase(pinyinStr) {
         if (!pinyinStr) return "";
         return String(pinyinStr)
           .toLowerCase()
@@ -2270,7 +2598,134 @@
           .normalize("NFD")
           .replace(/[\u0300-\u036f]/g, "")
           .replace(/u:/g, "v")
-          .replace(/[0-9\s'’\-_,.;:!?()[\]]+/g, "");
+          .replace(/[^a-z]+/g, "");
+      },
+
+      normalizePinyinForTyping(pinyinStr) {
+        return this.normalizePinyinBase(pinyinStr);
+      },
+
+      /**
+       * Normalizes Pinyin while preserving exact tone diacritics (e.g. nǐ hǎo -> nǐhǎo).
+       */
+      normalizePinyinWithMarks(pinyinStr) {
+        if (!pinyinStr) return "";
+        return String(pinyinStr)
+          .toLowerCase()
+          .normalize("NFC")
+          .replace(/u:/g, "ü")
+          .replace(/[\s'’\-_,.;:!?()[\]"“”‘’，。！？、·~]+/g, "");
+      },
+
+      /**
+       * Converts Pinyin with tone diacritics (or Chinese word via pinyinPro) into compact
+       * tone-number Pinyin (e.g. "nǐ hǎo" -> "ni3hao3", "péng yǒu" -> "peng2you3").
+       */
+      convertMarkedPinyinToToneNumbers(pinyinStr, chineseFallback = "") {
+        if (chineseFallback && window.pinyinPro && typeof window.pinyinPro.pinyin === "function") {
+          try {
+            const numPy = window.pinyinPro.pinyin(chineseFallback, { toneType: "num" });
+            if (numPy) {
+              return String(numPy)
+                .toLowerCase()
+                .replace(/ü/g, "v")
+                .replace(/u:/g, "v")
+                .replace(/[^a-z1-5]+/g, "");
+            }
+          } catch (e) {}
+        }
+
+        const toneMap = {
+          "ā": ["a", 1], "á": ["a", 2], "ǎ": ["a", 3], "à": ["a", 4],
+          "ē": ["e", 1], "é": ["e", 2], "ě": ["e", 3], "è": ["e", 4],
+          "ī": ["i", 1], "í": ["i", 2], "ǐ": ["i", 3], "ì": ["i", 4],
+          "ō": ["o", 1], "ó": ["o", 2], "ǒ": ["o", 3], "ò": ["o", 4],
+          "ū": ["u", 1], "ú": ["u", 2], "ǔ": ["u", 3], "ù": ["u", 4],
+          "ǖ": ["v", 1], "ǘ": ["v", 2], "ǚ": ["v", 3], "ǜ": ["v", 4]
+        };
+
+        const tokens = String(pinyinStr || "")
+          .toLowerCase()
+          .normalize("NFC")
+          .split(/[\s'’\-_,.;:!?()[\]，。！？、]+/)
+          .filter(Boolean);
+
+        return tokens.map(tok => {
+          let toneNum = "";
+          let plain = "";
+          for (const ch of Array.from(tok)) {
+            if (toneMap[ch]) {
+              plain += toneMap[ch][0];
+              toneNum = String(toneMap[ch][1]);
+            } else if (ch === "ü") {
+              plain += "v";
+            } else if (/[1-5]/.test(ch)) {
+              toneNum = ch;
+            } else if (/[a-z]/.test(ch)) {
+              plain += ch;
+            }
+          }
+          return plain + toneNum;
+        }).join("");
+      },
+
+      normalizeUserToneNumberInput(userStr) {
+        if (!userStr) return "";
+        return String(userStr)
+          .toLowerCase()
+          .replace(/ü/g, "v")
+          .replace(/u:/g, "v")
+          .replace(/5/g, "") // treat neutral tone 5 as optional
+          .replace(/[^a-z1-4]+/g, "");
+      },
+
+      /**
+       * Evaluates a user's Pinyin answer against target Pinyin / Chinese text.
+       * Sentences weigh heavier than single words, and Tests weigh heavier than Practice:
+       * - Words:     +15 XP (1 pt base) | 🎯 +25 XP (2 pts exact tones)
+       * - Sentences: +25 XP (1 pt base) | 🎯 +40 XP (2 pts exact tones)
+       */
+      evaluatePinyinAnswer(userInput, targetPinyin, targetChinese = "", isSentence = false) {
+        const rawUser = String(userInput || "").trim();
+        if (!rawUser) return { status: "wrong", points: 0, xp: 0 };
+
+        const resolvedPinyin = targetPinyin || this.getPinyin(targetChinese, true) || "";
+        const baseTarget = this.normalizePinyinBase(resolvedPinyin);
+        const baseUser = this.normalizePinyinBase(rawUser);
+
+        if (!baseTarget || baseUser !== baseTarget) {
+          return { status: "wrong", points: 0, xp: 0 };
+        }
+
+        const baseXp = isSentence ? 25 : 15;
+        const bonusXp = isSentence ? 40 : 25;
+
+        // Check if user provided tone marks or tone numbers matching the target
+        const hasUserToneMarks = /[\u0300-\u036f]/.test(rawUser.normalize("NFD"));
+        const hasUserToneDigits = /[1-5]/.test(rawUser);
+
+        if (hasUserToneMarks) {
+          const markedTarget = this.normalizePinyinWithMarks(resolvedPinyin);
+          const markedUser = this.normalizePinyinWithMarks(rawUser);
+          if (markedTarget && markedUser === markedTarget) {
+            return { status: "perfect_tones", points: 2, xp: bonusXp };
+          }
+          // Base Pinyin is 100% correct, only the tone mark was off -> award standard 1 pt without bonus
+          return { status: "correct_base", points: 1, xp: baseXp, hadWrongTones: true };
+        }
+
+        if (hasUserToneDigits) {
+          const numTarget = this.convertMarkedPinyinToToneNumbers(resolvedPinyin, targetChinese).replace(/5/g, "");
+          const numUser = this.normalizeUserToneNumberInput(rawUser);
+          const numTargetFromMarks = this.convertMarkedPinyinToToneNumbers(resolvedPinyin, "").replace(/5/g, "");
+          if ((numTarget && numUser === numTarget) || (numTargetFromMarks && numUser === numTargetFromMarks)) {
+            return { status: "perfect_tones", points: 2, xp: bonusXp };
+          }
+          // Base Pinyin is 100% correct, only the tone number was off -> award standard 1 pt without bonus
+          return { status: "correct_base", points: 1, xp: baseXp, hadWrongTones: true };
+        }
+
+        return { status: "correct_base", points: 1, xp: baseXp, hadWrongTones: false };
       },
 
       getPinyin(word, withTones = true) {
@@ -2487,6 +2942,52 @@
       "ktv_active_profile_id"
     ]);
 
+    /**
+     * Reusable Mandarin Chinese Text-to-Speech Function (zh-CN, rate = 0.85)
+     * Includes graceful error handling if the device/browser does not support Chinese TTS.
+     */
+    function speakChinese(text) {
+      const clean = String(text || "").trim();
+      if (!clean) return;
+      if (typeof window === "undefined" || !("speechSynthesis" in window) || typeof SpeechSynthesisUtterance === "undefined") {
+        if (window.app && typeof window.app.showSystemAlert === "function") {
+          window.app.showSystemAlert("Audio playback (Text-to-Speech) is not supported on this browser.");
+        }
+        return;
+      }
+
+      try {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(clean);
+        utter.lang = "zh-CN";
+        utter.rate = 0.85;
+
+        const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+        if (Array.isArray(voices) && voices.length > 0) {
+          const zhVoice =
+            voices.find(v => v.lang && v.lang.toLowerCase().replace("_", "-").startsWith("zh-cn")) ||
+            voices.find(v => v.lang && v.lang.toLowerCase().startsWith("zh"));
+          if (zhVoice) {
+            utter.voice = zhVoice;
+          }
+        }
+
+        utter.onerror = (ev) => {
+          if (ev && ev.error && ev.error !== "interrupted" && ev.error !== "canceled") {
+            if (window.app && typeof window.app.showSystemAlert === "function") {
+              window.app.showSystemAlert("Chinese voice audio could not be played on this device.");
+            }
+          }
+        };
+
+        window.speechSynthesis.speak(utter);
+      } catch (err) {
+        if (window.app && typeof window.app.showSystemAlert === "function") {
+          window.app.showSystemAlert("Could not play Chinese pronunciation audio.");
+        }
+      }
+    }
+
     const app = {
       state: {
         profiles: [],
@@ -2496,7 +2997,7 @@
         currentSong: null,
         parsedLines: [],
         selectedWord: null,
-        practiceInteractionMode: "flashcards", // "flashcards" | "matching" | "typing"
+        practiceInteractionMode: "flashcards", // "flashcards" | "matching"
         flashcardIndex: 0,
         flashcardSongFilter: "all_songs",
         flashcardHskFilter: "all", // "all" | "1-2" | "3-4" | "5-6-non"
@@ -2505,7 +3006,23 @@
         currentFlashcardItem: null,
         matchingFirstAttempt: true,
         matchingResolved: false,
-        typingChecked: false,
+        testConfig: {
+          contentType: "words", // "words" | "sentences" | "mixed"
+          songFilter: "all_songs",
+          hskFilter: "all", // "all" | "1-2" | "3-4" | "5-6"
+          testType: "char_to_pinyin" // "char_to_pinyin" | "meaning_to_pinyin"
+        },
+        testSession: {
+          active: false,
+          questions: [],
+          currentIndex: 0,
+          checked: false,
+          totalPoints: 0,
+          maxPoints: 0,
+          earnedXp: 0,
+          correctCount: 0,
+          perfectToneCount: 0
+        },
         settings: {
           scriptMode: "both",
           showPinyin: true,
@@ -2521,9 +3038,20 @@
         gamification: {
           streakCount: 0,
           lastPracticeDate: "",
+          lastSongXpDate: "",
           totalXp: 0,
-          dailyGoalXp: 50,
-          dailyXpByDate: {}
+          dailyGoalXp: 200,
+          dailyXpByDate: {},
+          testHistory: [],
+          testStats: {
+            testsCompleted: 0,
+            totalQuestions: 0,
+            totalCorrect: 0,
+            totalPerfectTones: 0,
+            totalPointsEarned: 0,
+            totalMaxPoints: 0,
+            totalTestXp: 0
+          }
         }
       },
 
@@ -2673,9 +3201,20 @@
           gamification: {
             streakCount: 0,
             lastPracticeDate: "",
+            lastSongXpDate: "",
             totalXp: 0,
-            dailyGoalXp: 50,
-            dailyXpByDate: {}
+            dailyGoalXp: 200,
+            dailyXpByDate: {},
+            testHistory: [],
+            testStats: {
+              testsCompleted: 0,
+              totalQuestions: 0,
+              totalCorrect: 0,
+              totalPerfectTones: 0,
+              totalPointsEarned: 0,
+              totalMaxPoints: 0,
+              totalTestXp: 0
+            }
           },
           songs: [],
           vocab: []
@@ -2971,9 +3510,16 @@
 
           const savedGamification = localStorage.getItem(this.getScopedStorageKey("ktv_gamification"));
           if (savedGamification) {
+            const parsedGam = JSON.parse(savedGamification) || {};
             this.state.gamification = {
               ...this.state.gamification,
-              ...JSON.parse(savedGamification)
+              ...parsedGam,
+              dailyGoalXp: 200,
+              testHistory: Array.isArray(parsedGam.testHistory) ? parsedGam.testHistory.slice(0, 20) : [],
+              testStats: {
+                ...(defaults.gamification.testStats || {}),
+                ...(parsedGam.testStats || {})
+              }
             };
           }
 
@@ -3139,16 +3685,13 @@
         }
 
         if (type === "streak") {
+          const defaults = this.getDefaultProfileState();
           this.state.gamification = {
-            streakCount: 0,
-            lastPracticeDate: "",
-            totalXp: 0,
-            dailyGoalXp: 50,
-            dailyXpByDate: {}
+            ...defaults.gamification
           };
           this.saveLocalStorageKey("ktv_gamification", this.state.gamification);
           this.updateGamificationUI();
-          this.showSystemAlert("Daily Streak and XP have been reset to 0.");
+          this.showSystemAlert("Daily Streak, XP, and Test statistics have been reset to 0.");
         } else if (type === "words") {
           this.state.vocab = [];
           this.state.srsMap = {};
@@ -3246,7 +3789,7 @@
         const g = this.state.gamification;
         const today = srsEngine.getTodayDateStr();
         const todayXp = Number(g.dailyXpByDate?.[today]) || 0;
-        const goalXp = Number(g.dailyGoalXp) || 50;
+        const goalXp = Number(g.dailyGoalXp) || 200;
         const pct = Math.min(100, Math.round((todayXp / goalXp) * 100));
 
         const headerStreak = document.getElementById("headerStreakCount");
@@ -3262,6 +3805,20 @@
           libDueBadge.textContent = dueTodayCount > 0 ? `⏰ ${dueTodayCount} due today` : "✓ All caught up";
         }
 
+        // Update Add Song 1x/day XP badge & button label
+        const songXpClaimedToday = g.lastSongXpDate === today;
+        const addSongBadge = document.getElementById("addSongXpRewardBadge");
+        const saveSongBtn = document.getElementById("saveSongSubmitBtn");
+        if (addSongBadge) {
+          addSongBadge.textContent = songXpClaimedToday ? "✓ Daily +25 XP Claimed" : "+25 XP (1×/day)";
+          addSongBadge.className = `badge ${songXpClaimedToday ? "" : "badge-green"}`;
+        }
+        if (saveSongBtn && !saveSongBtn.disabled) {
+          saveSongBtn.textContent = songXpClaimedToday
+            ? "💾 Save Song to Library"
+            : "💾 Save Song (+25 XP · 1×/day)";
+        }
+
         const streakDaysEl = document.getElementById("progressStreakDays");
         if (streakDaysEl) streakDaysEl.textContent = g.streakCount || 0;
 
@@ -3269,7 +3826,7 @@
         if (streakSubEl) {
           streakSubEl.textContent = g.lastPracticeDate === today
             ? "Awesome! You practiced today and kept your streak alive!"
-            : "Practice today in Flashcards, Matching, or Typing to light up your streak!";
+            : "Practice or take a test today to light up your streak!";
         }
 
         const goalBadge = document.getElementById("dailyGoalBadge");
@@ -3298,8 +3855,114 @@
         const statDue = document.getElementById("statWordsDueToday");
         if (statDue) statDue.textContent = dueTodayCount;
 
+        // Render Test Statistics on Progress Tab
+        const ts = g.testStats || {};
+        const testsCompleted = Number(ts.testsCompleted) || 0;
+        const totalMaxPts = Number(ts.totalMaxPoints) || 0;
+        const totalPtsEarned = Number(ts.totalPointsEarned) || 0;
+        const totalQuestions = Number(ts.totalQuestions) || 0;
+        const totalPerfectTones = Number(ts.totalPerfectTones) || 0;
+        const totalTestXp = Number(ts.totalTestXp) || 0;
+
+        const avgScorePct = totalMaxPts > 0 ? Math.round((totalPtsEarned / totalMaxPts) * 100) : 0;
+        const toneAccPct = totalQuestions > 0 ? Math.round((totalPerfectTones / totalQuestions) * 100) : 0;
+
+        const elTestsDone = document.getElementById("statTestsCompleted");
+        if (elTestsDone) elTestsDone.textContent = testsCompleted;
+        const elAvgScore = document.getElementById("statTestAvgScore");
+        if (elAvgScore) elAvgScore.textContent = `${avgScorePct}%`;
+        const elToneAcc = document.getElementById("statTestToneAcc");
+        if (elToneAcc) elToneAcc.textContent = `${toneAccPct}%`;
+        const elTestXp = document.getElementById("statTestTotalXp");
+        if (elTestXp) elTestXp.textContent = `${totalTestXp} XP`;
+
+        this.renderTestHistoryList();
         this.updateProfileUI();
         this.renderHskBreakdown();
+        this.updateLocalStorageUsageUI();
+      },
+
+      renderTestHistoryList() {
+        const listEl = document.getElementById("testHistoryListContainer");
+        const badgeEl = document.getElementById("testHistoryCountBadge");
+        if (!listEl) return;
+
+        const history = Array.isArray(this.state.gamification?.testHistory)
+          ? this.state.gamification.testHistory.slice(0, 20)
+          : [];
+
+        if (badgeEl) {
+          badgeEl.textContent = `${history.length} / 20`;
+        }
+
+        if (history.length === 0) {
+          listEl.innerHTML = `<div style="font-size:0.82rem; color:var(--text-muted); padding:4px 0;">No completed tests yet. Complete a test in the 'Test' tab to see your last 20 results here.</div>`;
+          return;
+        }
+
+        listEl.innerHTML = history.map((item, idx) => {
+          const modeLabel = item.mode === "sentences"
+            ? "📝 Sentences"
+            : (item.mode === "mixed" ? "🔀 Mixed" : "🔤 Words");
+          const accColor = item.acc >= 80 ? "var(--duo-green)" : (item.acc >= 50 ? "#ffb03a" : "var(--hard-red)");
+          return `
+            <div style="background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:12px; padding:8px 12px; display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:0.8rem;">
+              <div style="display:flex; flex-direction:column; gap:2px; min-width:0;">
+                <div style="font-weight:800; color:var(--text-main); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                  #${history.length - idx} · ${modeLabel} · ${this.escapeHtml(item.song || "All Songs")}
+                </div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">
+                  ${this.escapeHtml(item.d || "")} · ${this.escapeHtml(item.type || "Char→Py")} · Tones: ${Number(item.tone) || 0}%
+                </div>
+              </div>
+              <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                <span style="font-weight:900; color:${accColor};">${Number(item.acc) || 0}%</span>
+                <span class="badge badge-green" style="font-size:0.7rem; padding:2px 7px;">+${Number(item.xp) || 0} XP</span>
+              </div>
+            </div>
+          `;
+        }).join("");
+      },
+
+      /**
+       * Calculates actual localStorage size in UTF-16 bytes ((key.length + value.length) * 2)
+       * and updates the compact storage indicator at the bottom of the Progress tab.
+       */
+      updateLocalStorageUsageUI() {
+        const textEl = document.getElementById("localStorageUsageText");
+        const fillEl = document.getElementById("localStorageUsageFill");
+        if (!textEl || !fillEl) return;
+
+        try {
+          let totalChars = 0;
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i) || "";
+            const val = localStorage.getItem(key) || "";
+            totalChars += key.length + val.length;
+          }
+
+          const totalBytes = totalChars * 2; // UTF-16: 2 bytes per character
+          const usedMb = totalBytes / (1024 * 1024);
+          const maxMb = 5.0;
+          const rawPct = (usedMb / maxMb) * 100;
+          const displayPct = Math.min(100, Math.round(rawPct));
+          const barWidthPct = Math.min(100, Math.max(usedMb > 0 ? 1 : 0, rawPct));
+
+          textEl.textContent = `💾 Local Storage: ${usedMb.toFixed(2)} MB / ${maxMb.toFixed(2)} MB (${displayPct}%)`;
+          fillEl.style.width = `${barWidthPct.toFixed(1)}%`;
+
+          // Color thresholds: < 70% green, 70% - 90% orange, > 90% red
+          if (rawPct > 90) {
+            fillEl.style.backgroundColor = "var(--hard-red)";
+          } else if (rawPct >= 70) {
+            fillEl.style.backgroundColor = "var(--streak-orange)";
+          } else {
+            fillEl.style.backgroundColor = "var(--duo-green)";
+          }
+        } catch (err) {
+          textEl.textContent = "💾 Local Storage: Unavailable";
+          fillEl.style.width = "0%";
+        }
       },
 
       showSystemAlert(msg) {
@@ -3328,7 +3991,7 @@
 
         document.querySelectorAll(".bottom-nav-btn").forEach(btn => {
           const navTarget = btn.getAttribute("data-view");
-          const isHomeSubView = (targetView === "reader" || targetView === "add") && navTarget === "home";
+          const isHomeSubView = targetView === "reader" && navTarget === "home";
           btn.classList.toggle("active", navTarget === targetView || isHomeSubView);
         });
 
@@ -3336,6 +3999,8 @@
           this.populateSongSelects();
           this.renderCurrentFlashcard();
           this.renderVocabList();
+        } else if (targetView === "test") {
+          this.populateSongSelects();
         } else if (targetView === "progress") {
           this.updateGamificationUI();
         }
@@ -3580,7 +4245,7 @@
           if (this.state.songs.length === 0) {
             libList.innerHTML = `
               <div class="card" style="text-align:center; color:var(--text-muted); padding:28px 18px;">
-                No songs yet. Tap <strong>'+ Add New Song (+50 XP)'</strong> above to add your first KTV lyrics!
+                No songs yet. Tap <strong>'＋ Add Song'</strong> above to add your first KTV lyrics!
               </div>
             `;
           } else if (filtered.length === 0) {
@@ -4174,12 +4839,25 @@
       },
 
       speakChineseWord() {
-        if (!this.state.selectedWord || !("speechSynthesis" in window)) return;
-        const utter = new SpeechSynthesisUtterance(this.state.selectedWord.simp);
-        utter.lang = "zh-CN";
-        utter.rate = 0.85;
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utter);
+        if (!this.state.selectedWord) return;
+        speakChinese(this.state.selectedWord.simp || this.state.selectedWord.trad);
+      },
+
+      speakModalContextSentence() {
+        if (!this.state.selectedWord?.contextSentence) return;
+        speakChinese(this.state.selectedWord.contextSentence);
+      },
+
+      speakCurrentFlashcardWord() {
+        const item = this.state.currentFlashcardItem;
+        if (!item) return;
+        speakChinese(item.simp || item.trad || item.original);
+      },
+
+      speakCurrentFlashcardContext() {
+        const item = this.state.currentFlashcardItem;
+        if (!item || !item.contextSentence) return;
+        speakChinese(item.contextSentence);
       },
 
       saveCurrentWordToVocab() {
@@ -4260,8 +4938,340 @@
       },
 
       // -----------------------------------------------------------------------
-      // ADD SONG (+50 XP REWARD & PRE-CACHING WORDS + SENTENCES)
+      // YOUTUBE / SPOTIFY OEMBED + LRCLIB AUTO-IMPORT & ADD SONG (+50 XP)
       // -----------------------------------------------------------------------
+      extractChineseSegments(str) {
+        if (!str) return "";
+        const matches = String(str).match(/[\u4e00-\u9fff]+/g);
+        return matches ? matches.join(" ").trim() : "";
+      },
+
+      extractLatinSegments(str) {
+        if (!str) return "";
+        return String(str)
+          .replace(/[\u4e00-\u9fff【】《》「」『』（）()[\]]+/g, " ")
+          .replace(/\b(?:official|mv|music\s*video|lyric|lyrics|audio|hd|4k|video|visualizer|feat|ft|featuring)\b\.?/gi, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+      },
+
+      /**
+       * 4-Step Smart Parser for Mandopop / Cantopop / KTV YouTube & Spotify Titles:
+       * Handles all major label formats:
+       * 1) 周杰倫 Jay Chou (特別演出: 派偉俊)【告白氣球 Love Confession】Official MV
+       * 2) 林俊傑 JJ Lin - 手心的薔薇 Beautiful feat. G.E.M. 鄧紫棋 (華納 Official 高畫質 HD 官方完整版 MV)
+       * 3) G.E.M.【光年之外 LIGHT YEARS AWAY 】MV (電影《太空潛航者 Passengers》中文主題曲) [HD] 鄧紫棋
+       */
+      parseMediaMetadata(rawTitle, rawAuthor = "") {
+        const cleanChannel = String(rawAuthor || "")
+          .replace(/\s*-\s*Topic$/i, "")
+          .replace(/official\s*channel/gi, "")
+          .trim();
+
+        // STEP 1: Strip all round (...) / （...） and square [...] brackets FIRST
+        // This immediately removes movie tie-ins like (電影《太空潛航者 Passengers》中文主題曲),
+        // guest credits like (特別演出: 派偉俊), and label tags like (華納 Official... MV) or [HD].
+        let working = String(rawTitle || "")
+          .replace(/\([^)]*\)/g, " ")
+          .replace(/（[^）]*）/g, " ")
+          .replace(/\[[^\]]*\]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        // Also strip noise CJK brackets that only contain MV / Official / HD tags
+        working = working
+          .replace(/[【《「『][^】》」』]*(?:official|mv|music\s*video|高畫質|高清|官方|完整版|動態歌詞|歌詞版|4k|hd)[^】》」』]*[】》」』]/gi, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+
+        // STEP 2: Strip standalone noise words (Official, MV, HD, 4K, Lyrics...)
+        const stripNoiseWords = (txt) =>
+          String(txt || "")
+            .replace(/\b(?:official\s+music\s+video|official\s+lyric\s+video|official\s+video|official\s+audio|music\s+video|lyric\s+video|lyrics|official|visualizer|audio|video|mv|hd|4k|1080p)\b/gi, " ")
+            .replace(/(?:官方完整版|官方高清|高畫質|高清|動態歌詞|歌詞版|完整版|官方)/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        const stripFeatTail = (txt) =>
+          String(txt || "")
+            .replace(/\s+(?:feat\.?|ft\.?|featuring|合唱|with)\s+.*$/i, "")
+            .trim();
+
+        let extractedTitle = "";
+        let extractedArtist = "";
+
+        // STEP 3A: Check for CJK Title Brackets 【...】, 《...》, 「...」, 『...』
+        const cjkBracketMatch = working.match(/[【《「『]([^】》」』]+)[】》」』]/);
+        if (cjkBracketMatch) {
+          extractedTitle = stripFeatTail(stripNoiseWords(cjkBracketMatch[1]));
+
+          // Everything before AND after the bracket belongs to the artist
+          // (e.g. "G.E.M." before 【...】 and "鄧紫棋" after MV/[HD])
+          const beforeBracket = working.slice(0, cjkBracketMatch.index);
+          const afterBracket = working.slice(cjkBracketMatch.index + cjkBracketMatch[0].length);
+          const combinedOutside = stripFeatTail(stripNoiseWords(`${beforeBracket} ${afterBracket}`))
+            .replace(/^[-–—:：|·\s]+|[-–—:：|·\s]+$/g, "")
+            .trim();
+
+          extractedArtist = combinedOutside || cleanChannel;
+        } else {
+          // STEP 3B: Split on " - ", " – ", " — "
+          const cleanedWorking = stripNoiseWords(working);
+          const dashParts = cleanedWorking.split(/\s+[-–—]\s+/);
+          if (dashParts.length >= 2) {
+            extractedArtist = stripFeatTail(dashParts[0]).trim() || cleanChannel;
+            extractedTitle = stripFeatTail(dashParts.slice(1).join(" - ")).trim();
+          } else {
+            extractedTitle = stripFeatTail(cleanedWorking);
+            extractedArtist = cleanChannel;
+          }
+        }
+
+        // STEP 4: Isolate pure Chinese & English parts for clean display and cascading LRCLIB queries
+        const zhTitle = this.extractChineseSegments(extractedTitle);
+        const enTitle = this.extractLatinSegments(extractedTitle);
+        const zhArtist = this.extractChineseSegments(extractedArtist) || this.extractChineseSegments(cleanChannel);
+        const enArtist = this.extractLatinSegments(extractedArtist) || this.extractLatinSegments(cleanChannel);
+
+        // Prefer pure Chinese title if available, otherwise full cleaned title
+        const displayTitle = zhTitle || extractedTitle || working;
+        let displayArtist = extractedArtist || cleanChannel;
+        if (zhArtist && enArtist) {
+          displayArtist = `${zhArtist} (${enArtist})`;
+        } else if (zhArtist) {
+          displayArtist = zhArtist;
+        }
+
+        // Build cascading LRCLIB search queries from most accurate to broadest
+        const searchQueries = [];
+        const addQ = (q) => {
+          const clean = String(q || "").replace(/\s+/g, " ").trim();
+          if (clean && !searchQueries.includes(clean)) searchQueries.push(clean);
+        };
+
+        if (zhTitle && zhArtist) addQ(`${zhTitle} ${zhArtist}`);
+        if (zhTitle) addQ(zhTitle);
+        if (extractedTitle && zhArtist) addQ(`${extractedTitle} ${zhArtist}`);
+        if (enTitle && enArtist) addQ(`${enTitle} ${enArtist}`);
+        if (extractedTitle && extractedArtist) addQ(`${extractedTitle} ${extractedArtist}`);
+        if (extractedTitle) addQ(extractedTitle);
+
+        return {
+          displayTitle,
+          displayArtist,
+          zhTitle,
+          zhArtist,
+          enTitle,
+          enArtist,
+          searchQueries
+        };
+      },
+
+      stripLrcTimestamps(rawLrc) {
+        if (!rawLrc) return "";
+        return String(rawLrc)
+          .split(/\r?\n/)
+          .filter(line => !/^\[[a-zA-Z]+:.*\]$/.test(line.trim()))
+          .map(line => line.replace(/\[(\d{1,3}):(\d{2})(?:\.(\d{1,3}))?\]/g, "").trim())
+          .filter(Boolean)
+          .join("\n");
+      },
+
+      async fetchFromMediaUrl(event) {
+        if (event) event.preventDefault();
+        const urlInput = document.getElementById("mediaUrlInput");
+        const statusEl = document.getElementById("mediaUrlStatus");
+        const resultsEl = document.getElementById("mediaUrlLrcResults");
+        const fetchBtn = document.getElementById("fetchMediaUrlBtn");
+
+        const rawUrl = (urlInput?.value || "").trim();
+        if (!rawUrl) {
+          this.showSystemAlert("Please paste a YouTube or Spotify URL first.");
+          return;
+        }
+
+        const lowerUrl = rawUrl.toLowerCase();
+        const isYouTube = lowerUrl.includes("youtube.com") || lowerUrl.includes("youtu.be");
+        const isSpotify = lowerUrl.includes("open.spotify.com") || lowerUrl.includes("spotify.com");
+
+        if (!isYouTube && !isSpotify) {
+          this.showSystemAlert("Please enter a valid YouTube (youtube.com / youtu.be) or Spotify (open.spotify.com) link.");
+          return;
+        }
+
+        if (statusEl) {
+          statusEl.style.display = "block";
+          statusEl.textContent = "⏳ Fetching song info...";
+        }
+        if (resultsEl) {
+          resultsEl.style.display = "none";
+          resultsEl.innerHTML = "";
+        }
+        if (fetchBtn) fetchBtn.disabled = true;
+
+        try {
+          const oembedEndpoint = isYouTube
+            ? `https://www.youtube.com/oembed?url=${encodeURIComponent(rawUrl)}&format=json`
+            : `https://open.spotify.com/oembed?url=${encodeURIComponent(rawUrl)}`;
+
+          const ctrl = new AbortController();
+          const timer = setTimeout(() => ctrl.abort(), 6500);
+          const metaRes = await fetch(oembedEndpoint, { signal: ctrl.signal });
+          clearTimeout(timer);
+
+          if (!metaRes.ok) {
+            throw new Error("Could not fetch media metadata");
+          }
+
+          const meta = await metaRes.json();
+          const rawTitle = (meta?.title || "").trim();
+          const rawAuthor = (meta?.author_name || "").trim();
+
+          const parsed = this.parseMediaMetadata(rawTitle, rawAuthor);
+
+          const titleField = document.getElementById("importSongTitle");
+          const artistField = document.getElementById("importSongArtist");
+          if (titleField && parsed.displayTitle) titleField.value = parsed.displayTitle;
+          if (artistField && parsed.displayArtist) artistField.value = parsed.displayArtist;
+
+          const lrcSearchInput = document.getElementById("lrcSearchTrack");
+          if (lrcSearchInput && parsed.displayTitle) {
+            lrcSearchInput.value = parsed.zhTitle
+              ? `${parsed.zhTitle} ${parsed.zhArtist}`.trim()
+              : parsed.displayTitle;
+          }
+
+          if (statusEl) {
+            statusEl.textContent = `⏳ Found "${parsed.displayTitle}" — ${parsed.displayArtist}. Searching lyrics on LRCLIB...`;
+          }
+
+          try {
+            let lrcItems = [];
+            for (const q of parsed.searchQueries) {
+              try {
+                const ctrlLrc = new AbortController();
+                const timerLrc = setTimeout(() => ctrlLrc.abort(), 5500);
+                const lrcRes = await fetch(`https://lrclib.net/api/search?q=${encodeURIComponent(q)}`, { signal: ctrlLrc.signal });
+                clearTimeout(timerLrc);
+
+                if (lrcRes.ok) {
+                  const data = await lrcRes.json();
+                  if (Array.isArray(data) && data.length > 0) {
+                    // Keep results that actually have lyrics text
+                    const withLyrics = data.filter(item => (item.plainLyrics || item.syncedLyrics || "").trim().length > 0);
+                    if (withLyrics.length > 0) {
+                      lrcItems = withLyrics;
+                      // Prioritize items containing Chinese characters
+                      const chineseMatches = withLyrics.filter(item =>
+                        textHelper.isChineseText(item.plainLyrics || item.syncedLyrics || "")
+                      );
+                      if (chineseMatches.length > 0) {
+                        lrcItems = [
+                          ...chineseMatches,
+                          ...withLyrics.filter(item => !chineseMatches.includes(item))
+                        ];
+                        break;
+                      }
+                    }
+                  }
+                }
+              } catch (innerQueryErr) {
+                // Continue to next fallback query
+              }
+            }
+
+            const topThree = lrcItems.slice(0, 3);
+            this.lastMediaUrlLrcResults = topThree;
+
+            if (topThree.length > 0 && resultsEl) {
+              // Automatically fill the lyrics box with the #1 best match so the user doesn't even have to click unless they want another version
+              this.selectMediaUrlLrcResult(0, true);
+
+              if (statusEl) {
+                statusEl.textContent = `✅ Lyrics automatically loaded! (Or tap another version below):`;
+              }
+              resultsEl.style.display = "flex";
+              resultsEl.innerHTML = topThree.map((item, idx) => {
+                const tName = item.trackName || item.name || parsed.displayTitle || "Song";
+                const aName = item.artistName || parsed.displayArtist || "Unknown Artist";
+                const rawPreview = this.stripLrcTimestamps(item.plainLyrics || item.syncedLyrics || "");
+                const firstLine = rawPreview.split(/\r?\n/)[0] || "Tap to load lyrics";
+                return `
+                  <button type="button" class="match-option-btn ${idx === 0 ? "correct" : ""}" id="mediaLrcCard-${idx}" onclick="app.selectMediaUrlLrcResult(${idx})">
+                    <div style="display:flex; justify-content:space-between; align-items:center; width:100%; gap:8px;">
+                      <span style="font-weight:800; font-size:0.95rem; font-family:var(--font-zh); color:var(--text-main);">
+                        🎵 ${this.escapeHtml(tName)} — ${this.escapeHtml(aName)}
+                      </span>
+                      <span class="badge ${idx === 0 ? "badge-green" : "badge-blue"}" id="mediaLrcBadge-${idx}">
+                        ${idx === 0 ? "✓ Loaded" : "Use Lyrics"}
+                      </span>
+                    </div>
+                    <span style="font-size:0.78rem; color:var(--text-muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:100%;">
+                      ${this.escapeHtml(firstLine)}
+                    </span>
+                  </button>
+                `;
+              }).join("");
+            } else {
+              if (statusEl) {
+                statusEl.textContent = `ℹ️ Title & Artist filled ("${parsed.displayTitle}"). No matching lyrics found on LRCLIB — paste lyrics below.`;
+              }
+            }
+          } catch (lrcErr) {
+            if (statusEl) {
+              statusEl.textContent = `✅ Title & Artist filled! LRCLIB could not be reached — paste your lyrics below.`;
+            }
+          }
+        } catch (err) {
+          if (statusEl) {
+            statusEl.textContent = "⚠️ Could not fetch info from URL (offline or blocked by firewall). You can still enter the song details manually below.";
+          }
+        } finally {
+          if (fetchBtn) fetchBtn.disabled = false;
+        }
+      },
+
+      selectMediaUrlLrcResult(idx, silentAutoLoad = false) {
+        const item = this.lastMediaUrlLrcResults?.[idx];
+        if (!item) return;
+        const rawLyrics = item.plainLyrics || item.syncedLyrics || "";
+        const cleanLyrics = this.stripLrcTimestamps(rawLyrics);
+
+        const titleEl = document.getElementById("importSongTitle");
+        const artistEl = document.getElementById("importSongArtist");
+        const lyricsEl = document.getElementById("importLrcTextarea");
+
+        if (titleEl && !titleEl.value && (item.trackName || item.name)) {
+          titleEl.value = item.trackName || item.name;
+        }
+        if (artistEl && !artistEl.value && item.artistName) {
+          artistEl.value = item.artistName;
+        }
+        if (lyricsEl) {
+          lyricsEl.value = cleanLyrics;
+        }
+
+        // Highlight the selected card among the top 3
+        if (this.lastMediaUrlLrcResults) {
+          this.lastMediaUrlLrcResults.forEach((_, i) => {
+            const cardEl = document.getElementById(`mediaLrcCard-${i}`);
+            const badgeEl = document.getElementById(`mediaLrcBadge-${i}`);
+            if (cardEl) cardEl.classList.toggle("correct", i === idx);
+            if (badgeEl) {
+              badgeEl.className = `badge ${i === idx ? "badge-green" : "badge-blue"}`;
+              badgeEl.textContent = i === idx ? "✓ Loaded" : "Use Lyrics";
+            }
+          });
+        }
+
+        if (!silentAutoLoad) {
+          const statusEl = document.getElementById("mediaUrlStatus");
+          if (statusEl) {
+            statusEl.textContent = "✨ Lyrics loaded into form below! Tap 'Save Song' when ready.";
+          }
+        }
+      },
+
       previewImportedLrcFile(file) {
         if (!file) return;
         const reader = new FileReader();
@@ -4353,8 +5363,16 @@
         this.state.songs.unshift(newSong);
         this.saveLocalStorageKey("ktv_songs", this.state.songs);
 
-        this.awardXp(50);
-        this.showSystemAlert(`🎉 Song "${title}" added! You earned +50 XP!`);
+        // Award +25 XP at most once per calendar day for adding a new song
+        const today = srsEngine.getTodayDateStr();
+        if (this.state.gamification.lastSongXpDate !== today) {
+          this.state.gamification.lastSongXpDate = today;
+          this.awardXp(25);
+          this.showSystemAlert(`🎉 Song "${title}" added! You earned +25 XP (Daily song bonus)!`);
+        } else {
+          this.saveLocalStorageKey("ktv_gamification", this.state.gamification);
+          this.showSystemAlert(`🎵 Song "${title}" added to your library! (Daily song XP already claimed today)`);
+        }
 
         this.renderHomeLists();
         this.populateSongSelects();
@@ -4408,19 +5426,20 @@
         if (!item) return;
         document.getElementById("importSongTitle").value = item.trackName || item.name || "";
         document.getElementById("importSongArtist").value = item.artistName || "";
-        document.getElementById("importLrcTextarea").value = item.syncedLyrics || item.plainLyrics || "";
+        const rawLrc = item.plainLyrics || item.syncedLyrics || "";
+        document.getElementById("importLrcTextarea").value = this.stripLrcTimestamps(rawLrc);
         window.scrollTo({ top: 0, behavior: "smooth" });
       },
 
       // -----------------------------------------------------------------------
-      // PRACTICE TAB: MODE SWITCHER (FLASHCARDS / MATCHING / TYPING) & FILTERS
+      // PRACTICE TAB: MODE SWITCHER (FLASHCARDS SRS / MATCHING) & FILTERS
       // -----------------------------------------------------------------------
       setPracticeInteractionMode(mode) {
-        const validModes = ["flashcards", "matching", "typing"];
+        const validModes = ["flashcards", "matching"];
         this.state.practiceInteractionMode = validModes.includes(mode) ? mode : "flashcards";
         this.state.flashcardIndex = 0;
 
-        // Matching & Typing modes practice words; switch unit mode to words automatically if needed
+        // Matching mode practices words; switch unit mode to words automatically if needed
         const unitRow = document.getElementById("fcUnitModeRow");
         if (this.state.practiceInteractionMode !== "flashcards") {
           this.state.flashcardUnitMode = "words";
@@ -4435,14 +5454,11 @@
 
         document.getElementById("pModeFlashcardsBtn")?.classList.toggle("active", this.state.practiceInteractionMode === "flashcards");
         document.getElementById("pModeMatchingBtn")?.classList.toggle("active", this.state.practiceInteractionMode === "matching");
-        document.getElementById("pModeTypingBtn")?.classList.toggle("active", this.state.practiceInteractionMode === "typing");
 
         document.getElementById("practicePaneFlashcards").style.display =
           this.state.practiceInteractionMode === "flashcards" ? "block" : "none";
         document.getElementById("practicePaneMatching").style.display =
           this.state.practiceInteractionMode === "matching" ? "flex" : "none";
-        document.getElementById("practicePaneTyping").style.display =
-          this.state.practiceInteractionMode === "typing" ? "flex" : "none";
 
         this.populateSongSelects();
         this.renderCurrentFlashcard();
@@ -4521,6 +5537,23 @@
               `<option value="${song.id}">${this.escapeHtml(song.title)} - ${this.escapeHtml(song.artist || "")}</option>`
             )
           ].join("");
+        }
+
+        const testSongSelect = document.getElementById("testSongSelect");
+        if (testSongSelect) {
+          const prevTestSong = this.state.testConfig?.songFilter || "all_songs";
+          testSongSelect.innerHTML = [
+            `<option value="all_songs">All Songs in Library (${this.state.songs.length})</option>`,
+            ...this.state.songs.map(song =>
+              `<option value="song:${song.id}">${this.escapeHtml(song.title)}${song.artist ? " - " + this.escapeHtml(song.artist) : ""}</option>`
+            )
+          ].join("");
+          if ([...testSongSelect.options].some(o => o.value === prevTestSong)) {
+            testSongSelect.value = prevTestSong;
+          } else {
+            this.state.testConfig.songFilter = "all_songs";
+            testSongSelect.value = "all_songs";
+          }
         }
       },
 
@@ -4673,14 +5706,17 @@
       },
 
       /**
-       * Mode 1: Anki SRS Flashcard Rating Handler (+10 XP)
+       * Mode 1: Anki SRS Flashcard Rating Handler (+5 XP for Words / +10 XP for Sentences)
        */
       rateFlashcardSRS(rating) {
         const item = this.state.currentFlashcardItem;
         if (!item) return;
 
+        const isSent = this.state.flashcardUnitMode === "sentences" || !!item.isSentence || (item.simp && Array.from(item.simp).length > 4);
+        const xpReward = isSent ? 10 : 5;
+
         this.saveCardSrsOutcome(item, rating);
-        this.recordPracticeActivity(10);
+        this.recordPracticeActivity(xpReward);
 
         if (!this.state.flashcardDueOnly) {
           this.state.flashcardIndex += 1;
@@ -4697,6 +5733,9 @@
 
         this.state.matchingFirstAttempt = true;
         this.state.matchingResolved = false;
+
+        const resultBar = document.getElementById("matchingResultBar");
+        if (resultBar) resultBar.style.display = "none";
 
         const correctPinyin = item.pinyin || textHelper.getPinyin(item.simp, true) || "—";
         const correctMeaning = resolvedMeaning || item.fallbackGloss || "Chinese word";
@@ -4746,8 +5785,9 @@
       handleMatchingChoice(btnEl) {
         if (this.state.matchingResolved || !btnEl) return;
         this.state.matchingResolved = true;
+        this.state.lastMatchingWasCorrect = btnEl.getAttribute("data-correct") === "1";
 
-        const isCorrect = btnEl.getAttribute("data-correct") === "1";
+        const isCorrect = this.state.lastMatchingWasCorrect;
         const allBtns = document.querySelectorAll("#matchingOptionsGrid .match-option-btn");
 
         allBtns.forEach(b => {
@@ -4769,91 +5809,434 @@
           this.saveCardSrsOutcome(item, "hard");
         }
 
-        setTimeout(() => {
-          if (!this.state.flashcardDueOnly || !isCorrect) {
-            this.state.flashcardIndex += 1;
+        const resultBar = document.getElementById("matchingResultBar");
+        const statusText = document.getElementById("matchingResultStatusText");
+        const subText = document.getElementById("matchingResultSubText");
+        if (resultBar) {
+          resultBar.style.display = "flex";
+          if (statusText) {
+            statusText.textContent = isCorrect ? "✅ Correct! (+5 XP)" : "❌ Not quite — see green answer";
+            statusText.style.color = isCorrect ? "#86efac" : "#fca5a5";
           }
-          this.renderCurrentFlashcard();
-        }, 950);
+          if (subText && item) {
+            subText.textContent = `${item.trad || item.simp} · ${item.pinyin || textHelper.getPinyin(item.simp, true)}`;
+          }
+        }
       },
 
-      /**
-       * Mode 3: Typing Mode (Hard Mode, Tone-Insensitive Pinyin Check, +15 XP)
-       */
-      renderTypingModePrompt(item, resolvedMeaning) {
-        this.state.typingChecked = false;
-        const meaningEl = document.getElementById("typingPromptMeaning");
-        const simpNoteEl = document.getElementById("typingPromptSimpNote");
-        const inputEl = document.getElementById("typingPinyinInput");
-        const feedbackBox = document.getElementById("typingFeedbackBox");
-        const checkBtn = document.getElementById("typingCheckBtn");
+      advanceMatchingCard() {
+        if (!this.state.flashcardDueOnly || !this.state.lastMatchingWasCorrect) {
+          this.state.flashcardIndex += 1;
+        }
+        this.renderCurrentFlashcard();
+      },
 
-        if (meaningEl) {
-          meaningEl.textContent = resolvedMeaning || item.fallbackGloss || "Type the Pinyin for this character";
+      // -----------------------------------------------------------------------
+      // TAB 4: TEST ENGINE (10 QUESTIONS, TONE RECOGNITION & GAMIFICATION)
+      // -----------------------------------------------------------------------
+      setTestConfig(key, val) {
+        if (!this.state.testConfig) return;
+        this.state.testConfig[key] = val;
+
+        if (key === "contentType") {
+          document.querySelectorAll("[data-test-content]").forEach(btn => {
+            btn.classList.toggle("active", btn.getAttribute("data-test-content") === val);
+          });
+        } else if (key === "testType") {
+          document.getElementById("testTypeBtnChar")?.classList.toggle("correct", val === "char_to_pinyin");
+          document.getElementById("testTypeBtnMeaning")?.classList.toggle("correct", val === "meaning_to_pinyin");
         }
-        if (simpNoteEl) {
-          simpNoteEl.textContent = item.trad !== item.simp
-            ? `Simplified: ${item.simp}${item.songTitle ? " · 🎵 " + item.songTitle : ""}`
-            : (item.songTitle ? `🎵 ${item.songTitle}` : "");
+      },
+
+      doesSentenceMatchTestHsk(sentenceItem, hskFilter) {
+        if (!hskFilter || hskFilter === "all") return true;
+        const tokens = textHelper.segmentLine(sentenceItem.original || sentenceItem.simp);
+        for (const tok of tokens) {
+          if (!textHelper.isChineseText(tok)) continue;
+          const simpTok = textHelper.toSimplified(tok);
+          const lvl = hskEngine.getWordHskLevel(simpTok);
+          if (hskFilter === "1-2" && (lvl === 1 || lvl === 2)) return true;
+          if (hskFilter === "3-4" && (lvl === 3 || lvl === 4)) return true;
+          if (hskFilter === "5-6" && (lvl === 5 || lvl === 6)) return true;
         }
-        if (feedbackBox) {
-          feedbackBox.className = "typing-feedback-box";
+        return false;
+      },
+
+      doesWordMatchTestHsk(wordItem, hskFilter) {
+        if (!hskFilter || hskFilter === "all") return true;
+        const lvl = wordItem.hskLevel || hskEngine.getWordHskLevel(wordItem.simp || wordItem.original);
+        if (hskFilter === "1-2") return lvl === 1 || lvl === 2;
+        if (hskFilter === "3-4") return lvl === 3 || lvl === 4;
+        if (hskFilter === "5-6") return lvl === 5 || lvl === 6;
+        return true;
+      },
+
+      buildTestQuestionPool() {
+        const cfg = this.state.testConfig;
+        const targetSongs = cfg.songFilter.startsWith("song:")
+          ? this.state.songs.filter(s => s.id === cfg.songFilter.slice(5))
+          : this.state.songs;
+
+        let wordPool = [];
+        let sentencePool = [];
+
+        if (cfg.contentType === "words" || cfg.contentType === "mixed") {
+          const seenW = new Set();
+          targetSongs.forEach(song => {
+            this.extractUniqueWordsFromSong(song).forEach(w => {
+              if (!seenW.has(w.simp) && this.doesWordMatchTestHsk(w, cfg.hskFilter)) {
+                seenW.add(w.simp);
+                const resolvedMeaning = textHelper.getKnownMeaning(w.original || w.simp)?.meaning || w.meaning || "";
+                wordPool.push({ ...w, meaning: resolvedMeaning, isSentence: false });
+              }
+            });
+          });
+
+          // Include saved vocab words when testing All Songs
+          if (cfg.songFilter === "all_songs") {
+            this.state.vocab.forEach(v => {
+              if (v && v.simp && !seenW.has(v.simp) && Array.from(v.simp).length <= 4) {
+                const enriched = { ...v, hskLevel: hskEngine.getWordHskLevel(v.simp), isSentence: false };
+                if (this.doesWordMatchTestHsk(enriched, cfg.hskFilter)) {
+                  seenW.add(v.simp);
+                  wordPool.push(enriched);
+                }
+              }
+            });
+          }
         }
-        if (checkBtn) {
-          checkBtn.textContent = "✓ Check (+15 XP)";
+
+        if (cfg.contentType === "sentences" || cfg.contentType === "mixed") {
+          const seenS = new Set();
+          targetSongs.forEach(song => {
+            this.extractUniqueSentencesFromSong(song).forEach(s => {
+              if (!seenS.has(s.simp) && this.doesSentenceMatchTestHsk(s, cfg.hskFilter)) {
+                seenS.add(s.simp);
+                const resolvedMeaning =
+                  s.meaning ||
+                  textHelper.getKnownMeaning(s.original || s.simp)?.meaning ||
+                  s.fallbackGloss ||
+                  "";
+                sentencePool.push({ ...s, meaning: resolvedMeaning, isSentence: true });
+              }
+            });
+          });
         }
+
+        let combined = [];
+        if (cfg.contentType === "words") combined = wordPool;
+        else if (cfg.contentType === "sentences") combined = sentencePool;
+        else combined = [...wordPool, ...sentencePool];
+
+        // For Option 2 (Meaning -> Pinyin), automatically skip items without a stored meaning
+        if (cfg.testType === "meaning_to_pinyin") {
+          combined = combined.filter(item => {
+            const m = (item.meaning || "").trim();
+            return m.length > 0 && m !== "—";
+          });
+        }
+
+        return combined;
+      },
+
+      startTestSession() {
+        const pool = this.buildTestQuestionPool();
+        if (pool.length === 0) {
+          this.showSystemAlert(
+            this.state.songs.length === 0
+              ? "Please add a song in the 'Add' tab first before starting a test."
+              : "No items match your selected filters (or have stored meanings for Meaning → Pinyin). Try adjusting the HSK filter or translating the song first."
+          );
+          return;
+        }
+
+        const shuffled = [...pool].sort(() => Math.random() - 0.5);
+        const questions = shuffled.slice(0, 10);
+
+        this.state.testSession = {
+          active: true,
+          questions,
+          currentIndex: 0,
+          checked: false,
+          totalPoints: 0,
+          maxPoints: questions.length * 2,
+          earnedXp: 0,
+          correctCount: 0,
+          perfectToneCount: 0
+        };
+
+        document.getElementById("testSetupPane").style.display = "none";
+        document.getElementById("testSummaryPane").style.display = "none";
+        document.getElementById("testRunnerPane").style.display = "flex";
+
+        this.renderTestQuestion();
+      },
+
+      renderTestQuestion() {
+        const sess = this.state.testSession;
+        const cfg = this.state.testConfig;
+        const q = sess.questions[sess.currentIndex];
+        if (!q) return;
+
+        sess.checked = false;
+        const total = sess.questions.length;
+        const num = sess.currentIndex + 1;
+
+        document.getElementById("testQuestionCounter").textContent = `Question ${num} / ${total}`;
+        document.getElementById("testLiveScoreBadge").textContent = `${sess.earnedXp} XP`;
+        document.getElementById("testProgressBarFill").style.width = `${Math.round((num / total) * 100)}%`;
+
+        const hskEl = document.getElementById("testQuestionHskBadge");
+        if (hskEl) {
+          hskEl.innerHTML = hskEngine.getHskBadgeHtml(q.simp, !!q.isSentence);
+        }
+
+        const promptTypeLabel = document.getElementById("testPromptTypeLabel");
+        const mainTextEl = document.getElementById("testPromptMainText");
+        const subTextEl = document.getElementById("testPromptSubText");
+
+        const displayTrad = q.trad || q.simp;
+        const isSent = !!q.isSentence || Array.from(q.simp || "").length > 4;
+
+        if (cfg.testType === "meaning_to_pinyin") {
+          if (promptTypeLabel) promptTypeLabel.textContent = "Meaning → Pinyin";
+          if (mainTextEl) {
+            mainTextEl.textContent = q.meaning || "—";
+            mainTextEl.classList.add("sentence-mode");
+          }
+          if (subTextEl) {
+            subTextEl.textContent = q.songTitle ? `🎵 ${q.songTitle}` : "Type the Chinese Pinyin for this meaning";
+          }
+        } else {
+          if (promptTypeLabel) promptTypeLabel.textContent = "Characters → Pinyin";
+          if (mainTextEl) {
+            mainTextEl.textContent = displayTrad;
+            mainTextEl.classList.toggle("sentence-mode", isSent);
+          }
+          if (subTextEl) {
+            const simpHint = q.trad && q.trad !== q.simp ? `Simplified: ${q.simp}` : "";
+            subTextEl.textContent = [simpHint, q.songTitle ? `🎵 ${q.songTitle}` : ""].filter(Boolean).join(" · ");
+          }
+        }
+
+        const inputEl = document.getElementById("testAnswerInput");
+        const submitBtn = document.getElementById("testSubmitBtn");
+        const feedbackBox = document.getElementById("testFeedbackBox");
+
+        if (feedbackBox) feedbackBox.className = "typing-feedback-box";
+        if (submitBtn) submitBtn.textContent = "Check Answer";
         if (inputEl) {
           inputEl.value = "";
           inputEl.disabled = false;
           setTimeout(() => {
             try { inputEl.focus({ preventScroll: true }); } catch (e) {}
-          }, 60);
+          }, 50);
         }
       },
 
-      handleTypingSubmit(event) {
+      submitTestAnswer(event) {
         if (event) event.preventDefault();
-        const item = this.state.currentFlashcardItem;
-        if (!item) return;
+        const sess = this.state.testSession;
+        if (!sess.active) return;
 
-        // If already checked, pressing Enter / Check advances to the next card
-        if (this.state.typingChecked) {
-          this.stepFlashcard(1);
+        // If already checked, advance to next question or finish test
+        if (sess.checked) {
+          if (sess.currentIndex + 1 < sess.questions.length) {
+            sess.currentIndex += 1;
+            this.renderTestQuestion();
+          } else {
+            this.finishTestSession();
+          }
           return;
         }
 
-        const inputEl = document.getElementById("typingPinyinInput");
+        const inputEl = document.getElementById("testAnswerInput");
         const userRaw = (inputEl?.value || "").trim();
         if (!userRaw) return;
 
-        const targetPinyin = item.pinyin || textHelper.getPinyin(item.simp, true) || "";
-        const normalizedTarget = textHelper.normalizePinyinForTyping(targetPinyin);
-        const normalizedUser = textHelper.normalizePinyinForTyping(userRaw);
+        const q = sess.questions[sess.currentIndex];
+        const isSent = !!q.isSentence || Array.from(q.simp || "").length > 4;
+        const targetPinyin = q.pinyin || textHelper.getPinyin(q.simp, true) || "";
+        const result = textHelper.evaluatePinyinAnswer(userRaw, targetPinyin, q.simp, isSent);
 
-        const isCorrect = normalizedTarget.length > 0 && normalizedUser === normalizedTarget;
-        this.state.typingChecked = true;
+        sess.checked = true;
+        sess.totalPoints += result.points;
+        sess.earnedXp += result.xp;
 
-        const feedbackBox = document.getElementById("typingFeedbackBox");
-        const feedbackTitle = document.getElementById("typingFeedbackTitle");
-        const feedbackDetail = document.getElementById("typingFeedbackDetail");
-        const checkBtn = document.getElementById("typingCheckBtn");
-
-        if (isCorrect) {
-          if (feedbackBox) feedbackBox.className = "typing-feedback-box correct";
-          if (feedbackTitle) feedbackTitle.textContent = "✅ Spotless! +15 XP";
-          if (feedbackDetail) feedbackDetail.textContent = `Pinyin with tones: ${targetPinyin}`;
-          this.saveCardSrsOutcome(item, "easy");
-          this.recordPracticeActivity(15); // +15 XP for spotless Typing answer
+        if (result.status === "perfect_tones") {
+          sess.correctCount += 1;
+          sess.perfectToneCount += 1;
+          this.saveCardSrsOutcome(q, "easy");
+        } else if (result.status === "correct_base") {
+          sess.correctCount += 1;
+          this.saveCardSrsOutcome(q, "good");
         } else {
-          if (feedbackBox) feedbackBox.className = "typing-feedback-box wrong";
-          if (feedbackTitle) feedbackTitle.textContent = "❌ Not quite!";
-          if (feedbackDetail) feedbackDetail.textContent = `Correct Pinyin: ${targetPinyin} (${normalizedTarget})`;
-          this.saveCardSrsOutcome(item, "hard");
+          this.saveCardSrsOutcome(q, "hard");
         }
 
-        if (checkBtn) {
-          checkBtn.textContent = "Next Word ▶";
+        document.getElementById("testLiveScoreBadge").textContent = `${sess.earnedXp} XP`;
+
+        const feedbackBox = document.getElementById("testFeedbackBox");
+        const titleEl = document.getElementById("testFeedbackTitle");
+        const charsEl = document.getElementById("testFeedbackChars");
+        const pinyinEl = document.getElementById("testFeedbackPinyin");
+        const meaningEl = document.getElementById("testFeedbackMeaning");
+        const submitBtn = document.getElementById("testSubmitBtn");
+
+        if (feedbackBox) {
+          if (result.status === "perfect_tones") {
+            feedbackBox.className = "typing-feedback-box bonus";
+          } else if (result.points > 0) {
+            feedbackBox.className = "typing-feedback-box correct";
+          } else {
+            feedbackBox.className = "typing-feedback-box wrong";
+          }
         }
+
+        if (titleEl) {
+          if (result.status === "perfect_tones") {
+            titleEl.textContent = `🌟🎯 Perfect Tones! +${result.xp} XP (2 pts — Bonus!)`;
+            this.triggerBonusPointAnimation(result.xp);
+          } else if (result.status === "correct_base") {
+            titleEl.textContent = result.hadWrongTones
+              ? `✅ Correct Pinyin (Tone off — +${result.xp} XP · 1 pt)`
+              : `✅ Correct (No Tones) (+${result.xp} XP · 1 pt)`;
+          } else {
+            titleEl.textContent = "❌ Incorrect (0 XP)";
+          }
+        }
+
+        const charDisplay = q.trad && q.trad !== q.simp ? `${q.trad} (${q.simp})` : (q.trad || q.simp);
+        if (charsEl) charsEl.textContent = charDisplay;
+        if (pinyinEl) {
+          const numVersion = textHelper.convertMarkedPinyinToToneNumbers(targetPinyin, q.simp);
+          pinyinEl.textContent = `Pinyin: ${targetPinyin}${numVersion ? ` (${numVersion})` : ""}`;
+        }
+        if (meaningEl) {
+          meaningEl.textContent = `Meaning: ${q.meaning || textHelper.getKnownMeaning(q.simp)?.meaning || "—"}`;
+        }
+
+        if (submitBtn) {
+          submitBtn.textContent =
+            sess.currentIndex + 1 < sess.questions.length ? "Next Question ▶" : "See Test Results 🏆";
+        }
+      },
+
+      speakCurrentTestQuestion() {
+        const sess = this.state.testSession;
+        const q = sess?.questions?.[sess.currentIndex];
+        if (!q) return;
+        speakChinese(q.simp || q.trad || q.original);
+      },
+
+      triggerBonusPointAnimation(xpEarned = 25) {
+        try {
+          const existing = document.querySelector(".bonus-xp-burst");
+          if (existing) existing.remove();
+
+          const burstEl = document.createElement("div");
+          burstEl.className = "bonus-xp-burst";
+          burstEl.textContent = `🎯 +${xpEarned} XP · Tone Bonus! ✨`;
+          document.body.appendChild(burstEl);
+
+          const liveBadge = document.getElementById("testLiveScoreBadge");
+          if (liveBadge) {
+            liveBadge.style.transition = "transform 0.25s ease";
+            liveBadge.style.transform = "scale(1.22)";
+            setTimeout(() => {
+              liveBadge.style.transform = "scale(1)";
+            }, 280);
+          }
+
+          setTimeout(() => {
+            burstEl.remove();
+          }, 1300);
+        } catch (e) {}
+      },
+
+      finishTestSession() {
+        const sess = this.state.testSession;
+        const cfg = this.state.testConfig;
+        sess.active = false;
+
+        const qCount = sess.questions.length || 1;
+        const accuracyPct = Math.round((sess.correctCount / qCount) * 100);
+        const toneAccPct = Math.round((sess.perfectToneCount / qCount) * 100);
+
+        // Update active profile's Test Statistics, Capped History (max 20) & Gamification (XP + Daily Streak)
+        const g = this.state.gamification;
+        if (!g.testStats || typeof g.testStats !== "object") {
+          g.testStats = {
+            testsCompleted: 0,
+            totalQuestions: 0,
+            totalCorrect: 0,
+            totalPerfectTones: 0,
+            totalPointsEarned: 0,
+            totalMaxPoints: 0,
+            totalTestXp: 0
+          };
+        }
+
+        g.testStats.testsCompleted = (Number(g.testStats.testsCompleted) || 0) + 1;
+        g.testStats.totalQuestions = (Number(g.testStats.totalQuestions) || 0) + sess.questions.length;
+        g.testStats.totalCorrect = (Number(g.testStats.totalCorrect) || 0) + sess.correctCount;
+        g.testStats.totalPerfectTones = (Number(g.testStats.totalPerfectTones) || 0) + sess.perfectToneCount;
+        g.testStats.totalPointsEarned = (Number(g.testStats.totalPointsEarned) || 0) + sess.totalPoints;
+        g.testStats.totalMaxPoints = (Number(g.testStats.totalMaxPoints) || 0) + sess.maxPoints;
+        g.testStats.totalTestXp = (Number(g.testStats.totalTestXp) || 0) + sess.earnedXp;
+
+        // Save compact test result into testHistory capped at the last 20 tests
+        const songObj = cfg.songFilter && cfg.songFilter.startsWith("song:")
+          ? this.state.songs.find(s => s.id === cfg.songFilter.slice(5))
+          : null;
+        const now = new Date();
+        const dateLabel = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+
+        const compactRecord = {
+          d: dateLabel,
+          mode: cfg.contentType || "words",
+          type: cfg.testType === "meaning_to_pinyin" ? "Meaning→Py" : "Char→Py",
+          song: songObj ? String(songObj.title).slice(0, 22) : "All Songs",
+          acc: accuracyPct,
+          tone: toneAccPct,
+          pts: `${sess.totalPoints}/${sess.maxPoints}`,
+          xp: sess.earnedXp
+        };
+
+        if (!Array.isArray(g.testHistory)) {
+          g.testHistory = [];
+        }
+        g.testHistory.unshift(compactRecord);
+        if (g.testHistory.length > 20) {
+          g.testHistory = g.testHistory.slice(0, 20);
+        }
+
+        if (sess.earnedXp > 0) {
+          this.recordPracticeActivity(sess.earnedXp);
+        } else {
+          this.saveLocalStorageKey("ktv_gamification", g);
+          this.updateGamificationUI();
+        }
+
+        document.getElementById("testSumAccuracy").textContent = `${accuracyPct}%`;
+        document.getElementById("testSumToneAccuracy").textContent = `${toneAccPct}%`;
+        document.getElementById("testSumPoints").textContent = `${sess.totalPoints} / ${sess.maxPoints}`;
+        document.getElementById("testSumXp").textContent = `+${sess.earnedXp} XP`;
+
+        document.getElementById("testRunnerPane").style.display = "none";
+        document.getElementById("testSetupPane").style.display = "none";
+        document.getElementById("testSummaryPane").style.display = "flex";
+      },
+
+      quitTestSession() {
+        this.state.testSession.active = false;
+        this.resetTestViewToSetup();
+      },
+
+      resetTestViewToSetup() {
+        document.getElementById("testRunnerPane").style.display = "none";
+        document.getElementById("testSummaryPane").style.display = "none";
+        document.getElementById("testSetupPane").style.display = "flex";
       },
 
       async renderCurrentFlashcard() {
@@ -4912,6 +6295,13 @@
         const backSimpLabelEl = document.getElementById("flashcardBackSimpLabel");
         if (backSimpLabelEl) {
           backSimpLabelEl.textContent = isSentence ? "Simplified Sentence (简体)" : "Simplified (简体)";
+        }
+
+        const srsXpHintEl = document.getElementById("flashcardSrsXpHint");
+        if (srsXpHintEl) {
+          srsXpHintEl.textContent = isSentence
+            ? "Rate your recall (+10 XP · Sentence)"
+            : "Rate your recall (+5 XP · Word)";
         }
 
         // Render HSK Badge on Practice Card
@@ -4976,12 +6366,10 @@
         const frontActions = document.getElementById("flashcardFrontActions");
         if (frontActions) frontActions.style.display = "flex";
 
-        // Update Matching Mode or Typing Mode UI if active
+        // Update Matching Mode UI if active
         if (this.state.practiceInteractionMode === "matching") {
           const fullPool = this.getRawFlashcardDeck("all_songs", "all");
           this.renderMatchingModeOptions(item, resolvedMeaning, fullPool);
-        } else if (this.state.practiceInteractionMode === "typing") {
-          this.renderTypingModePrompt(item, resolvedMeaning);
         }
 
         if (!resolvedMeaning && navigator.onLine !== false) {
@@ -4994,9 +6382,6 @@
               document.getElementById("flashcardEditMeaningInput").value = fetched;
               if (this.state.practiceInteractionMode === "matching") {
                 this.renderMatchingModeOptions(item, fetched, this.getRawFlashcardDeck("all_songs", "all"));
-              } else if (this.state.practiceInteractionMode === "typing") {
-                const tm = document.getElementById("typingPromptMeaning");
-                if (tm) tm.textContent = fetched;
               }
             }
           } else if (!item.fallbackGloss) {
