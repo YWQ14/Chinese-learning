@@ -1625,7 +1625,7 @@
         <div class="card" id="testSetupPane" style="display:flex; flex-direction:column; gap:14px;">
           <div class="section-title" style="margin-bottom:2px;">
             <span>✍️ Pinyin &amp; Tone Test</span>
-            <span class="badge badge-green">10 Questions</span>
+            <span class="badge badge-green" id="testQuestionCountBadge">15 Questions</span>
           </div>
 
           <!-- 1. Content Type -->
@@ -1855,7 +1855,7 @@
         <div class="card">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <div style="font-weight:900; font-size:1.05rem;">🎯 Daily XP Goal</div>
+              <div style="font-weight:900; font-size:1.05rem;">🎯 Daily XP Goal <span style="font-size:0.74rem; color:var(--gold); font-weight:800;">(+100 XP/day · Max 1000)</span></div>
               <div style="font-size:0.76rem; color:var(--text-muted);">Practice +5/+10 · Test Words +15/+25 · Sentences +25/+40 · 1st Song +25</div>
             </div>
             <span class="badge badge-green" id="dailyGoalBadge">0 / 200 XP</span>
@@ -3004,6 +3004,7 @@
         flashcardUnitMode: "words",
         flashcardDueOnly: true,
         currentFlashcardItem: null,
+        practiceShuffleOrder: {},
         matchingFirstAttempt: true,
         matchingResolved: false,
         testConfig: {
@@ -3039,6 +3040,7 @@
           streakCount: 0,
           lastPracticeDate: "",
           lastSongXpDate: "",
+          lastGoalStepDate: "",
           totalXp: 0,
           dailyGoalXp: 200,
           dailyXpByDate: {},
@@ -3202,6 +3204,7 @@
             streakCount: 0,
             lastPracticeDate: "",
             lastSongXpDate: "",
+            lastGoalStepDate: "",
             totalXp: 0,
             dailyGoalXp: 200,
             dailyXpByDate: {},
@@ -3511,10 +3514,11 @@
           const savedGamification = localStorage.getItem(this.getScopedStorageKey("ktv_gamification"));
           if (savedGamification) {
             const parsedGam = JSON.parse(savedGamification) || {};
+            const restoredGoal = Math.min(1000, Math.max(200, Number(parsedGam.dailyGoalXp) || 200));
             this.state.gamification = {
               ...this.state.gamification,
               ...parsedGam,
-              dailyGoalXp: 200,
+              dailyGoalXp: restoredGoal,
               testHistory: Array.isArray(parsedGam.testHistory) ? parsedGam.testHistory.slice(0, 20) : [],
               testStats: {
                 ...(defaults.gamification.testStats || {}),
@@ -3578,11 +3582,50 @@
       // -----------------------------------------------------------------------
       verifyStreakContinuity() {
         const g = this.state.gamification;
-        if (!g.lastPracticeDate) return;
         const today = srsEngine.getTodayDateStr();
         const yesterday = srsEngine.getFutureDateStr(-1);
-        if (g.lastPracticeDate !== today && g.lastPracticeDate !== yesterday) {
+        let changed = false;
+
+        if (g.lastPracticeDate && g.lastPracticeDate !== today && g.lastPracticeDate !== yesterday) {
           g.streakCount = 0;
+          changed = true;
+        }
+
+        // Progressive Daily XP Goal: starts at 200 XP and increases by +100 XP each new day up to max 1000 XP
+        const baseGoal = Math.min(1000, Math.max(200, Number(g.dailyGoalXp) || 200));
+        if (g.dailyGoalXp !== baseGoal) {
+          g.dailyGoalXp = baseGoal;
+          changed = true;
+        }
+
+        if (!g.lastGoalStepDate) {
+          g.lastGoalStepDate = g.lastPracticeDate || today;
+          changed = true;
+        }
+
+        if (g.lastGoalStepDate !== today) {
+          const prevParts = String(g.lastGoalStepDate).split("-").map(Number);
+          const currParts = String(today).split("-").map(Number);
+          let daysElapsed = 1;
+          if (prevParts.length === 3 && currParts.length === 3) {
+            const prevMs = new Date(prevParts[0], prevParts[1] - 1, prevParts[2]).getTime();
+            const currMs = new Date(currParts[0], currParts[1] - 1, currParts[2]).getTime();
+            const diffDays = Math.round((currMs - prevMs) / 86400000);
+            if (diffDays > 0) daysElapsed = diffDays;
+          }
+          g.dailyGoalXp = Math.min(1000, Math.max(200, g.dailyGoalXp + daysElapsed * 100));
+          g.lastGoalStepDate = today;
+          changed = true;
+        }
+
+        // Also ensure multi-day streaks scale at least by +100 XP per streak day up to 1000 XP
+        const streakGoalFloor = Math.min(1000, 200 + Math.max(0, (Number(g.streakCount) || 1) - 1) * 100);
+        if (streakGoalFloor > g.dailyGoalXp) {
+          g.dailyGoalXp = streakGoalFloor;
+          changed = true;
+        }
+
+        if (changed && this.state.activeProfileId) {
           this.saveLocalStorageKey("ktv_gamification", g);
         }
       },
@@ -3996,6 +4039,7 @@
         });
 
         if (targetView === "practice") {
+          this.reshufflePracticeDeck();
           this.populateSongSelects();
           this.renderCurrentFlashcard();
           this.renderVocabList();
@@ -5434,10 +5478,26 @@
       // -----------------------------------------------------------------------
       // PRACTICE TAB: MODE SWITCHER (FLASHCARDS SRS / MATCHING) & FILTERS
       // -----------------------------------------------------------------------
+      shuffleArray(arr) {
+        const copy = Array.isArray(arr) ? [...arr] : [];
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          const tmp = copy[i];
+          copy[i] = copy[j];
+          copy[j] = tmp;
+        }
+        return copy;
+      },
+
+      reshufflePracticeDeck() {
+        this.state.practiceShuffleOrder = {};
+        this.state.flashcardIndex = 0;
+      },
+
       setPracticeInteractionMode(mode) {
         const validModes = ["flashcards", "matching"];
         this.state.practiceInteractionMode = validModes.includes(mode) ? mode : "flashcards";
-        this.state.flashcardIndex = 0;
+        this.reshufflePracticeDeck();
 
         // Matching mode practices words; switch unit mode to words automatically if needed
         const unitRow = document.getElementById("fcUnitModeRow");
@@ -5466,7 +5526,7 @@
 
       setFlashcardDueOnly(dueOnly) {
         this.state.flashcardDueOnly = !!dueOnly;
-        this.state.flashcardIndex = 0;
+        this.reshufflePracticeDeck();
 
         document.getElementById("fcFilterDueBtn")?.classList.toggle("active", this.state.flashcardDueOnly);
         document.getElementById("fcFilterAllBtn")?.classList.toggle("active", !this.state.flashcardDueOnly);
@@ -5476,7 +5536,7 @@
 
       setFlashcardUnitMode(unitMode) {
         this.state.flashcardUnitMode = unitMode === "sentences" ? "sentences" : "words";
-        this.state.flashcardIndex = 0;
+        this.reshufflePracticeDeck();
 
         document.getElementById("fcModeWordsBtn")?.classList.toggle("active", this.state.flashcardUnitMode === "words");
         document.getElementById("fcModeSentencesBtn")?.classList.toggle("active", this.state.flashcardUnitMode === "sentences");
@@ -5487,13 +5547,13 @@
 
       onFlashcardSongFilterChange(val) {
         this.state.flashcardSongFilter = val || "all_songs";
-        this.state.flashcardIndex = 0;
+        this.reshufflePracticeDeck();
         this.renderCurrentFlashcard();
       },
 
       onFlashcardHskFilterChange(val) {
         this.state.flashcardHskFilter = val || "all";
-        this.state.flashcardIndex = 0;
+        this.reshufflePracticeDeck();
         this.renderCurrentFlashcard();
       },
 
@@ -5620,6 +5680,23 @@
           baseList = baseList.filter(card => hskEngine.matchesHskFilter(card, hskFilter));
         }
 
+        // Always mix/shuffle cards in Practice regardless of whether All Songs, Saved Only, or a specific Song is selected
+        if (!this.state.practiceShuffleOrder || typeof this.state.practiceShuffleOrder !== "object") {
+          this.state.practiceShuffleOrder = {};
+        }
+        const orderMap = this.state.practiceShuffleOrder;
+        baseList.forEach(card => {
+          const key = card.simp || card.id || card.original;
+          if (key && orderMap[key] === undefined) {
+            orderMap[key] = Math.random();
+          }
+        });
+        baseList.sort((a, b) => {
+          const ka = a.simp || a.id || a.original;
+          const kb = b.simp || b.id || b.original;
+          return (orderMap[ka] ?? 0.5) - (orderMap[kb] ?? 0.5);
+        });
+
         return baseList;
       },
 
@@ -5744,7 +5821,7 @@
         const distractors = [];
         const usedSimp = new Set([item.simp]);
 
-        const shuffledPool = [...fullPool].sort(() => Math.random() - 0.5);
+        const shuffledPool = this.shuffleArray(fullPool);
         for (const cand of shuffledPool) {
           if (distractors.length >= 3) break;
           if (!cand || usedSimp.has(cand.simp)) continue;
@@ -5769,10 +5846,10 @@
           }
         }
 
-        const options = [
+        const options = this.shuffleArray([
           { pinyin: correctPinyin, meaning: correctMeaning, isCorrect: true },
           ...distractors.slice(0, 3)
-        ].sort(() => Math.random() - 0.5);
+        ]);
 
         gridEl.innerHTML = options.map((opt, idx) => `
           <button type="button" class="match-option-btn" data-correct="${opt.isCorrect ? "1" : "0"}" onclick="app.handleMatchingChoice(this)">
@@ -5832,7 +5909,7 @@
       },
 
       // -----------------------------------------------------------------------
-      // TAB 4: TEST ENGINE (10 QUESTIONS, TONE RECOGNITION & GAMIFICATION)
+      // TAB 4: TEST ENGINE (15 WORDS / 10 SENTENCES, TONE RECOGNITION & XP)
       // -----------------------------------------------------------------------
       setTestConfig(key, val) {
         if (!this.state.testConfig) return;
@@ -5842,6 +5919,10 @@
           document.querySelectorAll("[data-test-content]").forEach(btn => {
             btn.classList.toggle("active", btn.getAttribute("data-test-content") === val);
           });
+          const countBadge = document.getElementById("testQuestionCountBadge");
+          if (countBadge) {
+            countBadge.textContent = val === "sentences" ? "10 Questions" : "15 Questions";
+          }
         } else if (key === "testType") {
           document.getElementById("testTypeBtnChar")?.classList.toggle("correct", val === "char_to_pinyin");
           document.getElementById("testTypeBtnMeaning")?.classList.toggle("correct", val === "meaning_to_pinyin");
@@ -5950,8 +6031,9 @@
           return;
         }
 
-        const shuffled = [...pool].sort(() => Math.random() - 0.5);
-        const questions = shuffled.slice(0, 10);
+        const targetCount = this.state.testConfig?.contentType === "sentences" ? 10 : 15;
+        const shuffled = this.shuffleArray(pool);
+        const questions = shuffled.slice(0, targetCount);
 
         this.state.testSession = {
           active: true,
